@@ -1,0 +1,8 @@
+{
+    "trailingComma": "all",
+    "bracketSameLine": false,
+    "bracketSpacing": true,
+    "endOfLine": "lf",
+    "tabWidth": 4,
+    "useTabs": false
+}
