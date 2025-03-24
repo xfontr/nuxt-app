@@ -1,12 +1,12 @@
 <template>
-    <Pointer :size="15" :sizeMagnitude="'vw'" :alwaysVisible="true">
+    <Pointer :size="15" :unit="'vw'" :alwaysVisible="false">
         <span class="test">{{ $t("meta.title") }}</span>
         <template #pointer>
             <div class="custom-pointer"></div>
         </template>
     </Pointer>
 
-    <Pointer :size="15" :sizeMagnitude="'vw'" :alwaysVisible="true">
+    <Pointer :size="15" :unit="'vw'" :alwaysVisible="false">
         <span class="test test--difference">{{ $t("meta.title") }}</span>
         <template #pointer>
             <div class="custom-pointer"></div>

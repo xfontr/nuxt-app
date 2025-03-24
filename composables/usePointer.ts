@@ -19,6 +19,7 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
     });
 
     const radius = ref<number>(options.size / 2);
+    const isVisible = ref<boolean>(options.alwaysVisible);
 
     const isEnabled = computed<boolean>(
         () => !!target.value && !!pointer.value && options.enabled,
@@ -29,8 +30,7 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
     const actualSize = computed(() => target.value?.getBoundingClientRect());
 
     const togglePointerVisibility = (visible: boolean): void => {
-        if (options.alwaysVisible) return;
-        pointer.value!.style.display = visible ? "block" : "none";
+        isVisible.value = options.alwaysVisible || visible;
     };
 
     const leave = (): void => togglePointerVisibility(false);
@@ -77,8 +77,9 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
         setLimits,
         location,
         limit,
-        isEnabled,
         radius,
+        isEnabled,
+        isVisible,
     };
 };
 

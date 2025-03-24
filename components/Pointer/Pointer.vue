@@ -26,7 +26,7 @@ const cssTop = computed(() =>
 const cssSize = computed(() => toCssUnit(props.size, props.unit));
 
 const cssDisplay = computed<"block" | "none">(() =>
-    props.alwaysVisible ? "block" : "none",
+    $p.isVisible.value ? "block" : "none",
 );
 </script>
 
