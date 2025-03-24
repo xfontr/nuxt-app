@@ -2,7 +2,7 @@
 @use "variables/fonts" as *;
 
 @mixin font-style(
-    $weight: $fonts-weight-regular,
+    $weight: $fonts-regular,
     $family: $fonts-primary,
     $line-height: $fonts-line-height-md
 ) {
@@ -11,7 +11,7 @@
     line-height: $line-height;
 }
 
-@mixin font-size($mobile, $desktop, $weight: $fonts-weight-regular) {
+@mixin font-size($mobile, $desktop, $weight: $fonts-regular) {
     font-size: $mobile;
 
     @media (min-width: $breakpoints-md) {
