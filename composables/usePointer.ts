@@ -6,6 +6,8 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
     target: Ref<Target | undefined>,
     options: Required<PointerOptions>,
 ) => {
+    const { onResize } = useWindow();
+
     const location = ref<Location>({
         x: options.start.x,
         y: options.start.y,
@@ -16,52 +18,59 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
         right: { x: 0, y: 0 },
     });
 
-    const distanceToMiddle = ref<number>(options.size / 2);
+    const radius = ref<number>(options.size / 2);
 
     const isEnabled = computed<boolean>(
         () => !!target.value && !!pointer.value && options.enabled,
     );
 
-    const leave = (): void => {
+    const isSizeRelative = computed<boolean>(() => options.unit !== "px");
+
+    const actualSize = computed(() => target.value?.getBoundingClientRect());
+
+    const togglePointerVisibility = (visible: boolean): void => {
         if (options.alwaysVisible) return;
-        pointer.value!.style.display = "none";
+        pointer.value!.style.display = visible ? "block" : "none";
     };
 
-    const enter = (): void => {
-        if (options.alwaysVisible) return;
-        pointer.value!.style.display = "block";
-    };
+    const leave = (): void => togglePointerVisibility(false);
+    const enter = (): void => togglePointerVisibility(true);
 
     const move = ({ x: mouseX, y: mouseY }: MouseEvent): void => {
         if (!isEnabled.value) return;
 
-        const rect = target.value!.getBoundingClientRect();
-        const x = mouseX - rect.left;
-        const y = mouseY - rect.top;
+        const { left, right } = limit.value;
+
+        let x = mouseX - actualSize.value!.left;
+        let y = mouseY - actualSize.value!.top;
+
+        x = Math.min(Math.max(x, left.x), right.x);
+        y = Math.min(Math.max(y, left.y), right.y);
 
         location.value = { x, y };
-
-        if (x <= limit.value.left.x) location.value.x = limit.value.left.x;
-        if (y <= limit.value.left.y) location.value.y = limit.value.left.y;
-
-        if (x >= limit.value.right.x) location.value.x = limit.value.right.x;
-        if (y >= limit.value.right.y) location.value.y = limit.value.right.y;
     };
 
     const setLimits = (): void => {
         if (!isEnabled.value) return;
 
-        const { width, height } = target.value!.getBoundingClientRect();
+        const overflow = options.canOverflow ? 10 : 1;
+        const { left, right } = limit.value;
 
-        limit.value.left.y = limit.value.left.x = options.canOverflow
-            ? -distanceToMiddle.value
-            : distanceToMiddle.value;
+        left.y = left.x = options.canOverflow ? -radius.value : radius.value;
 
-        limit.value.right.x =
-            width - distanceToMiddle.value / (options.canOverflow ? 10 : 1);
-        limit.value.right.y =
-            height - distanceToMiddle.value / (options.canOverflow ? 10 : 1);
+        right.x = actualSize.value!.width - radius.value / overflow;
+        right.y = actualSize.value!.height - radius.value / overflow;
     };
+
+    const resize = (): void => {
+        if (!isEnabled.value) return;
+        if (isSizeRelative.value) radius.value = pointer.value!.clientWidth / 2;
+        setLimits();
+    };
+
+    onResize(resize, { immediate: true });
+
+    if (isSizeRelative.value) watch(() => pointer.value?.clientWidth, resize);
 
     return {
         mouse: { enter, leave, move },
@@ -69,7 +78,7 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
         location,
         limit,
         isEnabled,
-        distanceToMiddle,
+        radius,
     };
 };
 

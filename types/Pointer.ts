@@ -6,4 +6,5 @@ export type PointerOptions = Partial<{
     enabled: boolean;
     canOverflow: boolean;
     size: number;
+    unit: "vh" | "vw" | "%" | "px";
 }>;
