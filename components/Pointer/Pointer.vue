@@ -8,6 +8,7 @@ const props = withDefaults(
         alwaysVisible?: boolean;
         start?: Location;
         sizeMagnitude?: "vh" | "vw" | "%" | "px";
+        canOverflow?: boolean;
     }>(),
     {
         size: 16,
@@ -16,6 +17,7 @@ const props = withDefaults(
         enabled: true,
         alwaysVisible: false,
         start: () => ({ x: 0, y: 0 }),
+        canOverflow: true,
     },
 );
 
@@ -28,7 +30,7 @@ const location = ref<Location>({
     y: props.start.y,
 });
 const limit = ref<FullLocation>({
-    left: { x: distanceToMiddle.value, y: distanceToMiddle.value },
+    left: { x: 0, y: 0 },
     right: { x: 0, y: 0 },
 });
 
@@ -81,16 +83,21 @@ const handleMouseEnter = (): void => {
 
 const setLimits = (element: HTMLElement) => {
     const { width, height } = element.getBoundingClientRect();
-    console.log(limit.value);
 
-    limit.value.right.x = width - distanceToMiddle.value;
-    limit.value.right.y = height - distanceToMiddle.value;
+    limit.value.left.y = limit.value.left.x = props.canOverflow
+        ? -distanceToMiddle.value
+        : distanceToMiddle.value;
+
+    limit.value.right.x =
+        width - distanceToMiddle.value / (props.canOverflow ? 10 : 1);
+    limit.value.right.y =
+        height - distanceToMiddle.value / (props.canOverflow ? 10 : 1);
 };
 
 const handleScreenResize = () => {
-    if (target.value) setLimits(target.value);
     if (isSizeRelative.value && pointer.value)
         distanceToMiddle.value = pointer.value.clientWidth / 2;
+    if (target.value) setLimits(target.value);
 };
 
 onMounted(() => {
@@ -107,19 +114,14 @@ onUnmounted(() => {
     window.removeEventListener("resize", handleScreenResize);
 });
 
-if (isSizeRelative.value)
-    watch(
-        () => pointer.value?.clientWidth,
-        () => {
-            if (!pointer.value) return;
-            distanceToMiddle.value = pointer.value.clientWidth / 2;
-        },
-    );
+if (isSizeRelative.value) {
+    watch(() => pointer.value?.clientWidth, handleScreenResize);
+}
 </script>
 
 <template>
     <div
-        class="pointer"
+        :class="['pointer', { 'pointer--overflow': canOverflow }]"
         ref="target"
         @mouseenter="handleMouseEnter"
         @mousemove="handleMouseMove"
@@ -137,6 +139,7 @@ if (isSizeRelative.value)
     position: relative;
     user-select: none;
     cursor: none;
+    width: fit-content;
 
     &__pointer {
         display: none;
@@ -150,6 +153,10 @@ if (isSizeRelative.value)
     &__pointer > * {
         width: 100%;
         height: 100%;
+    }
+
+    &--overflow {
+        overflow: hidden;
     }
 }
 </style>
