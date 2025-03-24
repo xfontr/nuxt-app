@@ -3,9 +3,9 @@
 @use "variables/colors" as *;
 
 body {
+    color: $colors-primary;
     @include font-style($fonts-regular, $fonts-primary);
     @include font-size($fonts-size-base, $fonts-size-lg);
-    color: $colors-primary;
 }
 
 h1 {
