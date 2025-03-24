@@ -12,7 +12,19 @@ describe("useWindow composable", () => {
 
         window.dispatchEvent(RESIZE_EVENT);
 
-        expect(callback).toHaveBeenCalled();
+        expect(callback).toHaveBeenCalledTimes(1);
+    });
+
+    it("should immediately run the callback, and once again after mount", () => {
+        const callback = vi.fn();
+
+        mountComposable(() => {
+            useWindow().onResize(callback, { immediate: true });
+        });
+
+        window.dispatchEvent(RESIZE_EVENT);
+
+        expect(callback).toHaveBeenCalledTimes(2);
     });
 
     it("should clean up event listeners on unmount", () => {

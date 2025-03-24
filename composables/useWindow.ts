@@ -1,9 +1,15 @@
-const useWindow = () => {
-    const onResizeCallbacks = new Set<(event: Event) => void>();
+import type { OnResizeOptions } from "~/types/Window";
 
-    const onResize = (callback: (event: Event) => void) => {
+const useWindow = () => {
+    const onResizeCallbacks = new Set<(event?: Event) => void>();
+
+    const onResize = (
+        callback: (event?: Event) => void,
+        options?: OnResizeOptions,
+    ) => {
         onResizeCallbacks.add(callback);
 
+        if (options?.immediate) callback();
         if (!import.meta.client) return;
 
         window.addEventListener("resize", callback);

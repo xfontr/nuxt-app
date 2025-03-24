@@ -21,6 +21,7 @@ const target = ref<HTMLDivElement>();
 const pointer = ref<HTMLDivElement>();
 
 const $p = usePointer(pointer, target, props);
+const { onResize } = useWindow();
 
 const toMagnitude = <T>(
     text: T,
@@ -39,28 +40,22 @@ const locationY = computed<string>(() =>
 
 const cssSize = computed<string>(() => toMagnitude(props.size));
 
-const handleScreenResize = () => {
-    if (isSizeRelative.value && pointer.value)
+const display = computed<"block" | "none">(() =>
+    props.alwaysVisible ? "block" : "none",
+);
+
+const resize = (): void => {
+    if (isSizeRelative.value && pointer.value) {
         $p.distanceToMiddle.value = pointer.value.clientWidth / 2;
+    }
+
     if (target.value) $p.setLimits();
 };
 
-onMounted(() => {
-    if (!$p.isEnabled.value) return;
-
-    $p.setLimits();
-
-    pointer.value!.style.display = props.alwaysVisible ? "block" : "none";
-
-    window.addEventListener("resize", handleScreenResize);
-});
-
-onUnmounted(() => {
-    window.removeEventListener("resize", handleScreenResize);
-});
+onResize(resize, { immediate: true });
 
 if (isSizeRelative.value) {
-    watch(() => pointer.value?.clientWidth, handleScreenResize);
+    watch(() => pointer.value?.clientWidth, resize);
 }
 </script>
 
@@ -91,8 +86,8 @@ if (isSizeRelative.value) {
     width: fit-content;
 
     &__pointer {
-        display: none;
         position: absolute;
+        display: v-bind(display);
         height: v-bind(cssSize);
         width: v-bind(cssSize);
         top: v-bind(locationY);
