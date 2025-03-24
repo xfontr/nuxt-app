@@ -19,7 +19,7 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
     });
 
     const radius = ref<number>(options.size / 2);
-    const isVisible = ref<boolean>(options.alwaysVisible);
+    const isVisible = ref<boolean>(true); // renders on server
 
     const isEnabled = computed<boolean>(
         () => !!target.value && !!pointer.value && options.enabled,
@@ -68,7 +68,9 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
 
     onResize(resize, { immediate: true });
 
-    if (isSizeRelative.value) watch(() => pointer.value?.clientWidth, resize);
+    onMounted(() => {
+        isVisible.value = options.alwaysVisible;
+    });
 
     return {
         mouse: { enter, leave, move },

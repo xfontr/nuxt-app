@@ -20,6 +20,7 @@ describe("useWindow composable", () => {
 
         mountComposable(() => {
             useWindow().onResize(callback, { immediate: true });
+            expect(callback).not.toHaveBeenCalled();
         });
 
         window.dispatchEvent(RESIZE_EVENT);
