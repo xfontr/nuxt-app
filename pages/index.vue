@@ -6,7 +6,12 @@
         </template>
     </Pointer>
 
-    <Pointer :size="15" :unit="'vw'" :alwaysVisible="false">
+    <Pointer
+        :size="200"
+        :unit="'px'"
+        :alwaysVisible="false"
+        :canOverflow="true"
+    >
         <span class="test test--difference">{{ $t("meta.title") }}</span>
         <template #pointer>
             <div class="custom-pointer"></div>

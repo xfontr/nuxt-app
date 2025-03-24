@@ -1,15 +1,15 @@
 import type { OnResizeOptions } from "~/types/Window";
 
-const useWindow = () => {
-    const onResizeCallbacks = new Set<(event?: Event) => void>();
+type Callback = (event?: Event) => void;
 
-    const onResize = (
-        callback: (event?: Event) => void,
-        options?: OnResizeOptions,
-    ) => {
+const useWindow = () => {
+    const onResizeCallbacks = new Set<Callback>();
+    const immediateCallbacks = new Set<Callback>();
+
+    const onResize = (callback: Callback, options?: OnResizeOptions) => {
         onResizeCallbacks.add(callback);
 
-        if (options?.immediate) callback();
+        if (options?.immediate) immediateCallbacks.add(callback);
         if (!import.meta.client) return;
 
         window.addEventListener("resize", callback);
@@ -19,6 +19,10 @@ const useWindow = () => {
         onResizeCallbacks.forEach((callback) => {
             window.addEventListener("resize", callback);
         });
+
+        immediateCallbacks.forEach((callback) => {
+            callback();
+        });
     });
 
     onUnmounted(() => {
@@ -27,6 +31,7 @@ const useWindow = () => {
         });
 
         onResizeCallbacks.clear();
+        immediateCallbacks.clear();
     });
 
     return { onResize };

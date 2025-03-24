@@ -51,8 +51,6 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
     };
 
     const setLimits = (): void => {
-        if (!isEnabled.value) return;
-
         const overflow = options.canOverflow ? 10 : 1;
         const { left, right } = limit.value;
 
@@ -74,9 +72,7 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
 
     return {
         mouse: { enter, leave, move },
-        setLimits,
         location,
-        limit,
         radius,
         isEnabled,
         isVisible,
