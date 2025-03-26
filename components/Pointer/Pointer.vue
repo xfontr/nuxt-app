@@ -1,20 +1,33 @@
 <script lang="ts" setup>
 import type { PointerOptions } from "~/types/Pointer";
+import type { Ranges } from "~/types/Ranges";
 
-const props = withDefaults(defineProps<PointerOptions>(), {
-    size: 16,
-    unit: "vw",
-    enabled: true,
-    alwaysVisible: false,
-    canOverflow: true,
-    start: () => ({ x: 0, y: 0 }),
-});
+const props = withDefaults(
+    defineProps<
+        PointerOptions & {
+            animate?: boolean;
+            canInterfereAnimation?: boolean;
+            animationRange?: Ranges;
+        }
+    >(),
+    {
+        size: 16,
+        unit: "vw",
+        enabled: true,
+        alwaysVisible: false,
+        canOverflow: true,
+        canInterfereAnimation: true,
+        animate: true,
+        animationRange: undefined,
+        start: () => ({ x: 0, y: 0 }),
+    },
+);
 
 const target = ref<HTMLDivElement>();
 const pointer = ref<HTMLDivElement>();
 
 const $p = usePointer(pointer, target, props);
-const { animate } = useAnimation(pointer);
+const { animate, stop, init } = useAnimation(pointer, props.animationRange);
 
 const cssLeft = computed(() =>
     toCssUnit($p.location.value.x - $p.radius.value, "px"),
@@ -30,8 +43,43 @@ const cssDisplay = computed<"block" | "none">(() =>
     $p.isVisible.value ? "block" : "none",
 );
 
+const cssCursor = computed<"none" | "revert">(() =>
+    props.canInterfereAnimation ? "none" : "revert",
+);
+
+const isMouseDisabled = computed<boolean>(
+    () => props.animate && !props.canInterfereAnimation,
+);
+
+const enter = (): void => {
+    if (isMouseDisabled.value) return;
+
+    if (props.animate) {
+        stop();
+        return;
+    }
+
+    $p.mouse.enter();
+};
+
+const leave = (): void => {
+    if (isMouseDisabled.value) return;
+
+    if (props.animate) {
+        init($p.location.value);
+        return;
+    }
+
+    $p.mouse.leave();
+};
+
+const move = (event: MouseEvent): void => {
+    if (isMouseDisabled.value) return;
+    $p.mouse.move(event);
+};
+
 onMounted(() => {
-    animate($p.mouse.move);
+    if (props.animate) animate($p.mouse.move);
 });
 </script>
 
@@ -40,9 +88,9 @@ onMounted(() => {
         v-if="$p.isEnabled"
         :class="['pointer', { 'pointer--overflow': canOverflow }]"
         ref="target"
-        @mouseenter="$p.mouse.enter"
-        @mousemove="$p.mouse.move"
-        @mouseleave="$p.mouse.leave"
+        @mouseenter="enter"
+        @mousemove="move"
+        @mouseleave="leave"
     >
         <slot />
 
@@ -58,7 +106,7 @@ onMounted(() => {
 .pointer {
     position: relative;
     user-select: none;
-    cursor: none;
+    cursor: v-bind(cssCursor);
     width: fit-content;
 
     &__pointer {

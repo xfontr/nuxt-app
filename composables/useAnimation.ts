@@ -54,7 +54,7 @@ const useAnimation = <T extends HTMLElement>(
             updateDirection();
         }
 
-        requestAnimationFrame(animation);
+        animationId.value = requestAnimationFrame(animation);
     };
 
     const stop = (): void => {
@@ -62,9 +62,10 @@ const useAnimation = <T extends HTMLElement>(
         cancelAnimationFrame(animationId.value);
     };
 
-    const init = (): void => {
+    const init = (start?: Location): void => {
         if (!import.meta.client) return;
         stop();
+        location.value = start ?? location.value;
         animationId.value = requestAnimationFrame(animation);
     };
 
