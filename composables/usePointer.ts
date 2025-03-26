@@ -4,14 +4,9 @@ import type { PointerOptions } from "~/types/Pointer";
 const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
     pointer: Ref<Pointer | undefined>,
     target: Ref<Target | undefined>,
-    options: Required<PointerOptions>,
+    options: PointerOptions,
 ) => {
     const { onResize } = useWindow();
-
-    const location = ref<Location>({
-        x: options.start.x,
-        y: options.start.y,
-    });
 
     const limit = ref<FullLocation>({
         left: { x: 0, y: 0 },
@@ -20,6 +15,7 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
 
     const radius = ref<number>(options.size / 2);
     const isVisible = ref<boolean>(true); // renders on server
+    const location = ref<Location>(options.start ?? ({} as Location));
 
     const isEnabled = computed<boolean>(
         () => !!target.value && !!pointer.value && options.enabled,
@@ -70,6 +66,9 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
 
     onMounted(() => {
         isVisible.value = options.alwaysVisible;
+
+        location.value.x ??= random(0, actualSize.value!.width);
+        location.value.y ??= random(0, actualSize.value!.height);
     });
 
     return {

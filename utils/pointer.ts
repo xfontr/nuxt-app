@@ -4,8 +4,8 @@ import type { Ranges } from "~/types/Ranges";
 
 export const DEFAULT_RANGES: Ranges = {
     short: [10, 15],
-    medium: [20, 80],
-    long: [100, 150],
+    medium: [60, 120],
+    long: [140, 190],
 };
 
 /**

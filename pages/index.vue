@@ -1,17 +1,12 @@
 <template>
-    <Pointer :size="15" :unit="'vw'" :alwaysVisible="false">
+    <Pointer :size="25" :unit="'vw'" :alwaysVisible="true" :canOverflow="false">
         <span class="test">{{ $t("meta.title") }}</span>
         <template #pointer>
             <div class="custom-pointer"></div>
         </template>
     </Pointer>
 
-    <Pointer
-        :size="200"
-        :unit="'px'"
-        :alwaysVisible="false"
-        :canOverflow="true"
-    >
+    <Pointer :size="200" :unit="'px'" :alwaysVisible="true">
         <span class="test test--difference">{{ $t("meta.title") }}</span>
         <template #pointer>
             <div class="custom-pointer"></div>
@@ -21,11 +16,12 @@
 
 <style lang="scss" scoped>
 .test {
-    cursor: none;
     font-size: 300px;
     -webkit-text-stroke: 1px black;
     font-weight: $fonts-extra-bold;
     color: $colors-secondary;
+    margin: 1rem;
+    padding: 0 2rem;
 
     &--difference {
         background-color: black;

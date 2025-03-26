@@ -4,7 +4,7 @@ import type { Ranges } from "~/types/Ranges";
 
 const props = withDefaults(
     defineProps<
-        PointerOptions & {
+        Partial<PointerOptions> & {
             animate?: boolean;
             canInterfereAnimation?: boolean;
             animationRange?: Ranges;
@@ -19,7 +19,7 @@ const props = withDefaults(
         canInterfereAnimation: true,
         animate: true,
         animationRange: undefined,
-        start: () => ({ x: 0, y: 0 }),
+        start: undefined,
     },
 );
 
@@ -27,7 +27,11 @@ const target = ref<HTMLDivElement>();
 const pointer = ref<HTMLDivElement>();
 
 const $p = usePointer(pointer, target, props);
-const { animate, stop, init } = useAnimation(pointer, props.animationRange);
+const {
+    set: setAnimation,
+    stop,
+    init,
+} = useAnimation(pointer, props.animationRange);
 
 const cssLeft = computed(() =>
     toCssUnit($p.location.value.x - $p.radius.value, "px"),
@@ -79,7 +83,9 @@ const move = (event: MouseEvent): void => {
 };
 
 onMounted(() => {
-    if (props.animate) animate($p.mouse.move);
+    if (!props.animate) return;
+    setAnimation($p.mouse.move);
+    init($p.location.value);
 });
 </script>
 

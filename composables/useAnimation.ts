@@ -69,14 +69,13 @@ const useAnimation = <T extends HTMLElement>(
         animationId.value = requestAnimationFrame(animation);
     };
 
-    const animate = (newCallback: (location: Location) => void): void => {
+    const set = (newCallback: (location: Location) => void): void => {
         callback.value = newCallback;
-        init();
     };
 
     onUnmounted(stop);
 
-    return { animate, init, stop };
+    return { set, init, stop };
 };
 
 export default useAnimation;

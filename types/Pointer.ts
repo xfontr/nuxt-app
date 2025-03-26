@@ -1,10 +1,10 @@
 import type { Location } from "./Location";
 
-export type PointerOptions = Partial<{
+export type PointerOptions = {
     alwaysVisible: boolean;
-    start: Location;
+    start?: Location;
     enabled: boolean;
     canOverflow: boolean;
     size: number;
     unit: "vh" | "vw" | "%" | "px";
-}>;
+};
