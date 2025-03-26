@@ -14,6 +14,7 @@ const target = ref<HTMLDivElement>();
 const pointer = ref<HTMLDivElement>();
 
 const $p = usePointer(pointer, target, props);
+const { animate } = useAnimation(pointer);
 
 const cssLeft = computed(() =>
     toCssUnit($p.location.value.x - $p.radius.value, "px"),
@@ -28,6 +29,10 @@ const cssSize = computed(() => toCssUnit(props.size, props.unit));
 const cssDisplay = computed<"block" | "none">(() =>
     $p.isVisible.value ? "block" : "none",
 );
+
+onMounted(() => {
+    animate($p.mouse.move);
+});
 </script>
 
 <template>
