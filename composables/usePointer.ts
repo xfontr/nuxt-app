@@ -36,7 +36,7 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
     const leave = (): void => togglePointerVisibility(false);
     const enter = (): void => togglePointerVisibility(true);
 
-    const move = ({ x: mouseX, y: mouseY }: MouseEvent): void => {
+    const move = ({ x: mouseX, y: mouseY }: MouseEvent | Location): void => {
         if (!isEnabled.value) return;
 
         const { left, right } = limit.value;
@@ -44,8 +44,8 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
         let x = mouseX - actualSize.value!.left;
         let y = mouseY - actualSize.value!.top;
 
-        x = Math.min(Math.max(x, left.x), right.x);
-        y = Math.min(Math.max(y, left.y), right.y);
+        x = Math.max(left.x, Math.min(x, right.x));
+        y = Math.max(left.y, Math.min(y, right.y));
 
         location.value = { x, y };
     };
@@ -54,7 +54,7 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
         const overflow = options.canOverflow ? 10 : 1;
         const { left, right } = limit.value;
 
-        left.y = left.x = options.canOverflow ? -radius.value : radius.value;
+        left.x = left.y = options.canOverflow ? 0 : radius.value;
 
         right.x = actualSize.value!.width - radius.value / overflow;
         right.y = actualSize.value!.height - radius.value / overflow;
