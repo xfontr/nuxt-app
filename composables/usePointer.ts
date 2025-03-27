@@ -23,8 +23,6 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
 
     const isSizeRelative = computed<boolean>(() => options.unit !== "px");
 
-    const actualSize = computed(() => target.value?.getBoundingClientRect());
-
     const togglePointerVisibility = (visible: boolean): void => {
         isVisible.value = options.alwaysVisible || visible;
     };
@@ -32,13 +30,15 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
     const leave = (): void => togglePointerVisibility(false);
     const enter = (): void => togglePointerVisibility(true);
 
-    const move = ({ x: mouseX, y: mouseY }: MouseEvent | Location): void => {
+    const move = ({ x: clientX, y: clientY }: MouseEvent): void => {
         if (!isEnabled.value) return;
 
         const { left, right } = limit.value;
 
-        let x = mouseX - actualSize.value!.left;
-        let y = mouseY - actualSize.value!.top;
+        const rect = target.value!.getBoundingClientRect();
+
+        let x = clientX - rect.left,
+            y = clientY - rect.top;
 
         x = Math.max(left.x, Math.min(x, right.x));
         y = Math.max(left.y, Math.min(y, right.y));
@@ -52,8 +52,8 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
 
         left.x = left.y = options.canOverflow ? 0 : radius.value;
 
-        right.x = actualSize.value!.width - radius.value / overflow;
-        right.y = actualSize.value!.height - radius.value / overflow;
+        right.x = target.value!.offsetWidth - radius.value / overflow;
+        right.y = target.value!.offsetHeight - radius.value / overflow;
     };
 
     const resize = (): void => {
@@ -67,8 +67,8 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
     onMounted(() => {
         isVisible.value = options.alwaysVisible;
 
-        location.value.x ??= random(0, actualSize.value!.width);
-        location.value.y ??= random(0, actualSize.value!.height);
+        location.value.x ??= random(0, target.value!.offsetWidth);
+        location.value.y ??= random(0, target.value!.offsetHeight);
     });
 
     return {

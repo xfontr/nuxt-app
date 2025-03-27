@@ -15,7 +15,7 @@ const props = withDefaults(
         unit: "vw",
         enabled: true,
         alwaysVisible: false,
-        canOverflow: true,
+        canOverflow: false,
         canInterfereAnimation: true,
         animate: true,
         animationRange: undefined,
@@ -25,6 +25,8 @@ const props = withDefaults(
 
 const target = ref<HTMLDivElement>();
 const pointer = ref<HTMLDivElement>();
+const blocker = ref<ReturnType<typeof setTimeout>>();
+const isAnimationPaused = ref<boolean>(false);
 
 const $p = usePointer(pointer, target, props);
 const {
@@ -33,11 +35,11 @@ const {
     init,
 } = useAnimation(pointer, props.animationRange);
 
-const cssLeft = computed(() =>
+const cssLeft = computed<`${string}px`>(() =>
     toCssUnit($p.location.value.x - $p.radius.value, "px"),
 );
 
-const cssTop = computed(() =>
+const cssTop = computed<`${string}px`>(() =>
     toCssUnit($p.location.value.y - $p.radius.value, "px"),
 );
 
@@ -57,29 +59,32 @@ const isMouseDisabled = computed<boolean>(
 
 const enter = (): void => {
     if (isMouseDisabled.value) return;
-
-    if (props.animate) {
-        stop();
-        return;
-    }
-
     $p.mouse.enter();
 };
 
 const leave = (): void => {
     if (isMouseDisabled.value) return;
-
-    if (props.animate) {
-        init($p.location.value);
-        return;
-    }
-
     $p.mouse.leave();
+};
+
+const pauseAnimation = (): void => {
+    if (!isAnimationPaused.value) stop();
+
+    clearTimeout(blocker.value);
+    isAnimationPaused.value = true;
+
+    blocker.value = setTimeout(() => {
+        init($p.location.value);
+        blocker.value = undefined;
+        isAnimationPaused.value = false;
+    }, 800);
 };
 
 const move = (event: MouseEvent): void => {
     if (isMouseDisabled.value) return;
     $p.mouse.move(event);
+
+    if (props.animate) pauseAnimation();
 };
 
 onMounted(() => {
