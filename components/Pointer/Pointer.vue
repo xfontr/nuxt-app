@@ -14,12 +14,10 @@ const props = withDefaults(
         size: 16,
         unit: "vw",
         enabled: true,
-        alwaysVisible: false,
-        canOverflow: false,
+        alwaysVisible: true,
+        canOverflow: true,
         canInterfereAnimation: true,
         animate: true,
-        animationRange: undefined,
-        start: undefined,
     },
 );
 
@@ -28,6 +26,7 @@ const pointer = ref<HTMLDivElement>();
 const blocker = ref<ReturnType<typeof setTimeout>>();
 const isAnimationPaused = ref<boolean>(false);
 
+const { cooldown } = useCooldown();
 const $p = usePointer(pointer, target, props);
 const {
     set: setAnimation,
@@ -70,13 +69,12 @@ const leave = (): void => {
 const pauseAnimation = (): void => {
     if (!isAnimationPaused.value) stop();
 
-    clearTimeout(blocker.value);
     isAnimationPaused.value = true;
 
-    blocker.value = setTimeout(async () => {
+    cooldown(() => {
         blocker.value = undefined;
         isAnimationPaused.value = false;
-        await init($p.location.value);
+        init($p.location.value);
     }, 800);
 };
 
