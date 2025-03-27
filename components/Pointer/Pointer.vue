@@ -1,25 +1,45 @@
 <script lang="ts" setup>
 import type { PointerOptions } from "~/types/Pointer";
+import type { Ranges } from "~/types/Ranges";
 
-const props = withDefaults(defineProps<PointerOptions>(), {
-    size: 16,
-    unit: "vw",
-    enabled: true,
-    alwaysVisible: false,
-    canOverflow: true,
-    start: () => ({ x: 0, y: 0 }),
-});
+const props = withDefaults(
+    defineProps<
+        Partial<PointerOptions> & {
+            animate?: boolean;
+            canInterfereAnimation?: boolean;
+            animationRange?: Ranges;
+        }
+    >(),
+    {
+        size: 16,
+        unit: "vw",
+        enabled: true,
+        alwaysVisible: false,
+        canOverflow: false,
+        canInterfereAnimation: true,
+        animate: true,
+        animationRange: undefined,
+        start: undefined,
+    },
+);
 
 const target = ref<HTMLDivElement>();
 const pointer = ref<HTMLDivElement>();
+const blocker = ref<ReturnType<typeof setTimeout>>();
+const isAnimationPaused = ref<boolean>(false);
 
 const $p = usePointer(pointer, target, props);
+const {
+    set: setAnimation,
+    stop,
+    init,
+} = useAnimation(pointer, props.animationRange);
 
-const cssLeft = computed(() =>
+const cssLeft = computed<`${string}px`>(() =>
     toCssUnit($p.location.value.x - $p.radius.value, "px"),
 );
 
-const cssTop = computed(() =>
+const cssTop = computed<`${string}px`>(() =>
     toCssUnit($p.location.value.y - $p.radius.value, "px"),
 );
 
@@ -28,6 +48,50 @@ const cssSize = computed(() => toCssUnit(props.size, props.unit));
 const cssDisplay = computed<"block" | "none">(() =>
     $p.isVisible.value ? "block" : "none",
 );
+
+const cssCursor = computed<"none" | "revert">(() =>
+    props.canInterfereAnimation ? "none" : "revert",
+);
+
+const isMouseDisabled = computed<boolean>(
+    () => props.animate && !props.canInterfereAnimation,
+);
+
+const enter = (): void => {
+    if (isMouseDisabled.value) return;
+    $p.mouse.enter();
+};
+
+const leave = (): void => {
+    if (isMouseDisabled.value) return;
+    $p.mouse.leave();
+};
+
+const pauseAnimation = (): void => {
+    if (!isAnimationPaused.value) stop();
+
+    clearTimeout(blocker.value);
+    isAnimationPaused.value = true;
+
+    blocker.value = setTimeout(async () => {
+        blocker.value = undefined;
+        isAnimationPaused.value = false;
+        await init($p.location.value);
+    }, 800);
+};
+
+const move = (event: MouseEvent): void => {
+    if (isMouseDisabled.value) return;
+    if (props.animate) pauseAnimation();
+
+    $p.mouse.move(event, true);
+};
+
+onMounted(() => {
+    if (!props.animate) return;
+    setAnimation($p.mouse.move);
+    init($p.location.value);
+});
 </script>
 
 <template>
@@ -35,9 +99,9 @@ const cssDisplay = computed<"block" | "none">(() =>
         v-if="$p.isEnabled"
         :class="['pointer', { 'pointer--overflow': canOverflow }]"
         ref="target"
-        @mouseenter="$p.mouse.enter"
-        @mousemove="$p.mouse.move"
-        @mouseleave="$p.mouse.leave"
+        @mouseenter="enter"
+        @mousemove="move"
+        @mouseleave="leave"
     >
         <slot />
 
@@ -53,7 +117,7 @@ const cssDisplay = computed<"block" | "none">(() =>
 .pointer {
     position: relative;
     user-select: none;
-    cursor: none;
+    cursor: v-bind(cssCursor);
     width: fit-content;
 
     &__pointer {
