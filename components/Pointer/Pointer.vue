@@ -71,10 +71,10 @@ const pauseAnimation = (): void => {
 
     isAnimationPaused.value = true;
 
-    cooldown(() => {
+    cooldown(async () => {
         blocker.value = undefined;
         isAnimationPaused.value = false;
-        init($p.location.value);
+        await init($p.location.value);
     }, 800);
 };
 

@@ -1,4 +1,4 @@
-type CooldownCallback = <T>(...args: unknown[]) => T | void;
+type CooldownCallback = <T>(...args: unknown[]) => T | void | Promise<T | void>;
 
 const useCooldown = () => {
     const cooldownTimer = ref<ReturnType<typeof setTimeout>>();
@@ -10,8 +10,8 @@ const useCooldown = () => {
     };
 
     const runCooldownCallbackWhenDone = (span: number): void => {
-        cooldownTimer.value = setTimeout(() => {
-            callback.value?.();
+        cooldownTimer.value = setTimeout(async () => {
+            await callback.value?.();
             reset();
         }, span);
     };
