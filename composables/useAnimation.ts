@@ -2,8 +2,6 @@ import type { Count } from "~/types/Count";
 import type { Location } from "~/types/Location";
 import type { Ranges } from "~/types/Ranges";
 
-// TODO: Bug that happens that if not on top of screen, pointer only works at the top of its container. I'm trying to use the
-// diff - delta - between the parent and the target current location to fix this. I'm not sure if it's the best approach.
 const useAnimation = <T extends HTMLElement>(
     pointer: Ref<T | undefined>,
     ranges?: Ranges,
