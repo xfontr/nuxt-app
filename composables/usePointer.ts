@@ -30,15 +30,18 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
     const leave = (): void => togglePointerVisibility(false);
     const enter = (): void => togglePointerVisibility(true);
 
-    const move = ({ x: clientX, y: clientY }: MouseEvent): void => {
+    const targetRect = computed(() => target.value!.getBoundingClientRect());
+
+    const move = (
+        { x: clientX, y: clientY }: MouseEvent | Location,
+        isMouse: boolean,
+    ): void => {
         if (!isEnabled.value) return;
 
         const { left, right } = limit.value;
 
-        const rect = target.value!.getBoundingClientRect();
-
-        let x = clientX - rect.left,
-            y = clientY - rect.top;
+        let x = isMouse ? clientX - targetRect.value.left : clientX;
+        let y = isMouse ? clientY - targetRect.value.top : clientY;
 
         x = Math.max(left.x, Math.min(x, right.x));
         y = Math.max(left.y, Math.min(y, right.y));
@@ -54,6 +57,8 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
 
         right.x = target.value!.offsetWidth - radius.value / overflow;
         right.y = target.value!.offsetHeight - radius.value / overflow;
+
+        console.log("setting limits at", limit.value.right);
     };
 
     const resize = (): void => {

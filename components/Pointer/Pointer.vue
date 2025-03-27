@@ -73,18 +73,18 @@ const pauseAnimation = (): void => {
     clearTimeout(blocker.value);
     isAnimationPaused.value = true;
 
-    blocker.value = setTimeout(() => {
-        init($p.location.value);
+    blocker.value = setTimeout(async () => {
         blocker.value = undefined;
         isAnimationPaused.value = false;
+        await init($p.location.value);
     }, 800);
 };
 
 const move = (event: MouseEvent): void => {
     if (isMouseDisabled.value) return;
-    $p.mouse.move(event);
-
     if (props.animate) pauseAnimation();
+
+    $p.mouse.move(event, true);
 };
 
 onMounted(() => {
