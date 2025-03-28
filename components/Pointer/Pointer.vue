@@ -28,29 +28,15 @@ const isAnimationPaused = ref<boolean>(false);
 
 const { cooldown } = useCooldown();
 const $p = usePointer(pointer, target, props);
-const {
-    set: setAnimation,
-    stop,
-    init,
-} = useAnimation(pointer, props.animationRange);
+const animation = useAnimation(pointer, props.animationRange);
 
-const cssLeft = computed<`${string}px`>(() =>
-    toCssUnit($p.location.value.x - $p.radius.value, "px"),
-);
-
-const cssTop = computed<`${string}px`>(() =>
-    toCssUnit($p.location.value.y - $p.radius.value, "px"),
-);
-
-const cssSize = computed(() => toCssUnit(props.size, props.unit));
-
-const cssDisplay = computed<"block" | "none">(() =>
-    $p.isVisible.value ? "block" : "none",
-);
-
-const cssCursor = computed<"none" | "revert">(() =>
-    props.canInterfereAnimation ? "none" : "revert",
-);
+const css = computed(() => ({
+    left: toCssUnit($p.location.value.x - $p.radius.value, "px"),
+    top: toCssUnit($p.location.value.y - $p.radius.value, "px"),
+    size: toCssUnit(props.size, props.unit),
+    display: $p.isVisible.value ? "block" : "none",
+    cursor: props.canInterfereAnimation ? "none" : "revert",
+}));
 
 const isMouseDisabled = computed<boolean>(
     () => props.animate && !props.canInterfereAnimation,
@@ -66,29 +52,34 @@ const leave = (): void => {
     $p.mouse.leave();
 };
 
-const pauseAnimation = (): void => {
-    if (!isAnimationPaused.value) stop();
-
-    isAnimationPaused.value = true;
-
+const resumeAnimationIfNotMoving = () => {
     cooldown(async () => {
         blocker.value = undefined;
         isAnimationPaused.value = false;
-        await init($p.location.value);
+        await animation.init($p.location.value);
     }, 800);
+};
+
+const pauseAnimation = (): void => {
+    if (!isAnimationPaused.value) animation.stop();
+    isAnimationPaused.value = true;
 };
 
 const move = (event: MouseEvent): void => {
     if (isMouseDisabled.value) return;
-    if (props.animate) pauseAnimation();
+
+    if (props.animate) {
+        pauseAnimation();
+        resumeAnimationIfNotMoving();
+    }
 
     $p.mouse.move(event, true);
 };
 
 onMounted(() => {
     if (!props.animate) return;
-    setAnimation($p.mouse.move);
-    init($p.location.value);
+    animation.set($p.mouse.move);
+    animation.init($p.location.value);
 });
 </script>
 
@@ -115,16 +106,17 @@ onMounted(() => {
 .pointer {
     position: relative;
     user-select: none;
-    cursor: v-bind(cssCursor);
+    cursor: v-bind("css.cursor");
     width: fit-content;
+    height: 100%;
 
     &__pointer {
         position: absolute;
-        display: v-bind(cssDisplay);
-        height: v-bind(cssSize);
-        width: v-bind(cssSize);
-        top: v-bind(cssTop);
-        left: v-bind(cssLeft);
+        display: v-bind("css.display");
+        height: v-bind("css.size");
+        width: v-bind("css.size");
+        top: v-bind("css.top");
+        left: v-bind("css.left");
     }
 
     &__pointer > * {
