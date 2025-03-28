@@ -20,7 +20,7 @@ describe("useCooldown composable", () => {
         expect(third).not.toHaveBeenCalled();
     });
 
-    it("should reset and allow another action after cooldown", () => {
+    it("should reset and allow another action after cooldown", async () => {
         const action = vi.fn();
         const { cooldown } = useCooldown();
 
@@ -29,9 +29,12 @@ describe("useCooldown composable", () => {
 
         vi.advanceTimersByTime(100);
         expect(action).toHaveBeenCalled();
+        await nextTick();
 
-        cooldown(action, 100); // Should be allowed again after cooldown
+        cooldown(action, 100);
         vi.advanceTimersByTime(100);
+        await nextTick();
+
         expect(action).toHaveBeenCalledTimes(2);
     });
 
