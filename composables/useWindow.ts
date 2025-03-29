@@ -1,40 +1,56 @@
-import type { OnResizeOptions } from "~/types/Window";
+import type { OnEventOptions } from "~/types/Window";
 
-type Callback = (event?: Event) => void;
+type Callback = (window: Window, event?: Event) => void;
+type EventCallback = (event?: Event) => void;
 
 const useWindow = () => {
-    const onResizeCallbacks = new Set<Callback>();
-    const immediateCallbacks = new Set<Callback>();
+    const onEventCallbacks = new Set<{
+        event: string;
+        callback: EventCallback;
+    }>();
+    const immediateCallbacks = new Set<EventCallback>();
+    const mounted = ref<boolean>(false);
 
-    const onResize = (callback: Callback, options?: OnResizeOptions) => {
-        onResizeCallbacks.add(callback);
+    const on = (
+        event: keyof WindowEventMap,
+        callback: Callback,
+        options?: OnEventOptions,
+    ) => {
+        const fullCallback: EventCallback = (event?: Event) => {
+            callback(window, event);
+        };
 
-        if (options?.immediate) immediateCallbacks.add(callback);
-        if (!import.meta.client) return;
+        onEventCallbacks.add({ event, callback: fullCallback });
 
-        window.addEventListener("resize", callback);
+        if (options?.immediate) immediateCallbacks.add(fullCallback);
+
+        if (mounted.value)
+            window.addEventListener(event.toLocaleLowerCase(), fullCallback);
     };
 
     onMounted(() => {
-        onResizeCallbacks.forEach((callback) => {
-            window.addEventListener("resize", callback);
+        mounted.value = true;
+
+        onEventCallbacks.forEach(({ event, callback }) => {
+            window.addEventListener(event, callback);
         });
 
         immediateCallbacks.forEach((callback) => {
             callback();
         });
-    });
 
-    onUnmounted(() => {
-        onResizeCallbacks.forEach((callback) => {
-            window.removeEventListener("resize", callback);
-        });
-
-        onResizeCallbacks.clear();
         immediateCallbacks.clear();
     });
 
-    return { onResize };
+    onUnmounted(() => {
+        onEventCallbacks.forEach(({ event, callback }) => {
+            window.removeEventListener(event.toLocaleLowerCase(), callback);
+        });
+
+        onEventCallbacks.clear();
+    });
+
+    return { on };
 };
 
 export default useWindow;

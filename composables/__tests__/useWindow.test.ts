@@ -7,7 +7,7 @@ describe("useWindow composable", () => {
         const callback = vi.fn();
 
         mountComposable(() => {
-            useWindow().onResize(callback);
+            useWindow().on("resize", callback);
         });
 
         window.dispatchEvent(RESIZE_EVENT);
@@ -19,7 +19,7 @@ describe("useWindow composable", () => {
         const callback = vi.fn();
 
         mountComposable(() => {
-            useWindow().onResize(callback, { immediate: true });
+            useWindow().on("resize", callback, { immediate: true });
             expect(callback).not.toHaveBeenCalled();
         });
 
@@ -32,7 +32,7 @@ describe("useWindow composable", () => {
         const callback = vi.fn();
 
         const wrapper = mountComposable(() => {
-            useWindow().onResize(callback);
+            useWindow().on("resize", callback);
         });
 
         wrapper.unmount();
@@ -40,5 +40,27 @@ describe("useWindow composable", () => {
         window.dispatchEvent(RESIZE_EVENT);
 
         expect(callback).not.toHaveBeenCalled();
+    });
+
+    it("should forward the window object to the callback", () => {
+        const callback = vi.fn();
+
+        mountComposable(() => {
+            useWindow().on("resize", callback);
+        });
+
+        window.dispatchEvent(RESIZE_EVENT);
+
+        expect(callback).toHaveBeenCalledWith(window, expect.any(Event));
+    });
+
+    it("should forward the window object to the callback when immediate option is true", () => {
+        const callback = vi.fn();
+
+        mountComposable(() => {
+            useWindow().on("resize", callback, { immediate: true });
+        });
+
+        expect(callback).toHaveBeenCalledWith(window, undefined);
     });
 });
