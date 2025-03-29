@@ -31,19 +31,41 @@ export const randomizeDirection = (factor: number = 1): Location => {
     return { x, y };
 };
 
-// export const randomizeDirection = (
-//     reference: Location,
-//     factor: number = 1,
-// ): Location => {
-//     let x: number, y: number;
+/**
+ * Generates an array of threshold values between 0 and 1, evenly spaced.
+ *
+ * @param {number} amount - The number of thresholds to generate. Must be at least 1.
+ * @returns {number[]} An array of threshold values ranging from 0 to 1.
+ */
+export const generateThresholds = (amount: number): number[] => {
+    if (amount < 1) amount = 0;
+    const thresholds = [0];
 
-//     // Ensure the new step is within -1, 0, or +1
-//     const randomStep = () => random(-1, 1); // Randomize steps by -1, 0, 1 only
+    const step = 1 / (amount - 0.9);
 
-//     do {
-//         x = reference.x + randomStep(); // Relative to reference location
-//         y = reference.y + randomStep();
-//     } while (!x && !y); // Avoid no movement
+    for (let i = 1; i < amount - 1; i++) {
+        thresholds.push(i * step);
+    }
 
-//     return { x, y };
-// };
+    thresholds.push(0.9);
+
+    return thresholds;
+};
+
+/**
+ * Finds the closest number in an array to a given target value.
+ *
+ * @param {number[]} values - An array of numbers to search through.
+ * @param {number} target - The target number to find the closest match for.
+ * @returns {number} The closest number in the array to the target.
+ */
+export const findClosestValue = (
+    values: number[],
+    target: number,
+): undefined | number => {
+    if (!values.length) return undefined;
+
+    return values.reduce((prev, curr) =>
+        Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev,
+    );
+};
