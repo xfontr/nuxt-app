@@ -2,10 +2,16 @@
 @use "variables/fonts" as *;
 @use "variables/colors" as *;
 
+@use "themes" as *;
+
+@include themes;
+
 body {
-    color: $colors-primary;
     @include font-style($fonts-regular, $fonts-primary);
     @include font-size($fonts-size-base, $fonts-size-lg);
+
+    background-color: $colors-primary;
+    color: $colors-secondary;
 }
 
 h1 {

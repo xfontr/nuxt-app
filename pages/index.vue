@@ -4,7 +4,7 @@
             <section>
                 <Pointer
                     class="header"
-                    :size="50"
+                    :size="10"
                     unit="vw"
                     :alwaysVisible="true"
                     :animate="true"
@@ -43,20 +43,14 @@
         font-size: 300px;
         height: 400px;
         line-height: 40%;
-        -webkit-text-stroke: 1px black;
+        -webkit-text-stroke: 1px $colors-primary;
         font-weight: $fonts-extra-bold;
-        color: $colors-secondary;
 
         margin: auto 0;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: start;
-
-        &--difference {
-            background-color: black;
-            -webkit-text-stroke: 1px white;
-        }
 
         :deep(.space-left) {
             padding: 10px;
@@ -66,7 +60,7 @@
     .custom-pointer {
         mix-blend-mode: exclusion;
         background-color: $colors-secondary;
-        // border-radius: 50%;
+        border-radius: 50%;
     }
 }
 </style>

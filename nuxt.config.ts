@@ -1,3 +1,5 @@
+import { THEME } from "./configs/constants";
+
 export default defineNuxtConfig({
     compatibilityDate: "2024-11-01",
     devtools: { enabled: false },
@@ -7,6 +9,13 @@ export default defineNuxtConfig({
         "@nuxt/test-utils",
         "nuxt-i18n-micro",
     ],
+    app: {
+        head: {
+            bodyAttrs: {
+                class: THEME,
+            },
+        },
+    },
     future: {
         compatibilityVersion: 4,
     },
