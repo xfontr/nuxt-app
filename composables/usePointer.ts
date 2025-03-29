@@ -6,7 +6,7 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
     target: Ref<Target | undefined>,
     options: PointerOptions,
 ) => {
-    const { onResize } = useWindow();
+    const { on } = useWindow();
 
     const limit = ref<FullLocation>({
         left: { x: 0, y: 0 },
@@ -57,8 +57,6 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
 
         right.x = target.value!.offsetWidth - radius.value / overflow;
         right.y = target.value!.offsetHeight - radius.value / overflow;
-
-        console.log("setting limits at", limit.value.right);
     };
 
     const resize = (): void => {
@@ -67,7 +65,7 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
         setLimits();
     };
 
-    onResize(resize, { immediate: true });
+    on("resize", resize, { immediate: true });
 
     onMounted(() => {
         isVisible.value = options.alwaysVisible;
