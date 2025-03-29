@@ -1,5 +1,5 @@
 <template>
-    <GradientScroll :gradients="['#00000000', '#000000']">
+    <GradientScroll :gradients="['#00000000', '#000000']" :transition="1">
         <template #reference>
             <section>
                 <Pointer
@@ -68,11 +68,5 @@
         background-color: $colors-secondary;
         // border-radius: 50%;
     }
-}
-</style>
-
-<style lang="scss">
-body {
-    transition: 0.5s;
 }
 </style>

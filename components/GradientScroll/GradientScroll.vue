@@ -28,11 +28,9 @@ const currentThreshold = ref<number>(0);
 const lastScrollY = ref<number>(0);
 const isDown = ref<boolean>();
 
-const threshold = computed<number[]>(() => {
-    const e = generateThresholds(props.gradients.length);
-    console.log(e);
-    return e;
-});
+const threshold = computed<number[]>(() =>
+    generateThresholds(props.gradients.length),
+);
 
 const gradients = computed<Record<string, string>>(() =>
     threshold.value.reduce(
