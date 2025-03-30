@@ -19,7 +19,7 @@ const useRuntimeConfig = () => {
 
     const $reset = () => {
         for (const key in store) {
-            delete store[key];
+            delete store[key as keyof typeof store];
         }
     };
 
