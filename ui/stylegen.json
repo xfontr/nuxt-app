@@ -1,0 +1,22 @@
+{
+    "outDir": "src/configs",
+    "compile": [
+        {
+            "name": "breakpoints",
+            "path": "/src/assets/scss/variables/_breakpoints.scss"
+        },
+        {
+            "name": "distances",
+            "path": "/src/assets/scss/variables/_distances.scss"
+        },
+        {
+            "name": "fonts",
+            "path": "/src/assets/scss/variables/_fonts.scss"
+        },
+        {
+            "name": "colors",
+            "path": "_temp.css",
+            "type": "THEME"
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+@use "variables/breakpoints" as *;
+@use "variables/fonts" as *;
+
+@mixin font-style(
+    $weight: $fonts-regular,
+    $family: $fonts-primary,
+    $line-height: $fonts-line-height-md
+) {
+    font-weight: $weight;
+    font-family: $family;
+    line-height: $line-height;
+}
+
+@mixin font-size($mobile, $desktop, $weight: $fonts-regular) {
+    font-size: $mobile;
+
+    @media (min-width: $breakpoints-md) {
+        font-size: $desktop;
+    }
+}

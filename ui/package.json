@@ -1,0 +1,27 @@
+{
+    "name": "@portfolio/ui",
+    "private": true,
+    "version": "0.0.1",
+    "type": "module",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "dev": "vite",
+        "build": "vue-tsc -b && vite build",
+        "preview": "vite preview",
+        "stylegen": "npx sass --no-source-map src/assets/scss/_global.scss _temp.css && stylegen stylegen.json && rm _temp.css"
+    },
+    "dependencies": {
+        "vue": "^3.5.13",
+        "sass": "^1.86.0",
+        "sass-loader": "^16.0.5"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-vue": "^5.2.1",
+        "@vue/tsconfig": "^0.7.0",
+        "typescript": "~5.7.2",
+        "vite": "^6.2.0",
+        "vue-tsc": "^2.2.4",
+        "@portfolio/stylegen": "workspace:*"
+    }
+}
