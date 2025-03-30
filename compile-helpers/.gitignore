@@ -1,3 +1,5 @@
+build
+dist
 node_modules
 
 # Misc
@@ -8,3 +10,4 @@ node_modules
 # Local env files
 .env
 .env.*
+!.env.example
