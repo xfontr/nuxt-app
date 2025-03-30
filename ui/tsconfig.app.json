@@ -8,7 +8,14 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true,
-        "noUncheckedSideEffectImports": true
+        "noUncheckedSideEffectImports": true,
+        "sourceMap": true,
+
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "declarationDir": "dist",
+
+        "types": ["vitest/globals"]
     },
-    "include": ["src/**/*.ts", "src/**/*.vue"]
+    "include": ["src/**/*.ts", "src/**/*.vue", "shims-vue.d.ts"]
 }

@@ -1,1 +1,6 @@
-export * as variables from "./configs";
+export { GradientScroll } from "./features/gradientScroll";
+export { Pointer } from "./features/pointer";
+
+export * from "./configs";
+export * from "./composables";
+export * from "./directives";
