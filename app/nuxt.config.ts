@@ -1,4 +1,5 @@
 import { THEME } from "./configs/constants";
+import { fileURLToPath } from "node:url";
 
 export default defineNuxtConfig({
     compatibilityDate: "2024-11-01",
@@ -19,16 +20,24 @@ export default defineNuxtConfig({
     future: {
         compatibilityVersion: 4,
     },
-    css: ["@/assets/scss/index.scss"],
+    css: ["@portfolio/ui/src/assets/scss/index.scss"],
     vite: {
+        resolve: {
+            alias: {
+                // Required for css.preprocessorOptions.scss.additionalData
+                "@portfolio/ui": fileURLToPath(
+                    new URL("./node_modules/@portfolio/ui", import.meta.url),
+                ),
+            },
+        },
         css: {
             preprocessorOptions: {
                 scss: {
                     additionalData: `
-                        @use "./assets/scss/variables/_colors.scss" as *;
-                        @use "./assets/scss/variables/_breakpoints.scss" as *;
-                        @use "./assets/scss/variables/_distances.scss" as *;
-                        @use "./assets/scss/variables/_fonts.scss" as *;
+                        @use "@portfolio/ui/src/assets/scss/variables/_colors.scss" as *;
+                        @use "@portfolio/ui/src/assets/scss/variables/_breakpoints.scss" as *;
+                        @use "@portfolio/ui/src/assets/scss/variables/_distances.scss" as *;
+                        @use "@portfolio/ui/src/assets/scss/variables/_fonts.scss" as *;
                     `,
                 },
             },

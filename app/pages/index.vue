@@ -1,5 +1,19 @@
+<script lang="ts" setup>
+import { GradientScroll, Pointer } from "@portfolio/ui";
+
+const target = ref<HTMLElement>();
+
+onMounted(() => {
+    target.value = document.body;
+});
+</script>
+
 <template>
-    <GradientScroll :gradients="['#00000000', '#000000']" :transition="1">
+    <GradientScroll
+        :target="target"
+        :gradients="['#00000000', '#000000']"
+        :transition="1"
+    >
         <template #reference>
             <section>
                 <Pointer
