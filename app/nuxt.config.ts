@@ -11,16 +11,13 @@ export default defineNuxtConfig({
         "nuxt-i18n-micro",
     ],
     app: {
-        head: {
-            bodyAttrs: {
-                class: THEME,
-            },
-        },
+        head: { bodyAttrs: { class: THEME } },
     },
-    future: {
-        compatibilityVersion: 4,
-    },
-    css: ["@portfolio/ui/src/assets/scss/index.scss"],
+    future: { compatibilityVersion: 4 },
+    css: [
+        "@portfolio/ui/dist/index.css",
+        "@portfolio/ui/src/assets/scss/index.scss",
+    ],
     vite: {
         resolve: {
             alias: {
