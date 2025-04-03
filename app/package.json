@@ -1,31 +1,29 @@
 {
-    "name": "portfolio",
+    "name": "@portfolio/app",
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "pnpm compile:variables && nuxt build",
-        "dev": "pnpm compile:variables && pnpm compile:variables && nuxt dev",
+        "build": "nuxt build",
+        "dev": "nuxt dev",
         "generate": "nuxt generate",
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
-        "test": "pnpm compile:variables && vitest .",
-        "test:once": "pnpm compile:variables && vitest . --watch=false",
-        "compile:variables": "npx sass --no-source-map assets/scss/_global.scss _temp.css && compile-helpers --instructions=compile-instructions.json && rm _temp.css"
+        "test": "vitest .",
+        "test:once": "vitest . --watch=false"
     },
     "dependencies": {
+        "@portfolio/ui": "workspace:*",
         "@nuxt/eslint": "1.2.0",
         "@nuxt/fonts": "0.11.0",
         "@nuxt/test-utils": "3.17.2",
         "@vue/test-utils": "^2.4.6",
         "eslint": "^9.0.0",
-        "node": "^18.20.8",
         "nuxt": "^3.16.1",
         "nuxt-i18n-micro": "^1.81.0",
         "sass": "^1.86.0",
         "sass-loader": "^16.0.5",
         "vue": "^3.5.13",
-        "vue-router": "^4.5.0",
-        "compile-helpers": "workspace:*"
+        "vue-router": "^4.5.0"
     },
     "devDependencies": {
         "@vitest/browser": "^3.0.9",

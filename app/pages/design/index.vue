@@ -1,5 +1,5 @@
 <template>
-    <Pointer :size="35" :unit="'vw'" :alwaysVisible="true" :canOverflow="true">
+    <!-- <Pointer :size="35" :unit="'vw'" :alwaysVisible="true" :canOverflow="true">
         <span class="test">{{ $t("meta.title") }}</span>
         <template #pointer>
             <div class="custom-pointer"></div>
@@ -11,7 +11,7 @@
         <template #pointer>
             <div class="custom-pointer"></div>
         </template>
-    </Pointer>
+    </Pointer> -->
 </template>
 
 <style lang="scss" scoped>

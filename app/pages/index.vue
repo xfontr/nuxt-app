@@ -1,11 +1,28 @@
+<script lang="ts" setup>
+import { colors, GradientScroll, Pointer } from "@portfolio/ui";
+
+const target = ref<HTMLElement>();
+
+onMounted(() => {
+    target.value = document.body;
+});
+</script>
+
 <template>
-    <GradientScroll :gradients="['#00000000', '#000000']" :transition="1">
+    <GradientScroll
+        :target="target"
+        :gradients="[
+            colors.THEME_BLACK_WHITE.colorsPrimary,
+            colors.THEME_BLACK_WHITE.colorsSecondary,
+        ]"
+        :transition="1"
+    >
         <template #reference>
             <section>
                 <Pointer
                     class="header"
-                    :size="10"
-                    unit="vw"
+                    :size="50"
+                    unit="px"
                     :alwaysVisible="true"
                     :animate="true"
                 >
