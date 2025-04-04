@@ -15,9 +15,7 @@
     "scripts": {
         "build": "vue-tsc -b && vite build",
         "preview": "vite preview",
-        "stylegen": "npx sass --no-source-map src/assets/scss/_global.scss _temp.css && stylegen stylegen.json && rm _temp.css",
-        "changeset:add": "changeset add",
-        "changeset:version": "changeset version"
+        "stylegen": "npx sass --no-source-map src/assets/scss/_global.scss _temp.css && stylegen stylegen.json && rm _temp.css"
     },
     "peerDependencies": {
         "vue": "^3.5.13"
@@ -34,8 +32,7 @@
         "vite": "^6.2.0",
         "vite-plugin-dts": "^4.5.3",
         "vitest": "^3.0.8",
-        "vue-tsc": "^2.2.4",
-        "@changesets/cli": "^2.28.1"
+        "vue-tsc": "^2.2.4"
     },
     "files": [
         "dist",
