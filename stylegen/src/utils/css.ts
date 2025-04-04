@@ -30,7 +30,7 @@ const parseCssVariables = (variables: string[]): [string, string][] =>
         .filter((variable) => variable.trim().startsWith("--"))
         .map((variable) => {
             const [name, value] = cleanVariable(variable);
-            return [toCamelCase(name), value];
+            return [toCamelCase(name), value.trim()];
         });
 
 export const parseCss = (css: string, type: File["type"]): string => {

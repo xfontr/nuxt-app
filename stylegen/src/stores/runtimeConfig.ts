@@ -5,7 +5,8 @@ let store: Instructions = undefined;
 
 const useRuntimeConfig = () => {
     const init = (instructions: Instructions) => {
-        if (!store) store = instructions;
+        if (store) return;
+        store = instructions;
 
         const consumerPath = process.cwd();
 
@@ -18,12 +19,10 @@ const useRuntimeConfig = () => {
     };
 
     const $reset = () => {
-        for (const key in store) {
-            delete store[key as keyof typeof store];
-        }
+        store = undefined;
     };
 
-    const current = () => store;
+    const current = (): Instructions | undefined => store;
 
     return { init, $reset, current };
 };

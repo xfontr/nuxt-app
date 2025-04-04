@@ -6,6 +6,7 @@ import {
 
 export default defineConfig({
     test: {
+        globals: true,
         exclude: [...configDefaults.exclude, "dist/**/*"],
         coverage: {
             provider: "v8",

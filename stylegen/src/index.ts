@@ -23,6 +23,8 @@ if (!existsSync(instructionsPath)) {
     await parse();
 
     configs.$reset();
+
+    process.exit(0);
 })();
 
 export type { Instructions };
