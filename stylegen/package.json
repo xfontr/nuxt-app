@@ -11,16 +11,15 @@
     "scripts": {
         "start": "node --watch dist/src/index.js",
         "clean": "rimraf coverage dist tmp",
-        "prebuild": "npm run lint",
+        "prebuild": "pnpm lint",
         "build": "tsc -p tsconfig.json",
         "build:watch": "tsc -w -p tsconfig.json",
-        "build:release": "npm run clean && tsc -p tsconfig.release.json",
         "lint": "eslint .",
         "test": "vitest run unit .",
+        "test:dev": "vitest unit . --watch=true",
         "test:coverage": "vitest run unit . --coverage.enabled --coverage.all",
         "prettier": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --write",
-        "prettier:check": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --check",
-        "test:watch": "vitest unit"
+        "prettier:check": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --check"
     },
     "dependencies": {
         "tslib": "~2.8"
