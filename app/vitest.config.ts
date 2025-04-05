@@ -1,17 +1,6 @@
-import { coverageConfigDefaults } from "vitest/config";
-import { defineVitestConfig } from "@nuxt/test-utils/config";
+import { mergeConfig } from "vitest/config";
+import configs from "@portfolio/configs/vitest";
 
-export default defineVitestConfig({
-    test: {
-        globals: true,
-        environment: "happy-dom",
-        coverage: {
-            exclude: [
-                ...coverageConfigDefaults.exclude,
-                "**/types/**",
-                "**/configs/**",
-                "**/index.ts",
-            ],
-        },
-    },
+export default mergeConfig(configs, {
+    test: { environment: "happy-dom" },
 });

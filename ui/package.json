@@ -25,9 +25,11 @@
     },
     "devDependencies": {
         "@portfolio/stylegen": "workspace:*",
+        "@portfolio/configs": "workspace:*",
         "@vitejs/plugin-vue": "^5.2.1",
         "@vue/test-utils": "^2.4.6",
         "@vue/tsconfig": "^0.7.0",
+        "@vitest/coverage-v8": "^3.1.1",
         "sass": "^1.86.0",
         "sass-embedded": "^1.86.0",
         "sass-loader": "^16.0.5",
@@ -42,8 +44,5 @@
         "src/assets/*",
         "src/features",
         "src/components"
-    ],
-    "dependencies": {
-        "@vitest/coverage-v8": "^3.1.1"
-    }
+    ]
 }

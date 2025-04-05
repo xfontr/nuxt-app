@@ -4,6 +4,10 @@
     "author": "Xifré Font",
     "license": "ISC",
     "scripts": {
+        "test": "pnpm test:ui && pnpm test:stylegen",
+        "test:app": "pnpm --filter @portfolio/app test",
+        "test:ui": "pnpm --filter @portfolio/ui test",
+        "test:stylegen": "pnpm --filter @portfolio/stylegen test",
         "changeset:add": "changeset add",
         "changeset:version": "changeset version"
     },

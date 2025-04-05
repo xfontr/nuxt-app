@@ -1,22 +1,6 @@
-import {
-    configDefaults,
-    coverageConfigDefaults,
-    defineConfig,
-} from "vitest/config";
+import { mergeConfig } from "vitest/config";
+import configs from "@portfolio/configs/vitest";
 
-export default defineConfig({
-    test: {
-        globals: true,
-        exclude: [...configDefaults.exclude, "dist/**/*"],
-        coverage: {
-            provider: "v8",
-            exclude: [
-                ...coverageConfigDefaults.exclude,
-                "dist/**/*",
-                "src/types/*",
-                "src/configs/*",
-            ],
-        },
-    },
-    plugins: [],
+export default mergeConfig(configs, {
+    test: { environment: "happy-dom" },
 });
