@@ -115,9 +115,6 @@ importers:
       '@portfolio/configs':
         specifier: workspace:*
         version: link:../configs
-      '@types/node':
-        specifier: ~20
-        version: 20.17.30
       '@vitest/coverage-v8':
         specifier: ~2.1
         version: 2.1.9(vitest@2.1.9(@types/node@20.17.30)(happy-dom@17.4.4)(sass-embedded@1.86.3)(sass@1.86.3)(terser@5.39.0))
@@ -6884,6 +6881,7 @@ snapshots:
   '@types/node@20.17.30':
     dependencies:
       undici-types: 6.19.8
+    optional: true
 
   '@types/normalize-package-data@2.4.4': {}
 
@@ -10660,7 +10658,8 @@ snapshots:
       magic-string: 0.30.17
       unplugin: 2.2.2
 
-  undici-types@6.19.8: {}
+  undici-types@6.19.8:
+    optional: true
 
   unenv@2.0.0-rc.15:
     dependencies:

@@ -26,7 +26,6 @@
     },
     "devDependencies": {
         "@portfolio/configs": "workspace:*",
-        "@types/node": "~20",
         "@vitest/coverage-v8": "~2.1",
         "prettier": "~3.4",
         "rimraf": "~6.0",
