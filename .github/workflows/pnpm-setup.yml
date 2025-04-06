@@ -1,9 +1,11 @@
-name: Set up
+name: Setup pnpm
+
 on:
     workflow_call:
 
 jobs:
     cache-and-install:
+        name: Cache and install pnpm
         runs-on: ubuntu-latest
 
         steps:
