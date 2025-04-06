@@ -13,6 +13,16 @@ jobs:
             - uses: actions/checkout@v4
               with:
                   fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+            - name: Install dependencies
+              uses: pnpm i
+
+            - name: Run test coverage for ui
+              run: pnpm test:coverage:ui
+
+            - name: Run test coverage for stylegen
+              run: pnpm test:coverage:stylegen
+
             - name: SonarQube Scan
               uses: SonarSource/sonarqube-scan-action@v5
               env:
