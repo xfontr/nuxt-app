@@ -3,6 +3,7 @@
     "description": "",
     "author": "Xifré Font",
     "license": "ISC",
+    "packageManager": "pnpm@8.11.0",
     "scripts": {
         "test": "pnpm test:ui && pnpm test:stylegen",
         "test:coverage": "pnpm test:coverage:ui && pnpm test:coverage:stylegen",
