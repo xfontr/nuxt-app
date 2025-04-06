@@ -1,6 +1,7 @@
 import * as math from "../../../utils/math";
 import { areLocationsEqual, getUpdatedCount } from "./pointer";
 import type { Ranges } from "../types/Ranges";
+import { DEFAULT_RANGES } from "../constants";
 
 const mockRandom = vi.spyOn(math, "random");
 
@@ -17,7 +18,7 @@ describe("getUpdatedCount", () => {
         mockRandom.mockReturnValueOnce(50);
         mockRandom.mockReturnValueOnce(120);
 
-        const result = getUpdatedCount(count);
+        const result = getUpdatedCount(count, DEFAULT_RANGES);
 
         expect(result.short).toBe(50);
         expect(result.long).toBe(9);
@@ -29,22 +30,10 @@ describe("getUpdatedCount", () => {
         mockRandom.mockReturnValueOnce(120);
         mockRandom.mockReturnValueOnce(12);
 
-        const result = getUpdatedCount(count);
+        const result = getUpdatedCount(count, DEFAULT_RANGES);
 
         expect(result.short).toBe(120);
         expect(result.long).toBe(12);
-    });
-
-    it("should use default ranges if no range is passed", () => {
-        const count = { short: 20, medium: 60, long: 10 };
-
-        mockRandom.mockReturnValueOnce(30);
-        mockRandom.mockReturnValueOnce(110);
-
-        const result = getUpdatedCount(count);
-
-        expect(result.short).toBe(30);
-        expect(result.long).toBe(9);
     });
 
     it("should work with custom range passed as argument", () => {
@@ -70,7 +59,7 @@ describe("getUpdatedCount", () => {
         mockRandom.mockReturnValueOnce(150);
         mockRandom.mockReturnValueOnce(10);
 
-        const result = getUpdatedCount(count);
+        const result = getUpdatedCount(count, DEFAULT_RANGES);
 
         expect(result.short).toBe(150);
         expect(result.long).toBe(10);

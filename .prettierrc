@@ -4,5 +4,6 @@
     "bracketSpacing": true,
     "endOfLine": "lf",
     "tabWidth": 4,
-    "useTabs": false
+    "useTabs": false,
+    "singleAttributePerLine": true
 }

@@ -23,10 +23,13 @@ onMounted(() => {
                     class="header"
                     :size="50"
                     unit="px"
-                    :alwaysVisible="true"
+                    :always-visible="true"
                     :animate="true"
                 >
-                    <h1 class="header__title" v-html="$t('meta.title')" />
+                    <h1
+                        class="header__title"
+                        v-html="$t('meta.title')"
+                    />
 
                     <template #pointer>
                         <div class="custom-pointer" />

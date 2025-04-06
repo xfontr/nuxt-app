@@ -12,7 +12,7 @@ vi.mock("path", async () => {
     const actual = await vi.importActual<typeof import("path")>("path");
     return {
         ...actual,
-        extname: vi.fn(actual.extname),
+        extname: vi.fn(actual.extname.bind(actual)),
     };
 });
 

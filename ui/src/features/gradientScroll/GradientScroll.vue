@@ -6,7 +6,7 @@ import { getGradient } from "./utils/gradient";
 
 const props = withDefaults(
     defineProps<{
-        target?: HTMLElement;
+        target: HTMLElement;
         gradients?: string[];
         transition?: number;
     }>(),
@@ -54,6 +54,7 @@ const updateBackground = (): void => {
         currentThreshold.value,
     );
 
+    // eslint-disable-next-line vue/no-mutating-props
     props.target.style.background =
         gradients.value[
             getGradient(threshold.value, closestThreshold, !!isDown.value)!
@@ -89,6 +90,7 @@ watch(currentThreshold, updateBackground);
 
 onMounted(() => {
     if (!props.target) return;
+    // eslint-disable-next-line vue/no-mutating-props
     props.target.style.transition = `${props.transition}s`;
 });
 </script>

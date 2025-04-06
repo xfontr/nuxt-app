@@ -1,7 +1,7 @@
 {
     "name": "@portfolio/ui",
     "private": true,
-    "version": "0.0.2",
+    "version": "0.0.3",
     "type": "module",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -16,6 +16,7 @@
         "build": "vue-tsc -b && vite build",
         "preview": "vite preview",
         "stylegen": "npx sass --no-source-map src/assets/scss/_global.scss _temp.css && stylegen stylegen.json && rm _temp.css",
+        "lint": "eslint .",
         "test": "vitest . --watch=false",
         "test:dev": "vitest .",
         "test:coverage": "vitest run unit . --coverage.enabled --coverage.all"
@@ -24,12 +25,13 @@
         "vue": "^3.5.13"
     },
     "devDependencies": {
-        "@portfolio/stylegen": "workspace:*",
         "@portfolio/configs": "workspace:*",
+        "@portfolio/stylegen": "workspace:*",
         "@vitejs/plugin-vue": "^5.2.1",
+        "@vitest/coverage-v8": "^3.1.1",
         "@vue/test-utils": "^2.4.6",
         "@vue/tsconfig": "^0.7.0",
-        "@vitest/coverage-v8": "^3.1.1",
+        "eslint-plugin-vue": "^10.0.0",
         "sass": "^1.86.0",
         "sass-embedded": "^1.86.0",
         "sass-loader": "^16.0.5",
@@ -44,5 +46,8 @@
         "src/assets/*",
         "src/features",
         "src/components"
-    ]
+    ],
+    "dependencies": {
+        "vue-eslint-parser": "^10.1.3"
+    }
 }

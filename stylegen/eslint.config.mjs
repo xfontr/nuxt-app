@@ -1,3 +1,3 @@
-import config from "@portfolio/configs/eslint";
+import createEslintConfig from "@portfolio/configs/eslint";
 
-export default config;
+export default createEslintConfig("tsConfig", "tsTestConfig");

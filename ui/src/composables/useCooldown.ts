@@ -12,8 +12,8 @@ const useCooldown = () => {
     };
 
     const runCooldownCallbackWhenDone = (span: number): void => {
-        cooldownTimer.value = setTimeout(async () => {
-            await callback.value?.();
+        cooldownTimer.value = setTimeout(() => {
+            callback.value?.();
             reset();
         }, span);
     };

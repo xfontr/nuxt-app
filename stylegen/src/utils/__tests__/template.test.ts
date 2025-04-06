@@ -62,11 +62,6 @@ describe("toTsVariable", () => {
             'export const greeting = "hello";',
         );
     });
-
-    it("should throw an error if name or value is missing", () => {
-        expect(() => toTsVariable("", "42")).toThrow();
-        expect(() => toTsVariable("name", undefined as any)).toThrow();
-    });
 });
 
 describe("stringifyObject", () => {

@@ -54,7 +54,7 @@ describe("useCooldown composable", () => {
         expect(action).toHaveBeenCalled();
     });
 
-    it("should clean up on scope dispose", async () => {
+    it("should clean up on scope dispose", () => {
         const action = vi.fn();
 
         const wrapper = mountComposable(() => {

@@ -12,10 +12,10 @@ if (!existsSync(instructionsPath)) {
     process.exit(1);
 }
 
-(async () => {
-    const instructions: Instructions = JSON.parse(
+void (async () => {
+    const instructions = JSON.parse(
         await getFile(instructionsPath),
-    );
+    ) as Instructions;
 
     const configs = useRuntimeConfig();
     configs.init(instructions);
