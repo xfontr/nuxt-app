@@ -4,6 +4,9 @@ on:
     workflow_call:
 
 jobs:
+    pnpm-setup:
+        uses: ./.github/workflows/pnpm-setup.yml
+
     sonarqube:
         name: SonarQube
         runs-on: ubuntu-latest
