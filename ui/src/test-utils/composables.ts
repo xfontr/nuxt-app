@@ -1,12 +1,12 @@
 import { defineComponent } from "vue";
 import { mount } from "./test";
 
-export const mountComposable = <T extends <R>(...args: unknown[]) => R>(
-    callback: T,
-) =>
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+export const mountComposable = <T extends Function>(callback: T) =>
     mount(
         defineComponent({
             setup: () => {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 callback();
             },
             render: () => "",

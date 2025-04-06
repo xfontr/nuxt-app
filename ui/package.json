@@ -12,6 +12,7 @@
         "./package.json": "./package.json"
     },
     "scripts": {
+        "postinstall": "pnpm build",
         "build": "vue-tsc -b && vite build",
         "preview": "vite preview",
         "stylegen": "npx sass --no-source-map src/assets/scss/_global.scss _temp.css && stylegen stylegen.json && rm _temp.css",
