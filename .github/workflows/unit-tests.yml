@@ -19,15 +19,16 @@ jobs:
                   node-version: 20.0.0
                   cache: "pnpm"
 
-            - name: Restore node_modules cache
+            - name: Restore pnpm store
               uses: actions/cache@v4
               with:
-                  path: |
-                      node_modules
-                      ~/.pnpm-store
-                  key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  path: ~/.pnpm-store
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
                   restore-keys: |
-                      ${{ runner.os }}-pnpm-
+                      ${{ runner.os }}-pnpm-store-
+
+            - name: Recreate symlinks (no re-download)
+              run: pnpm install --frozen-lockfile
 
             - name: Testing
               run: pnpm test

@@ -33,12 +33,10 @@ jobs:
             - name: Install dependencies
               run: pnpm install
 
-            - name: Cache node_modules
+            - name: Cache pnpm store
               uses: actions/cache@v4
               with:
-                  path: |
-                      node_modules
-                      ~/.pnpm-store
-                  key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  path: ~/.pnpm-store
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
                   restore-keys: |
-                      ${{ runner.os }}-pnpm-
+                      ${{ runner.os }}-pnpm-store-
