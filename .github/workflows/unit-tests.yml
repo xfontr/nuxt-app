@@ -4,9 +4,6 @@ on:
     workflow_call:
 
 jobs:
-    pnpm-setup:
-        uses: ./.github/workflows/pnpm-setup.yml
-
     test:
         name: Run unit tests
         runs-on: ubuntu-latest
@@ -14,6 +11,11 @@ jobs:
         steps:
             - name: Git checkout
               uses: actions/checkout@v3
+
+            - uses: pnpm/action-setup@v4
+              name: Install pnpm
+              with:
+                  run_install: true
 
             - name: Testing
               run: pnpm test
