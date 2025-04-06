@@ -1,4 +1,4 @@
-# @portfolio/ui
+# @portfolio/stylegen
 
 ## 0.0.3
 
@@ -10,4 +10,4 @@
 
 ### Patch Changes
 
-- Init changesets
+- Add tests

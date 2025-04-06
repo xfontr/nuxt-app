@@ -11,7 +11,6 @@ export default defineConfig({
         // Creates a `types` entry in package.json
         dts({ insertTypesEntry: true, tsconfigPath: "./tsconfig.app.json" }),
     ],
-    test: { globals: true, environment: "happy-dom" },
     publicDir: "./src/assets",
 
     build: {

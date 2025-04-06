@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/valid-template-root -->
 <template>
     <!-- <Pointer :size="35" :unit="'vw'" :alwaysVisible="true" :canOverflow="true">
         <span class="test">{{ $t("meta.title") }}</span>

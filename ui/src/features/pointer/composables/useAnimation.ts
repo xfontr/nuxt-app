@@ -7,13 +7,14 @@ import { areLocationsEqual, getUpdatedCount } from "../utils/pointer";
 
 const useAnimation = <T extends HTMLElement>(
     pointer: Ref<T | undefined>,
-    ranges?: Ranges,
+    ranges: Ranges,
 ) => {
     const direction = ref<Location>({ x: 0, y: 0 });
     const location = ref<Location>({ x: 0, y: 0 });
     const delta = ref<Location>({ x: 0, y: 0 });
     const count = ref<Count>({ long: 0, short: 0 });
     const animationId = ref<number>();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const callback = ref<(location: Location, ...args: any[]) => void>();
 
     const updateDirection = (): void => {
@@ -59,7 +60,9 @@ const useAnimation = <T extends HTMLElement>(
             updateDirection();
         }
 
-        animationId.value = requestAnimationFrame(animation);
+        animationId.value = requestAnimationFrame(() => {
+            void animation();
+        });
     };
 
     const stop = (): void => {
@@ -80,7 +83,9 @@ const useAnimation = <T extends HTMLElement>(
 
         await runCallback();
 
-        animationId.value = requestAnimationFrame(animation);
+        animationId.value = requestAnimationFrame(() => {
+            void animation();
+        });
     };
 
     const set = <T>(

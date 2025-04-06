@@ -6,6 +6,7 @@ import useCooldown from "../../../composables/useCooldown";
 import usePointer from "../composables/usePointer";
 import useAnimation from "../composables/useAnimation";
 import { toCssUnit } from "../../../utils/text";
+import { DEFAULT_RANGES } from "../constants";
 
 const props = withDefaults(
     defineProps<
@@ -23,6 +24,7 @@ const props = withDefaults(
         canOverflow: true,
         canInterfereAnimation: true,
         animate: true,
+        animationRange: () => DEFAULT_RANGES,
     },
 );
 
@@ -84,7 +86,7 @@ const move = (event: MouseEvent): void => {
 onMounted(() => {
     if (!props.animate) return;
     animation.set($p.mouse.move);
-    animation.init($p.location.value);
+    void animation.init($p.location.value);
 });
 </script>
 
@@ -99,7 +101,10 @@ onMounted(() => {
     >
         <slot />
 
-        <div class="pointer__pointer" ref="pointer">
+        <div
+            class="pointer__pointer"
+            ref="pointer"
+        >
             <slot name="pointer" />
         </div>
     </div>

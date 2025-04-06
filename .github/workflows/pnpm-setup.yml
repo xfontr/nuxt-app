@@ -1,0 +1,33 @@
+name: Setup pnpm
+
+on:
+    workflow_call:
+        inputs:
+            install:
+                description: "Install dependencies"
+                type: boolean
+                required: false
+                default: false
+
+jobs:
+    cache-and-install:
+        name: Cache and install pnpm
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - uses: pnpm/action-setup@v4
+              name: Install pnpm
+              with:
+                  run_install: true
+
+            - name: Install Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20.0.0
+                  cache: "pnpm"
+
+            - name: Install dependencies
+              run: pnpm install

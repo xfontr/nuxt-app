@@ -49,7 +49,7 @@ describe("vIntersect directive", () => {
         } as unknown as DirectiveBinding<CustomDirectiveBinding>);
 
         const callback = (globalThis.IntersectionObserver as Mock).mock
-            .calls[0][0];
+            .calls[0][0] as (entries: IntersectionObserverEntry[]) => void;
         const entry = { isIntersecting: true } as IntersectionObserverEntry;
 
         callback([entry]);
