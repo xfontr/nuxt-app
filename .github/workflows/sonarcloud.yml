@@ -14,12 +14,6 @@ jobs:
               with:
                   fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
-            - name: Setup pnpm
-              uses: pnpm/action-setup@v4.1.0
-
-            - name: Install dependencies
-              uses: pnpm i
-
             - name: Run test coverage for ui
               run: pnpm test:coverage:ui
 
