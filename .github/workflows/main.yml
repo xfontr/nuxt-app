@@ -1,0 +1,23 @@
+name: Main Pipeline
+
+on:
+    push:
+        branches:
+            - master
+    pull_request:
+        types: [opened, synchronize, reopened]
+
+jobs:
+    dependency-review:
+        uses: ./.github/workflows/dependency-review.yml
+
+    pnpm-setup:
+        uses: ./.github/workflows/pnpm-setup.yml
+
+    run-tests:
+        needs: pnpm-setup
+        uses: ./.github/workflows/unit-tests.yml
+
+    sonarcloud:
+        needs: pnpm-setup
+        uses: ./.github/workflows/sonarcloud.yml
