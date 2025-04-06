@@ -19,7 +19,7 @@
         "changeset:add": "changeset add",
         "changeset:version": "changeset version"
     },
-    "devDependencies": {
+    "dependencies": {
         "@changesets/cli": "^2.28.1"
     },
     "workspaces": [
