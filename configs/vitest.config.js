@@ -16,6 +16,7 @@ export default defineConfig({
                 "src/types/*",
                 "src/configs/*",
             ],
+            reporter: ["text", "html", "clover", "json", "lcov"],
         },
     },
     plugins: [],
