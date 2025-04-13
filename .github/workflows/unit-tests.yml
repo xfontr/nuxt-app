@@ -18,4 +18,4 @@ jobs:
                   run_install: true
 
             - name: Testing
-              run: pnpm test
+              run: pnpm all:test

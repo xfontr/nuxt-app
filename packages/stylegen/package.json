@@ -9,6 +9,7 @@
         "node": ">= 18"
     },
     "scripts": {
+        "custom-pack": "npm pack && mv ./*.tgz ../portfolio-stylegen.tgz",
         "start": "node --watch dist/src/index.js",
         "clean": "rimraf coverage dist tmp",
         "prebuild": "pnpm lint",

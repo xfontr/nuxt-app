@@ -13,6 +13,7 @@
     },
     "scripts": {
         "postinstall": "pnpm build",
+        "custom-pack": "npm pack && mv ./*.tgz ../portfolio-ui.tgz",
         "build": "vue-tsc -b && vite build",
         "preview": "vite preview",
         "stylegen": "npx sass --no-source-map src/assets/scss/_global.scss _temp.css && stylegen stylegen.json && rm _temp.css",
@@ -32,6 +33,7 @@
         "@vue/test-utils": "^2.4.6",
         "@vue/tsconfig": "^0.7.0",
         "eslint-plugin-vue": "^10.0.0",
+        "eslint": "^9.24.0",
         "sass": "^1.86.0",
         "sass-embedded": "^1.86.0",
         "sass-loader": "^16.0.5",
@@ -41,11 +43,5 @@
         "vitest": "^3.1.1",
         "vue-tsc": "^2.2.8",
         "vue-eslint-parser": "^10.1.3"
-    },
-    "files": [
-        "dist",
-        "src/assets/*",
-        "src/features",
-        "src/components"
-    ]
+    }
 }

@@ -18,6 +18,7 @@
         }
     },
     "scripts": {
+        "custom-pack": "npm pack && mv ./*.tgz ../portfolio-configs.tgz",
         "test": "vitest run unit .",
         "test:dev": "vitest unit . --watch=true",
         "test:coverage": "vitest run unit . --coverage.enabled --coverage.all"
