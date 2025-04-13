@@ -25,10 +25,10 @@ fi
 
 # ✅ Run test and lint
 printf "${CYAN}▶ Running tests...${RESET}"
-pnpm test || exit 1
+pnpm all:test || exit 1
 
 printf "${CYAN}▶ Running linter...${RESET}"
-pnpm lint || exit 1
+pnpm all:lint || exit 1
 
 printf "${GREEN}✓ All checks passed. Push approved.${RESET}\n"
 exit 0

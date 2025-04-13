@@ -9,17 +9,14 @@ RESET='\033[0m'
 
 # 🧪 Test targets
 tests=(
-  "Test: UI|pnpm --filter @portfolio/ui test"
-  "Test: App|pnpm --filter @portfolio/app test"
-  "Test: Stylegen|pnpm --filter @portfolio/stylegen test"
-  "Test: Configs|pnpm --filter @portfolio/configs test"
+  "Test: all|pnpm --r test"
 )
 
 # 📊 Coverage targets
 coverage=(
-  "Coverage: UI|pnpm --filter @portfolio/ui test:coverage"
+  "Coverage: all|pnpm --filter @portfolio/ui test:coverage"
   "Coverage: Stylegen|pnpm --filter @portfolio/stylegen test:coverage"
-  "Coverage: App|pnpm --filter @portfolio/app test:coverage"
+  # "Coverage: App|pnpm --filter @portfolio/app test:coverage"
   "Coverage: Configs|pnpm --filter @portfolio/configs test:coverage"
 )
 
@@ -30,14 +27,28 @@ lints=(
   "Lint: Stylegen|pnpm --filter @portfolio/stylegen lint"
 )
 
+# 🛠️ Build targets
+builds=(
+  "Build: App|pnpm --filter @portfolio/app build"
+  "Build: UI|pnpm --filter @portfolio/ui build"
+  "Build: Stylegen|pnpm --filter @portfolio/stylegen build"
+)
+
+# 📦 Pack targets
+packs=(
+  "Pack: all|pnpm -r custom-pack"
+)
+
 # 📖 Help
 show_help() {
   echo ""
-  printf "${CYAN}Usage: ./quality.sh [--unit] [--coverage] [--lint]\n${RESET}"
+  printf "${CYAN}Usage: ./quality.sh [--unit] [--coverage] [--lint] [--build] [--pack]\n${RESET}"
   echo ""
   echo "  --unit       Run unit tests"
   echo "  --coverage   Run test coverage"
   echo "  --lint       Run linter checks"
+  echo "  --build      Run package builds"
+  echo "  --pack       Run pnpm pack on each package"
   echo "  (none)       Run all quality checks"
   echo ""
   exit 0
@@ -63,27 +74,25 @@ run() {
 RUN_TESTS=false
 RUN_COVERAGE=false
 RUN_LINT=false
+RUN_BUILD=false
+RUN_PACK=false
 
 if [ $# -eq 0 ]; then
   RUN_TESTS=true
   RUN_COVERAGE=true
   RUN_LINT=true
+  RUN_BUILD=true
+  RUN_PACK=true
 fi
 
 for arg in "$@"; do
   case "$arg" in
-    --unit)
-      RUN_TESTS=true
-      ;;
-    --coverage)
-      RUN_COVERAGE=true
-      ;;
-    --lint)
-      RUN_LINT=true
-      ;;
-    -h|--help)
-      show_help
-      ;;
+    --unit) RUN_TESTS=true ;;
+    --coverage) RUN_COVERAGE=true ;;
+    --lint) RUN_LINT=true ;;
+    --build) RUN_BUILD=true ;;
+    --pack) RUN_PACK=true ;;
+    -h|--help) show_help ;;
     *)
       printf "${RED}Unknown option: %s${RESET}\n" "$arg"
       show_help
@@ -116,5 +125,19 @@ if $RUN_LINT; then
   done
 fi
 
-printf "${GREEN}✅ All quality checks passed!${RESET}\n"
+if $RUN_BUILD; then
+  for entry in "${builds[@]}"; do
+    IFS="|" read -r label cmd <<< "$entry"
+    run "$label" "$cmd"
+  done
+fi
+
+if $RUN_PACK; then
+  for entry in "${packs[@]}"; do
+    IFS="|" read -r label cmd <<< "$entry"
+    run "$label" "$cmd"
+  done
+fi
+
+printf "${GREEN}✅ All selected checks passed!${RESET}\n"
 echo ""

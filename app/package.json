@@ -1,8 +1,10 @@
 {
     "name": "@portfolio/app",
     "private": true,
+    "version": "0.0.1",
     "type": "module",
     "scripts": {
+        "custom-pack": "pnpm pack --out ../%s.tgz",
         "build": "nuxt build",
         "dev": "nuxt dev",
         "generate": "nuxt generate",
