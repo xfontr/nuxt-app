@@ -3,7 +3,6 @@
     "description": "",
     "author": "Xifré Font",
     "license": "ISC",
-    "version": "0.0.1",
     "packageManager": "pnpm@10.7.1",
     "scripts": {
         "all:test": "./scripts.sh --unit",
@@ -11,6 +10,7 @@
         "all:lint": "./scripts.sh --lint",
         "all:pack": "./scripts.sh --pack",
         "all:build": "./scripts.sh --build",
+        "all:clean": "pnpm clean:dist && pnpm clean:output && pnpm clean:coverage && pnpm clean:node_modules",
         "changeset:add": "changeset add",
         "changeset:version": "changeset version",
         "reset": "rm pnpm-lock.yaml && pnpm clean:node_modules && pnpm i",

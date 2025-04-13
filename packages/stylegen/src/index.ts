@@ -8,7 +8,7 @@ import parse from "./helpers/parse.js";
 const instructionsPath = process.argv[2] || "./instructions.json";
 
 if (!existsSync(instructionsPath)) {
-    console.error(`Instructions file not found: ${instructionsPath}`);
+    process.stderr.write(`Instructions file not found: ${instructionsPath}\n`);
     process.exit(1);
 }
 

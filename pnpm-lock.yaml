@@ -16,7 +16,7 @@ importers:
         specifier: ^9.1.7
         version: 9.1.7
 
-  app:
+  packages/app:
     dependencies:
       '@nuxt/eslint':
         specifier: 1.2.0
@@ -74,7 +74,7 @@ importers:
         specifier: ^3.1.1
         version: 3.1.1(@types/node@22.14.1)(@vitest/browser@3.1.1)(happy-dom@17.4.4)(jiti@2.4.2)(sass-embedded@1.86.3)(sass@1.86.3)(terser@5.39.0)(yaml@2.7.1)
 
-  configs:
+  packages/configs:
     devDependencies:
       '@eslint/js':
         specifier: ~9.17
@@ -116,7 +116,7 @@ importers:
         specifier: ^10.1.3
         version: 10.1.3(eslint@9.24.0(jiti@2.4.2))
 
-  stylegen:
+  packages/stylegen:
     devDependencies:
       '@portfolio/configs':
         specifier: workspace:*
@@ -140,7 +140,7 @@ importers:
         specifier: ~3.1.1
         version: 3.1.1(@types/node@22.14.1)(@vitest/browser@3.1.1)(happy-dom@17.4.4)(jiti@2.4.2)(sass-embedded@1.86.3)(sass@1.86.3)(terser@5.39.0)(yaml@2.7.1)
 
-  ui:
+  packages/ui:
     dependencies:
       vue:
         specifier: ^3.5.13

@@ -4,7 +4,7 @@
     "version": "0.0.1",
     "type": "module",
     "scripts": {
-        "custom-pack": "pnpm pack --out ../%s.tgz",
+        "custom-pack": "npm pack && mv ./*.tgz ../portfolio-app.tgz",
         "build": "nuxt build",
         "dev": "nuxt dev",
         "generate": "nuxt generate",
