@@ -1,6 +1,13 @@
 declare module "@portfolio/configs/eslint" {
     const config: {
-        createEslintConfig: (...configs: unknown[]) => object[];
+        createEslintConfig: (
+            ...configs: (
+                | "tsConfig"
+                | "tsTestConfig"
+                | "tsVueConfig"
+                | "prettierConfig"
+            )[]
+        ) => object[];
     };
-    export default config;
+    export default config.createEslintConfig;
 }

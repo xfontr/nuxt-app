@@ -1,5 +1,14 @@
 # Stylegen
 
+## Recommended workflow (for devs)
+
+1. Run `$ pnpm build:watch`
+2. In a separate terminal, run `$ pnpm start`
+3. Implement changes
+4. Update version with `$ pnpm changesets:add` (at root package.json)
+
+## Implementation
+
 Minimal script example:
 
 ```bash

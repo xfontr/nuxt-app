@@ -12,7 +12,7 @@
         "all:build": "./scripts.sh --build",
         "all:clean": "pnpm clean:dist && pnpm clean:output && pnpm clean:coverage && pnpm clean:node_modules",
         "changeset:add": "changeset add",
-        "changeset:version": "changeset version",
+        "changeset:version": "pnpm all:test && pnpm all:lint && pnpm all:build && changeset version",
         "reset": "rm pnpm-lock.yaml && pnpm clean:node_modules && pnpm i",
         "clean:dist": "find . -type d -name 'dist' -prune -exec rm -rf '{}' +",
         "clean:output": "find . -type d -name '.output' -prune -exec rm -rf '{}' +",
