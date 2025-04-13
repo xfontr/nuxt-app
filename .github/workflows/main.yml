@@ -1,5 +1,8 @@
 name: Main Pipeline
 
+env:
+    HUSKY: 0
+
 on:
     push:
         branches:

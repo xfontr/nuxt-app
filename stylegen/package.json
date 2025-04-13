@@ -21,12 +21,10 @@
         "prettier": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --write",
         "prettier:check": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --check"
     },
-    "dependencies": {
-        "tslib": "~2.8"
-    },
     "devDependencies": {
         "@portfolio/configs": "workspace:*",
         "@vitest/coverage-v8": "~3.1.1",
+        "eslint": "^9.24.0",
         "rimraf": "~6.0",
         "ts-api-utils": "~2.0",
         "typescript": "~5.8.3",

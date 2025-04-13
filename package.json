@@ -18,7 +18,9 @@
         "lint:ui": "pnpm --filter @portfolio/ui lint",
         "lint:stylegen": "pnpm --filter @portfolio/stylegen lint",
         "changeset:add": "changeset add",
-        "changeset:version": "changeset version"
+        "changeset:version": "changeset version",
+        "prepare": "node .husky/install.mjs",
+        "reset": "rm pnpm-lock.yaml && find . -type d -name 'node_modules' -prune -exec rm -rf '{}' + && pnpm i"
     },
     "dependencies": {
         "@changesets/cli": "^2.28.1"
@@ -28,5 +30,8 @@
         "ui",
         "app",
         "configs"
-    ]
+    ],
+    "devDependencies": {
+        "husky": "^9.1.7"
+    }
 }
