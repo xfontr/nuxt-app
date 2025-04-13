@@ -65,7 +65,11 @@ export const findClosestValue = (
 ): undefined | number => {
     if (!values.length) return undefined;
 
-    return values.reduce((prev, curr) =>
-        Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev,
-    );
+    return values
+        .slice(1)
+        .reduce(
+            (prev, curr) =>
+                Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev,
+            values[0],
+        );
 };

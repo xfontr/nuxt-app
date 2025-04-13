@@ -71,9 +71,6 @@ const useAnimation = <T extends HTMLElement>(
     };
 
     const init = async (start?: Location): Promise<void> => {
-        // TODO
-        // if (!(import.meta as unknown as { client: boolean }).client) return;
-
         stop();
 
         delta.value.x = start ? start?.x - location.value.x : 0;
