@@ -1,18 +1,34 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+# 🏷 Get current branch name
 local_branch_name="$(git rev-parse --abbrev-ref HEAD)"
 
+# ✅ Valid branch name pattern
 valid_branch_regex='^((hotfix|bugfix|feature)\/[a-zA-Z0-9\-]+)$'
 
-message="Please check your branch name."
+# 🎨 Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+RESET='\033[0m'
 
+# 💡 Branch name check
 if [[ ! $local_branch_name =~ $valid_branch_regex ]]; then
-    echo -e "\033[0;31m$message"
-    exit 1
+  printf "${RED}✖ Invalid branch name: '${local_branch_name}'${RESET}"
+  printf "${YELLOW}→ Must follow: hotfix/xxx, bugfix/xxx, or feature/xxx${RESET}"
+  exit 1
+else
+  printf "${GREEN}✔ Valid branch: ${CYAN}$local_branch_name${RESET}"
 fi
 
-pnpm test
-pnpm lint
+# ✅ Run test and lint
+printf "${CYAN}▶ Running tests...${RESET}"
+pnpm test || exit 1
 
+printf "${CYAN}▶ Running linter...${RESET}"
+pnpm lint || exit 1
+
+printf "${GREEN}✓ All checks passed. Push approved.${RESET}\n"
 exit 0

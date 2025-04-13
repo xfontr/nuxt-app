@@ -1,12 +1,14 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-red='\033[0;31m'
-green='\033[0;32m'
-yellow='\033[0;33m'
-no_color='\033[0m'
+# 🎨 Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+RESET='\033[0m'
 
-echo -e "\n${yellow}Executing pre-commit hook...${no_color}\n"
+printf "\n${YELLOW}Executing pre-commit hook...${RESET}\n"
 
 FILES_PATTERN='\.(js|ts)(\..+)?$'
 FORBIDDEN='console\.[clear|dir|log|info|warn|error]'
@@ -18,7 +20,7 @@ if git diff --cached --name-only | \
     xargs grep --with-filename -n $FORBIDDEN | \
     grep -v '//';
 then
-    echo -e "\n${red}COMMIT REJECTED!  Found console. references. Please remove them before committing.\n${no_color}"
+    printf "\n${RED}COMMIT REJECTED!  Found console. references. Please remove them before committing.\n${no_color}"
     exit 1;
 fi
 
@@ -31,10 +33,10 @@ if git diff --cached --name-only | \
     xargs grep --with-filename -n $FORBIDDEN | \
     grep -v '//';
 then
-    echo -e "\n${red}COMMIT REJECTED!  Found debugger references. Please remove them before committing.\n${no_color}"
+    printf "\n${RED}COMMIT REJECTED!  Found debugger references. Please remove them before committing.\n${RESET}"
     exit 1;
 fi
 
-echo -e "${green}No console. or debugger references found!${no_color}\n"
-echo -e "${green}Git pre-commit hook was successful!${no_color}\n"
+printf "${GREEN}No console. or debugger references found!${RESET}\n"
+printf "${GREEN}Git pre-commit hook was successful!${RESET}\n"
 exit 0;
