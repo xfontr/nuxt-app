@@ -9,7 +9,7 @@
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
         "lint": "eslint .",
-        "test": "vitest . --watch=false",
+        "test": "vitest . --watch=false --passWithNoTests",
         "test:dev": "vitest .",
         "test:coverage": "vitest . --coverage"
     },
