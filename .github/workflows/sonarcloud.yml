@@ -21,10 +21,13 @@ jobs:
                   run_install: true
 
             - name: Run test coverage for ui
-              run: pnpm test:coverage:ui
+              run: pnpm --filter @portfolio/ui test:coverage
 
             - name: Run test coverage for stylegen
-              run: pnpm test:coverage:stylegen
+              run: pnpm --filter @portfolio/stylegen test:coverage
+
+            - name: Run test coverage for configs
+              run: pnpm --filter @portfolio/configs test:coverage
 
             - name: SonarQube Scan
               uses: SonarSource/sonarqube-scan-action@v5

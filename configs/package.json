@@ -5,20 +5,34 @@
     "private": true,
     "author": "Xifré Font",
     "license": "ISC",
+    "types": "./index.d.ts",
     "type": "module",
     "exports": {
-        "./eslint": "./eslint.config.js",
-        "./vitest": "./vitest.config.js"
+        "./eslint": {
+            "import": "./eslint.js",
+            "types": "./eslint.d.ts"
+        },
+        "./vitest": {
+            "import": "./vitest.config.mjs",
+            "types": "./vitest.config.d.ts"
+        }
+    },
+    "scripts": {
+        "test": "vitest run unit .",
+        "test:dev": "vitest unit . --watch=true",
+        "test:coverage": "vitest run unit . --coverage.enabled --coverage.all"
     },
     "devDependencies": {
         "@eslint/js": "~9.17",
         "@types/eslint__js": "~8.42",
         "@typescript-eslint/parser": "~8.19",
+        "@vitest/coverage-v8": "^3.1.1",
         "@vitest/eslint-plugin": "~1.1",
         "eslint": "^9.24.0",
         "eslint-config-prettier": "~9.1",
-        "prettier-eslint": "^16.3.0",
+        "eslint-plugin-vue": "^10.0.0",
         "globals": "~15.14",
+        "prettier-eslint": "^16.3.0",
         "typescript-eslint": "~8.19",
         "vitest": "^3.1.1",
         "vue-eslint-parser": "^10.1.3"
