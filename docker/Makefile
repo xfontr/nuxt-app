@@ -1,14 +1,11 @@
-# Variables
 IMAGE_NAME = portfolio
 CONTAINER_NAME = portfolio-container
 DOCKER_PORT = 8080
 
-# Commands
 SETUP_SCRIPT = ./setup.sh
 DOCKER_BUILD_CMD = docker build -t $(IMAGE_NAME) .
 DOCKER_RUN_CMD = docker run -d -p $(DOCKER_PORT):$(DOCKER_PORT) --name $(CONTAINER_NAME) $(IMAGE_NAME)
 
-# Targets
 .PHONY: all setup build run
 
 init: setup build run

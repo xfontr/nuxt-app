@@ -3,11 +3,9 @@
 
 @mixin font-style(
     $weight: $fonts-regular,
-    $family: $fonts-primary,
     $line-height: $fonts-line-height-md
 ) {
     font-weight: $weight;
-    font-family: $family;
     line-height: $line-height;
 }
 

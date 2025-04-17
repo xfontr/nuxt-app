@@ -1,7 +1,7 @@
 @use "./variables/colors" as *;
 
-@mixin theme-black-white {
-    body.theme-black-white {
+@mixin theme-main {
+    body.theme-main {
         --colors-primary: #{$colors-black};
         --colors-primary-light: #{$colors-black-primary-light};
         --colors-primary-very-light: #{$colors-black-primary-very-light};
@@ -14,143 +14,143 @@
         --colors-secondary-alpha: #{$colors-black-secondary-alpha};
         --colors-secondary-alpha-light: #{$colors-black-secondary-alpha-light};
 
-        --colors-contrast: #{$colors-tomato};
+        --colors-contrast: #{$colors-brutal};
     }
 }
 
-@mixin theme-dark-purple {
-    body.theme-dark-purple {
-        --colors-primary: #{$colors-dark-purple};
-        --colors-primary-light: #{$colors-dark-purple-primary-light};
-        --colors-primary-very-light: #{$colors-dark-purple-primary-very-light};
-        --colors-primary-alpha: #{$colors-dark-purple-primary-alpha};
-        --colors-primary-alpha-light: #{$colors-dark-purple-primary-alpha-light};
+@mixin theme-edgy {
+    body.theme-edgy {
+        --colors-primary: #{$colors-edgy};
+        --colors-primary-light: #{$colors-edgy-primary-light};
+        --colors-primary-very-light: #{$colors-edgy-primary-very-light};
+        --colors-primary-alpha: #{$colors-edgy-primary-alpha};
+        --colors-primary-alpha-light: #{$colors-edgy-primary-alpha-light};
 
-        --colors-secondary: #{$colors-dark-purple-secondary};
-        --colors-secondary-light: #{$colors-dark-purple-secondary-light};
-        --colors-secondary-very-light: #{$colors-dark-purple-secondary-very-light};
-        --colors-secondary-alpha: #{$colors-dark-purple-secondary-alpha};
-        --colors-secondary-alpha-light: #{$colors-dark-purple-secondary-alpha-light};
+        --colors-secondary: #{$colors-edgy-secondary};
+        --colors-secondary-light: #{$colors-edgy-secondary-light};
+        --colors-secondary-very-light: #{$colors-edgy-secondary-very-light};
+        --colors-secondary-alpha: #{$colors-edgy-secondary-alpha};
+        --colors-secondary-alpha-light: #{$colors-edgy-secondary-alpha-light};
 
-        --colors-contrast: #{$colors-dark-purple-contrast};
+        --colors-contrast: #{$colors-edgy-contrast};
     }
 }
 
-@mixin theme-brown {
-    body.theme-brown {
-        --colors-primary: #{$colors-brown};
-        --colors-primary-light: #{$colors-brown-primary-light};
-        --colors-primary-very-light: #{$colors-brown-primary-very-light};
-        --colors-primary-alpha: #{$colors-brown-primary-alpha};
-        --colors-primary-alpha-light: #{$colors-brown-primary-alpha-light};
+@mixin theme-classy {
+    body.theme-classy {
+        --colors-primary: #{$colors-classy};
+        --colors-primary-light: #{$colors-classy-primary-light};
+        --colors-primary-very-light: #{$colors-classy-primary-very-light};
+        --colors-primary-alpha: #{$colors-classy-primary-alpha};
+        --colors-primary-alpha-light: #{$colors-classy-primary-alpha-light};
 
-        --colors-secondary: #{$colors-brown-secondary};
-        --colors-secondary-light: #{$colors-brown-secondary-light};
-        --colors-secondary-very-light: #{$colors-brown-secondary-very-light};
-        --colors-secondary-alpha: #{$colors-brown-secondary-alpha};
-        --colors-secondary-alpha-light: #{$colors-brown-secondary-alpha-light};
+        --colors-secondary: #{$colors-classy-secondary};
+        --colors-secondary-light: #{$colors-classy-secondary-light};
+        --colors-secondary-very-light: #{$colors-classy-secondary-very-light};
+        --colors-secondary-alpha: #{$colors-classy-secondary-alpha};
+        --colors-secondary-alpha-light: #{$colors-classy-secondary-alpha-light};
 
-        --colors-contrast: #{$colors-brown-contrast};
+        --colors-contrast: #{$colors-classy-contrast};
     }
 }
 
-@mixin theme-purple {
-    body.theme-purple {
-        --colors-primary: #{$colors-purple};
-        --colors-primary-light: #{$colors-purple-primary-light};
-        --colors-primary-very-light: #{$colors-purple-primary-very-light};
-        --colors-primary-alpha: #{$colors-purple-primary-alpha};
-        --colors-primary-alpha-light: #{$colors-purple-primary-alpha-light};
+@mixin theme-ambition {
+    body.theme-ambition {
+        --colors-primary: #{$colors-ambition};
+        --colors-primary-light: #{$colors-ambition-primary-light};
+        --colors-primary-very-light: #{$colors-ambition-primary-very-light};
+        --colors-primary-alpha: #{$colors-ambition-primary-alpha};
+        --colors-primary-alpha-light: #{$colors-ambition-primary-alpha-light};
 
-        --colors-secondary: #{$colors-purple-secondary};
-        --colors-secondary-light: #{$colors-purple-secondary-light};
-        --colors-secondary-very-light: #{$colors-purple-secondary-very-light};
-        --colors-secondary-alpha: #{$colors-purple-secondary-alpha};
-        --colors-secondary-alpha-light: #{$colors-purple-secondary-alpha-light};
+        --colors-secondary: #{$colors-ambition-secondary};
+        --colors-secondary-light: #{$colors-ambition-secondary-light};
+        --colors-secondary-very-light: #{$colors-ambition-secondary-very-light};
+        --colors-secondary-alpha: #{$colors-ambition-secondary-alpha};
+        --colors-secondary-alpha-light: #{$colors-ambition-secondary-alpha-light};
 
-        --colors-contrast: #{$colors-purple-contrast};
+        --colors-contrast: #{$colors-ambition-contrast};
     }
 }
 
-@mixin theme-lavender {
-    body.theme-lavender {
-        --colors-primary: #{$colors-lavender};
-        --colors-primary-light: #{$colors-lavender-primary-light};
-        --colors-primary-very-light: #{$colors-lavender-primary-very-light};
-        --colors-primary-alpha: #{$colors-lavender-primary-alpha};
-        --colors-primary-alpha-light: #{$colors-lavender-primary-alpha-light};
+@mixin theme-peace {
+    body.theme-peace {
+        --colors-primary: #{$colors-peace};
+        --colors-primary-light: #{$colors-peace-primary-light};
+        --colors-primary-very-light: #{$colors-peace-primary-very-light};
+        --colors-primary-alpha: #{$colors-peace-primary-alpha};
+        --colors-primary-alpha-light: #{$colors-peace-primary-alpha-light};
 
-        --colors-secondary: #{$colors-lavender-secondary};
-        --colors-secondary-light: #{$colors-lavender-secondary-light};
-        --colors-secondary-very-light: #{$colors-lavender-secondary-very-light};
-        --colors-secondary-alpha: #{$colors-lavender-secondary-alpha};
-        --colors-secondary-alpha-light: #{$colors-lavender-secondary-alpha-light};
+        --colors-secondary: #{$colors-peace-secondary};
+        --colors-secondary-light: #{$colors-peace-secondary-light};
+        --colors-secondary-very-light: #{$colors-peace-secondary-very-light};
+        --colors-secondary-alpha: #{$colors-peace-secondary-alpha};
+        --colors-secondary-alpha-light: #{$colors-peace-secondary-alpha-light};
 
-        --colors-contrast: #{$colors-lavender-contrast};
+        --colors-contrast: #{$colors-peace-contrast};
     }
 }
 
-@mixin theme-blue {
-    body.theme-blue {
-        --colors-primary: #{$colors-blue};
-        --colors-primary-light: #{$colors-blue-primary-light};
-        --colors-primary-very-light: #{$colors-blue-primary-very-light};
-        --colors-primary-alpha: #{$colors-blue-primary-alpha};
-        --colors-primary-alpha-light: #{$colors-blue-primary-alpha-light};
+@mixin theme-sad {
+    body.theme-sad {
+        --colors-primary: #{$colors-sad};
+        --colors-primary-light: #{$colors-sad-primary-light};
+        --colors-primary-very-light: #{$colors-sad-primary-very-light};
+        --colors-primary-alpha: #{$colors-sad-primary-alpha};
+        --colors-primary-alpha-light: #{$colors-sad-primary-alpha-light};
 
-        --colors-secondary: #{$colors-blue-secondary};
-        --colors-secondary-light: #{$colors-blue-secondary-light};
-        --colors-secondary-very-light: #{$colors-blue-secondary-very-light};
-        --colors-secondary-alpha: #{$colors-blue-secondary-alpha};
-        --colors-secondary-alpha-light: #{$colors-blue-secondary-alpha-light};
+        --colors-secondary: #{$colors-sad-secondary};
+        --colors-secondary-light: #{$colors-sad-secondary-light};
+        --colors-secondary-very-light: #{$colors-sad-secondary-very-light};
+        --colors-secondary-alpha: #{$colors-sad-secondary-alpha};
+        --colors-secondary-alpha-light: #{$colors-sad-secondary-alpha-light};
 
-        --colors-contrast: #{$colors-blue-contrast};
+        --colors-contrast: #{$colors-sad-contrast};
     }
 }
 
-@mixin theme-tomato {
-    body.theme-tomato {
-        --colors-primary: #{$colors-tomato};
-        --colors-primary-light: #{$colors-tomato-primary-light};
-        --colors-primary-very-light: #{$colors-tomato-primary-very-light};
-        --colors-primary-alpha: #{$colors-tomato-primary-alpha};
-        --colors-primary-alpha-light: #{$colors-tomato-primary-alpha-light};
+@mixin theme-brutal {
+    body.theme-brutal {
+        --colors-primary: #{$colors-brutal};
+        --colors-primary-light: #{$colors-brutal-primary-light};
+        --colors-primary-very-light: #{$colors-brutal-primary-very-light};
+        --colors-primary-alpha: #{$colors-brutal-primary-alpha};
+        --colors-primary-alpha-light: #{$colors-brutal-primary-alpha-light};
 
-        --colors-secondary: #{$colors-tomato-secondary};
-        --colors-secondary-light: #{$colors-tomato-secondary-light};
-        --colors-secondary-very-light: #{$colors-tomato-secondary-very-light};
-        --colors-secondary-alpha: #{$colors-tomato-secondary-alpha};
-        --colors-secondary-alpha-light: #{$colors-tomato-secondary-alpha-light};
+        --colors-secondary: #{$colors-brutal-secondary};
+        --colors-secondary-light: #{$colors-brutal-secondary-light};
+        --colors-secondary-very-light: #{$colors-brutal-secondary-very-light};
+        --colors-secondary-alpha: #{$colors-brutal-secondary-alpha};
+        --colors-secondary-alpha-light: #{$colors-brutal-secondary-alpha-light};
 
-        --colors-contrast: #{$colors-tomato-contrast};
+        --colors-contrast: #{$colors-brutal-contrast};
     }
 }
 
-@mixin theme-pink {
-    body.theme-pink {
-        --colors-primary: #{$colors-pink};
-        --colors-primary-light: #{$colors-pink-primary-light};
-        --colors-primary-very-light: #{$colors-pink-primary-very-light};
-        --colors-primary-alpha: #{$colors-pink-primary-alpha};
-        --colors-primary-alpha-light: #{$colors-pink-primary-alpha-light};
+@mixin theme-love {
+    body.theme-love {
+        --colors-primary: #{$colors-love};
+        --colors-primary-light: #{$colors-love-primary-light};
+        --colors-primary-very-light: #{$colors-love-primary-very-light};
+        --colors-primary-alpha: #{$colors-love-primary-alpha};
+        --colors-primary-alpha-light: #{$colors-love-primary-alpha-light};
 
-        --colors-secondary: #{$colors-pink-secondary};
-        --colors-secondary-light: #{$colors-pink-secondary-light};
-        --colors-secondary-very-light: #{$colors-pink-secondary-very-light};
-        --colors-secondary-alpha: #{$colors-pink-secondary-alpha};
-        --colors-secondary-alpha-light: #{$colors-pink-secondary-alpha-light};
+        --colors-secondary: #{$colors-love-secondary};
+        --colors-secondary-light: #{$colors-love-secondary-light};
+        --colors-secondary-very-light: #{$colors-love-secondary-very-light};
+        --colors-secondary-alpha: #{$colors-love-secondary-alpha};
+        --colors-secondary-alpha-light: #{$colors-love-secondary-alpha-light};
 
-        --colors-contrast: #{$colors-pink-contrast};
+        --colors-contrast: #{$colors-love-contrast};
     }
 }
 
 @mixin themes {
-    @include theme-dark-purple;
-    @include theme-black-white;
-    @include theme-brown;
-    @include theme-purple;
-    @include theme-lavender;
-    @include theme-blue;
-    @include theme-tomato;
-    @include theme-pink;
+    @include theme-main;
+    @include theme-edgy;
+    @include theme-classy;
+    @include theme-ambition;
+    @include theme-peace;
+    @include theme-sad;
+    @include theme-brutal;
+    @include theme-love;
 }

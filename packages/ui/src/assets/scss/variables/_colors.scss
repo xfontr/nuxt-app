@@ -1,13 +1,13 @@
 @use "sass:color";
 
 $colors-black: #000000;
-$colors-dark-purple: #3e2a47;
-$colors-brown: #7f5f5f;
-$colors-purple: #5a2a83;
-$colors-lavender: #8b6e8e;
-$colors-blue: #4682b4;
-$colors-tomato: #ff6347;
-$colors-pink: #ffb6c1;
+$colors-edgy: #3e2a47;
+$colors-classy: #7f5f5f;
+$colors-ambition: #5a2a83;
+$colors-peace: #8b6e8e;
+$colors-sad: #4682b4;
+$colors-brutal: #ff6347;
+$colors-love: #ffb6c1;
 
 $colors-black-primary: $colors-black;
 $colors-black-primary-light: color.adjust($colors-black, $lightness: 20%);
@@ -19,145 +19,136 @@ $colors-black-secondary-light: color.adjust(#ffffff, $lightness: 20%);
 $colors-black-secondary-very-light: color.adjust(#ffffff, $lightness: 30%);
 $colors-black-secondary-alpha: rgba(#ffffff, 0.7);
 $colors-black-secondary-alpha-light: rgba(#ffffff, 0.5);
-$colors-black-contrast: $colors-tomato;
+$colors-black-contrast: $colors-brutal;
 
-$colors-dark-purple-primary: $colors-dark-purple;
-$colors-dark-purple-primary-light: color.adjust(
-    $colors-dark-purple,
+$colors-edgy-primary: $colors-edgy;
+$colors-edgy-primary-light: color.adjust($colors-edgy, $lightness: 20%);
+$colors-edgy-primary-very-light: color.adjust($colors-edgy, $lightness: 30%);
+$colors-edgy-primary-alpha: rgba($colors-edgy, 0.7);
+$colors-edgy-primary-alpha-light: rgba($colors-edgy, 0.5);
+$colors-edgy-secondary: #f5f5f5;
+$colors-edgy-secondary-light: color.adjust(#f5f5f5, $lightness: 20%);
+$colors-edgy-secondary-very-light: color.adjust(#f5f5f5, $lightness: 30%);
+$colors-edgy-secondary-alpha: rgba(#f5f5f5, 0.7);
+$colors-edgy-secondary-alpha-light: rgba(#f5f5f5, 0.5);
+$colors-edgy-contrast: #ffd700;
+
+$colors-classy-primary: $colors-classy;
+$colors-classy-primary-light: color.adjust($colors-classy, $lightness: 20%);
+$colors-classy-primary-very-light: color.adjust(
+    $colors-classy,
+    $lightness: 30%
+);
+$colors-classy-primary-alpha: rgba($colors-classy, 0.7);
+$colors-classy-primary-alpha-light: rgba($colors-classy, 0.5);
+$colors-classy-secondary: #b0e0e6;
+$colors-classy-secondary-light: color.adjust(
+    $colors-classy-secondary,
     $lightness: 20%
 );
-$colors-dark-purple-primary-very-light: color.adjust(
-    $colors-dark-purple,
+$colors-classy-secondary-very-light: color.adjust(
+    $colors-classy-secondary,
     $lightness: 30%
 );
-$colors-dark-purple-primary-alpha: rgba($colors-dark-purple, 0.7);
-$colors-dark-purple-primary-alpha-light: rgba($colors-dark-purple, 0.5);
-$colors-dark-purple-secondary: #f5f5f5;
-$colors-dark-purple-secondary-light: color.adjust(#f5f5f5, $lightness: 20%);
-$colors-dark-purple-secondary-very-light: color.adjust(
-    #f5f5f5,
-    $lightness: 30%
-);
-$colors-dark-purple-secondary-alpha: rgba(#f5f5f5, 0.7);
-$colors-dark-purple-secondary-alpha-light: rgba(#f5f5f5, 0.5);
-$colors-dark-purple-contrast: #ffd700;
+$colors-classy-secondary-alpha: rgba($colors-classy-secondary, 0.7);
+$colors-classy-secondary-alpha-light: rgba($colors-classy-secondary, 0.5);
+$colors-classy-contrast: #ff4500;
 
-$colors-brown-primary: $colors-brown;
-$colors-brown-primary-light: color.adjust($colors-brown, $lightness: 20%);
-$colors-brown-primary-very-light: color.adjust($colors-brown, $lightness: 30%);
-$colors-brown-primary-alpha: rgba($colors-brown, 0.7);
-$colors-brown-primary-alpha-light: rgba($colors-brown, 0.5);
-$colors-brown-secondary: #b0e0e6;
-$colors-brown-secondary-light: color.adjust(
-    $colors-brown-secondary,
+$colors-ambition-primary: $colors-ambition;
+$colors-ambition-primary-light: color.adjust($colors-ambition, $lightness: 20%);
+$colors-ambition-primary-very-light: color.adjust(
+    $colors-ambition,
+    $lightness: 30%
+);
+$colors-ambition-primary-alpha: rgba($colors-ambition, 0.7);
+$colors-ambition-primary-alpha-light: rgba($colors-ambition, 0.5);
+$colors-ambition-secondary: #f0e68c;
+$colors-ambition-secondary-light: color.adjust(
+    $colors-ambition-secondary,
     $lightness: 20%
 );
-$colors-brown-secondary-very-light: color.adjust(
-    $colors-brown-secondary,
+$colors-ambition-secondary-very-light: color.adjust(
+    $colors-ambition-secondary,
     $lightness: 30%
 );
-$colors-brown-secondary-alpha: rgba($colors-brown-secondary, 0.7);
-$colors-brown-secondary-alpha-light: rgba($colors-brown-secondary, 0.5);
-$colors-brown-contrast: #ff4500;
+$colors-ambition-secondary-alpha: rgba($colors-ambition-secondary, 0.7);
+$colors-ambition-secondary-alpha-light: rgba($colors-ambition-secondary, 0.5);
+$colors-ambition-contrast: #ff6347;
 
-$colors-purple-primary: $colors-purple;
-$colors-purple-primary-light: color.adjust($colors-purple, $lightness: 20%);
-$colors-purple-primary-very-light: color.adjust(
-    $colors-purple,
-    $lightness: 30%
-);
-$colors-purple-primary-alpha: rgba($colors-purple, 0.7);
-$colors-purple-primary-alpha-light: rgba($colors-purple, 0.5);
-$colors-purple-secondary: #f0e68c;
-$colors-purple-secondary-light: color.adjust(
-    $colors-purple-secondary,
+$colors-peace-primary: $colors-peace;
+$colors-peace-primary-light: color.adjust($colors-peace, $lightness: 20%);
+$colors-peace-primary-very-light: color.adjust($colors-peace, $lightness: 30%);
+$colors-peace-primary-alpha: rgba($colors-peace, 0.7);
+$colors-peace-primary-alpha-light: rgba($colors-peace, 0.5);
+$colors-peace-secondary: #e0ffff;
+$colors-peace-secondary-light: color.adjust(
+    $colors-peace-secondary,
     $lightness: 20%
 );
-$colors-purple-secondary-very-light: color.adjust(
-    $colors-purple-secondary,
+$colors-peace-secondary-very-light: color.adjust(
+    $colors-peace-secondary,
     $lightness: 30%
 );
-$colors-purple-secondary-alpha: rgba($colors-purple-secondary, 0.7);
-$colors-purple-secondary-alpha-light: rgba($colors-purple-secondary, 0.5);
-$colors-purple-contrast: #ff6347;
+$colors-peace-secondary-alpha: rgba($colors-peace-secondary, 0.7);
+$colors-peace-secondary-alpha-light: rgba($colors-peace-secondary, 0.5);
+$colors-peace-contrast: #ff1493;
 
-$colors-lavender-primary: $colors-lavender;
-$colors-lavender-primary-light: color.adjust($colors-lavender, $lightness: 20%);
-$colors-lavender-primary-very-light: color.adjust(
-    $colors-lavender,
-    $lightness: 30%
-);
-$colors-lavender-primary-alpha: rgba($colors-lavender, 0.7);
-$colors-lavender-primary-alpha-light: rgba($colors-lavender, 0.5);
-$colors-lavender-secondary: #e0ffff;
-$colors-lavender-secondary-light: color.adjust(
-    $colors-lavender-secondary,
+$colors-sad-primary: $colors-sad;
+$colors-sad-primary-light: color.adjust($colors-sad, $lightness: 20%);
+$colors-sad-primary-very-light: color.adjust($colors-sad, $lightness: 30%);
+$colors-sad-primary-alpha: rgba($colors-sad, 0.7);
+$colors-sad-primary-alpha-light: rgba($colors-sad, 0.5);
+$colors-sad-secondary: #add8e6;
+$colors-sad-secondary-light: color.adjust(
+    $colors-sad-secondary,
     $lightness: 20%
 );
-$colors-lavender-secondary-very-light: color.adjust(
-    $colors-lavender-secondary,
+$colors-sad-secondary-very-light: color.adjust(
+    $colors-sad-secondary,
     $lightness: 30%
 );
-$colors-lavender-secondary-alpha: rgba($colors-lavender-secondary, 0.7);
-$colors-lavender-secondary-alpha-light: rgba($colors-lavender-secondary, 0.5);
-$colors-lavender-contrast: #ff1493;
+$colors-sad-secondary-alpha: rgba($colors-sad-secondary, 0.7);
+$colors-sad-secondary-alpha-light: rgba($colors-sad-secondary, 0.5);
+$colors-sad-contrast: #ff4500;
 
-$colors-blue-primary: $colors-blue;
-$colors-blue-primary-light: color.adjust($colors-blue, $lightness: 20%);
-$colors-blue-primary-very-light: color.adjust($colors-blue, $lightness: 30%);
-$colors-blue-primary-alpha: rgba($colors-blue, 0.7);
-$colors-blue-primary-alpha-light: rgba($colors-blue, 0.5);
-$colors-blue-secondary: #add8e6;
-$colors-blue-secondary-light: color.adjust(
-    $colors-blue-secondary,
+$colors-brutal-primary: $colors-brutal;
+$colors-brutal-primary-light: color.adjust($colors-brutal, $lightness: 20%);
+$colors-brutal-primary-very-light: color.adjust(
+    $colors-brutal,
+    $lightness: 30%
+);
+$colors-brutal-primary-alpha: rgba($colors-brutal, 0.7);
+$colors-brutal-primary-alpha-light: rgba($colors-brutal, 0.5);
+$colors-brutal-secondary: #ffebcd;
+$colors-brutal-secondary-light: color.adjust(
+    $colors-brutal-secondary,
     $lightness: 20%
 );
-$colors-blue-secondary-very-light: color.adjust(
-    $colors-blue-secondary,
+$colors-brutal-secondary-very-light: color.adjust(
+    $colors-brutal-secondary,
     $lightness: 30%
 );
-$colors-blue-secondary-alpha: rgba($colors-blue-secondary, 0.7);
-$colors-blue-secondary-alpha-light: rgba($colors-blue-secondary, 0.5);
-$colors-blue-contrast: #ff4500;
+$colors-brutal-secondary-alpha: rgba($colors-brutal-secondary, 0.7);
+$colors-brutal-secondary-alpha-light: rgba($colors-brutal-secondary, 0.5);
+$colors-brutal-contrast: #4682b4;
 
-$colors-tomato-primary: $colors-tomato;
-$colors-tomato-primary-light: color.adjust($colors-tomato, $lightness: 20%);
-$colors-tomato-primary-very-light: color.adjust(
-    $colors-tomato,
-    $lightness: 30%
-);
-$colors-tomato-primary-alpha: rgba($colors-tomato, 0.7);
-$colors-tomato-primary-alpha-light: rgba($colors-tomato, 0.5);
-$colors-tomato-secondary: #ffebcd;
-$colors-tomato-secondary-light: color.adjust(
-    $colors-tomato-secondary,
+$colors-love-primary: $colors-love;
+$colors-love-primary-light: color.adjust($colors-love, $lightness: 20%);
+$colors-love-primary-very-light: color.adjust($colors-love, $lightness: 30%);
+$colors-love-primary-alpha: rgba($colors-love, 0.7);
+$colors-love-primary-alpha-light: rgba($colors-love, 0.5);
+$colors-love-secondary: #faebd7;
+$colors-love-secondary-light: color.adjust(
+    $colors-love-secondary,
     $lightness: 20%
 );
-$colors-tomato-secondary-very-light: color.adjust(
-    $colors-tomato-secondary,
+$colors-love-secondary-very-light: color.adjust(
+    $colors-love-secondary,
     $lightness: 30%
 );
-$colors-tomato-secondary-alpha: rgba($colors-tomato-secondary, 0.7);
-$colors-tomato-secondary-alpha-light: rgba($colors-tomato-secondary, 0.5);
-$colors-tomato-contrast: #4682b4;
-
-$colors-pink-primary: $colors-pink;
-$colors-pink-primary-light: color.adjust($colors-pink, $lightness: 20%);
-$colors-pink-primary-very-light: color.adjust($colors-pink, $lightness: 30%);
-$colors-pink-primary-alpha: rgba($colors-pink, 0.7);
-$colors-pink-primary-alpha-light: rgba($colors-pink, 0.5);
-$colors-pink-secondary: #faebd7;
-$colors-pink-secondary-light: color.adjust(
-    $colors-pink-secondary,
-    $lightness: 20%
-);
-$colors-pink-secondary-very-light: color.adjust(
-    $colors-pink-secondary,
-    $lightness: 30%
-);
-$colors-pink-secondary-alpha: rgba($colors-pink-secondary, 0.7);
-$colors-pink-secondary-alpha-light: rgba($colors-pink-secondary, 0.5);
-$colors-pink-contrast: #4682b4;
+$colors-love-secondary-alpha: rgba($colors-love-secondary, 0.7);
+$colors-love-secondary-alpha-light: rgba($colors-love-secondary, 0.5);
+$colors-love-contrast: #4682b4;
 
 :root {
     --colors-primary: #{$colors-black-primary};

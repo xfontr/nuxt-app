@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { colors, GradientScroll, Pointer } from "@portfolio/ui";
+import { GradientScroll, Pointer, gradients } from "@portfolio/ui";
 
 const target = ref<HTMLElement>();
 
@@ -11,10 +11,7 @@ onMounted(() => {
 <template>
     <GradientScroll
         :target="target"
-        :gradients="[
-            colors.THEME_BLACK_WHITE.colorsPrimary,
-            colors.THEME_BLACK_WHITE.colorsSecondary,
-        ]"
+        :gradients="gradients.GRADIENTS_MAIN.toReversed()"
         :transition="1"
     >
         <template #reference>
@@ -25,6 +22,7 @@ onMounted(() => {
                     unit="px"
                     :always-visible="true"
                     :animate="true"
+                    :can-overflow="false"
                 >
                     <h1
                         class="header__title"
@@ -53,7 +51,21 @@ onMounted(() => {
             </section>
         </template>
 
-        <section :style="{ height: '110vh' }">Second section</section>
+        <section :style="{ height: '110vh' }">
+            <p
+                :style="{
+                    width: '30rem',
+                    'padding-top': '3rem',
+                    'line-height': '1rem',
+                    'font-size': '16px',
+                }"
+            >
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry. Lorem Ipsum has been the industry's standard dummy
+                text ever since the 1500s, when an unknown printer took a galley
+                of type and scrambled it to make a type specimen book.
+            </p>
+        </section>
     </GradientScroll>
 </template>
 
@@ -63,8 +75,9 @@ onMounted(() => {
         font-size: 300px;
         height: 400px;
         line-height: 40%;
-        -webkit-text-stroke: 1px $colors-primary;
+        -webkit-text-stroke: 1px $colors-secondary;
         font-weight: $fonts-extra-bold;
+        // -webkit-text-fill-color: $colors-primary;
 
         margin: auto 0;
         display: flex;
@@ -79,7 +92,7 @@ onMounted(() => {
 
     .custom-pointer {
         mix-blend-mode: exclusion;
-        background-color: $colors-secondary;
+        background-color: $colors-primary;
         border-radius: 50%;
     }
 }
