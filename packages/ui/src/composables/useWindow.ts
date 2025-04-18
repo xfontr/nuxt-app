@@ -3,7 +3,7 @@ import type { OnEventOptions } from "../types/Window";
 
 type Callback<EventType extends Event> = (
     window: Window,
-    event?: EventType,
+    event: EventType,
 ) => void;
 type EventCallback = (event?: Event) => void;
 
