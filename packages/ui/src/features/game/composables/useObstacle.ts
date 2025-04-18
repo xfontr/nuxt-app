@@ -5,7 +5,7 @@ import type { CanvasDrawOptions } from "../types/Canvas";
 import { random } from "../../../utils";
 
 const DEFAULT_OPTIONS: Required<ObstacleOptions> = {
-    amount: 5,
+    amount: 40,
     canScale: false,
     width: 20,
     height: 20,

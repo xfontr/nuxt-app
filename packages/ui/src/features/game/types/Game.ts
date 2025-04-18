@@ -8,6 +8,16 @@ export type Game = {
     };
     player: {
         size: number;
+        offsetX: 550;
+    };
+    laser: {
+        offset: number;
+        min: number;
+        max: number;
+        recoveryRate: number;
+        cost: number;
+        minReach: number;
+        maxReach: number;
     };
     layout: {
         floorPadding: number;
@@ -23,6 +33,8 @@ export type GameState = {
     jumpKeyHeld: boolean;
     isJumping: boolean;
     isLasering: boolean;
+    laserLeft: number;
+    laserReach: number;
     boosted: boolean;
     gameSpeed: number;
     player: { x: number; y: number; image: string };

@@ -9,6 +9,7 @@ import type { Asset } from "./types/Asset";
 import useUserActions from "./composables/useUserActions";
 import { useLaser } from "./composables/useLaser";
 import { drawBeam } from "./utils/beam";
+import GameInterface from "./GameInterface.vue";
 
 const props = defineProps<{ game: Game; assets: Asset[] }>();
 
@@ -20,10 +21,12 @@ const state = ref<GameState>({
     jumpKeyHeld: false,
     isJumping: false,
     isLasering: false,
+    laserLeft: game.laser.offset,
+    laserReach: game.laser.minReach,
     gameSpeed: game.physics.baseSpeed,
     boosted: false,
     player: {
-        x: 100,
+        x: game.player.offsetX,
         y: 0,
         image: "player-neutral",
     },
@@ -33,7 +36,7 @@ const canvasElement = ref<HTMLCanvasElement>();
 
 const thisWindow = useWindow();
 const lasers = useLaser(state, game);
-const { keyDown, keyUp } = useUserActions(state, game, lasers.shoot);
+const { keyDown, keyUp } = useUserActions(state, game);
 const canvas = useCanvas(canvasElement, props.assets);
 const bullets = useObstacle(game, state, { amount: 10 });
 const clouds = useObstacle(game, state, {
@@ -51,6 +54,7 @@ const restartGame = () => {
     state.value.player.y = height - game.player.size - game.layout.floorPadding;
     state.value.velocityY = 0;
     state.value.isJumping = false;
+    state.value.laserLeft = game.laser.offset;
     state.value.gameSpeed = game.physics.baseSpeed;
     game.physics.jumpStrength = game.physics.baseJumpStrength;
     state.value.boosted = false;
@@ -78,9 +82,8 @@ const drawPlayer = () => {
 };
 
 const drawLasers = () => {
-    lasers.lasers.value.forEach((beam) => {
-        drawBeam(beam, canvas.ctx.value!);
-    });
+    if (!lasers.laser.value) return;
+    drawBeam(lasers.laser.value, canvas.ctx.value!);
 };
 
 const draw = (image: string, pool: CanvasDrawOptions[]) => {
@@ -95,16 +98,27 @@ const updateGame = () => {
     lasers.update();
 
     // Check laser collisions
-    for (const laser of lasers.lasers.value) {
-        bullets.list.value = bullets.list.value.filter((obstacle) => {
-            const hit =
-                laser.y < obstacle.y + obstacle.height &&
-                laser.y + laser.height > obstacle.y &&
-                laser.x < obstacle.x + obstacle.width;
-            return !hit;
-        });
-    }
 
+    bullets.list.value = bullets.list.value.filter((obstacle) => {
+        const laserBeam = lasers.laser.value;
+        if (!laserBeam) return true;
+
+        // Laser ends at this world X position
+        const laserEndX =
+            state.value.player.x +
+            game.player.size +
+            game.layout.canvas.width * state.value.laserReach;
+
+        const verticalHit =
+            laserBeam.y < obstacle.y + obstacle.height &&
+            laserBeam.y + laserBeam.height > obstacle.y;
+
+        const horizontalHit = obstacle.x < laserEndX;
+
+        const hit = verticalHit && horizontalHit;
+
+        return !hit;
+    });
     // Apply gravity
     state.value.player.y += state.value.velocityY;
     state.value.velocityY += state.value.jumpKeyHeld
@@ -154,9 +168,11 @@ onMounted(() => {
 </script>
 
 <template>
-    <canvas
-        ref="canvasElement"
-        :width="width"
-        :height="height"
-    />
+    <GameInterface>
+        <canvas
+            ref="canvasElement"
+            :width="width"
+            :height="height"
+        />
+    </GameInterface>
 </template>
