@@ -22,6 +22,7 @@ export type GameState = {
     velocityY: number;
     jumpKeyHeld: boolean;
     isJumping: boolean;
+    isLasering: boolean;
     boosted: boolean;
     gameSpeed: number;
     player: { x: number; y: number; image: string };

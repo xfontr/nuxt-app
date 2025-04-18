@@ -8,7 +8,7 @@ import type { CanvasDrawOptions } from "./types/Canvas";
 import type { Asset } from "./types/Asset";
 import useUserActions from "./composables/useUserActions";
 import { useLaser } from "./composables/useLaser";
-// import { random } from "../../utils";
+import { drawBeam } from "./utils/beam";
 
 const props = defineProps<{ game: Game; assets: Asset[] }>();
 
@@ -19,6 +19,7 @@ const state = ref<GameState>({
     velocityY: 0,
     jumpKeyHeld: false,
     isJumping: false,
+    isLasering: false,
     gameSpeed: game.physics.baseSpeed,
     boosted: false,
     player: {
@@ -78,8 +79,7 @@ const drawPlayer = () => {
 
 const drawLasers = () => {
     lasers.lasers.value.forEach((beam) => {
-        canvas.ctx.value!.fillStyle = "red";
-        canvas.ctx.value!.fillRect(beam.x, beam.y, beam.width, beam.height);
+        drawBeam(beam, canvas.ctx.value!);
     });
 };
 
