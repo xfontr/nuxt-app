@@ -6,7 +6,7 @@ export const GRADIENTS_MAIN = [
         color: THEME_MAIN.colorsSecondary,
     },
     {
-        backgroundColor: THEME_MAIN.colorsSecondary,
+        backgroundColor: "transparent",
         color: THEME_MAIN.colorsPrimary,
     },
 ];
