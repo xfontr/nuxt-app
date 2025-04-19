@@ -1,7 +1,10 @@
 import { onMounted, onUnmounted, ref } from "vue";
 import type { OnEventOptions } from "../types/Window";
 
-type Callback = (window: Window, event?: Event) => void;
+type Callback<EventType extends Event> = (
+    window: Window,
+    event: EventType,
+) => void;
 type EventCallback = (event?: Event) => void;
 
 const useWindow = () => {
@@ -12,13 +15,13 @@ const useWindow = () => {
     const immediateCallbacks = new Set<EventCallback>();
     const mounted = ref<boolean>(false);
 
-    const on = (
+    const on = <EventType extends Event>(
         event: keyof WindowEventMap,
-        callback: Callback,
+        callback: Callback<EventType>,
         options?: OnEventOptions,
     ) => {
         const fullCallback: EventCallback = (event?: Event) => {
-            callback(window, event);
+            callback(window, event as EventType);
         };
 
         onEventCallbacks.add({ event, callback: fullCallback });

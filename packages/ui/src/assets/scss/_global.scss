@@ -6,45 +6,51 @@
 
 @include themes;
 
-body {
-    background-color: $colors-primary;
-    color: $colors-secondary;
+:root {
+    background-color: $colors-secondary;
+    color: $colors-primary;
+    font-family: $fonts-primary;
 
-    @include font-style($fonts-regular, $fonts-primary);
+    @include font-style($fonts-regular);
     @include font-size($fonts-size-base, $fonts-size-lg);
 }
 
+body.reversed {
+    background-color: $colors-primary;
+    color: $colors-secondary;
+}
+
 h1 {
-    @include font-style($fonts-bold, $fonts-primary, $fonts-line-height-xl);
+    @include font-style($fonts-bold, $fonts-line-height-xl);
     @include font-size($fonts-size-xl, $fonts-size-xxl);
 }
 
 h2 {
-    @include font-style($fonts-bold, $fonts-primary, $fonts-line-height-lg);
+    @include font-style($fonts-bold, $fonts-line-height-lg);
     @include font-size($fonts-size-lg, $fonts-size-xl);
 }
 
 h3 {
-    @include font-style($fonts-regular, $fonts-primary, $fonts-line-height-lg);
+    @include font-style($fonts-regular, $fonts-line-height-lg);
     @include font-size($fonts-size-md, $fonts-size-lg);
 }
 
 h4 {
-    @include font-style($fonts-regular, $fonts-primary, $fonts-line-height-md);
+    @include font-style($fonts-regular, $fonts-line-height-md);
     @include font-size($fonts-size-base, $fonts-size-md);
 }
 
 p {
-    @include font-style($fonts-regular, $fonts-primary);
+    @include font-style($fonts-regular);
     @include font-size($fonts-size-base, $fonts-size-lg);
 }
 
 small {
-    @include font-style($fonts-regular, $fonts-primary, $fonts-line-height-md);
+    @include font-style($fonts-regular, $fonts-line-height-md);
     @include font-size($fonts-size-small, $fonts-size-base);
 }
 
 button {
-    @include font-style($fonts-bold, $fonts-secondary, $fonts-line-height-sm);
+    @include font-style($fonts-bold, $fonts-line-height-sm);
     @include font-size($fonts-size-base, $fonts-size-lg);
 }

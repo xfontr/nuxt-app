@@ -1,13 +1,14 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import useWindow from "../../composables/useWindow";
 import { findClosestValue, generateThresholds } from "../../utils/math";
 import { getGradient } from "./utils/gradient";
+import type { GradientStyle } from "./types/GradientStyle";
 
 const props = withDefaults(
     defineProps<{
-        target: HTMLElement;
-        gradients?: string[];
+        target?: HTMLElement;
+        gradients?: (string | GradientStyle)[];
         transition?: number;
     }>(),
     {
@@ -23,6 +24,10 @@ const props = withDefaults(
             "#000000",
         ],
         transition: 0.3,
+        /**
+         * Can be defined anytime (this is particularly important for SSR).
+         */
+        target: undefined,
     },
 );
 
@@ -36,17 +41,27 @@ const threshold = computed<number[]>(() =>
     generateThresholds(props.gradients.length),
 );
 
-const gradients = computed<Record<string, string>>(() =>
+const gradientStyles = computed<GradientStyle[]>(() =>
+    props.gradients.map((gradient) =>
+        typeof gradient === "string"
+            ? {
+                  backgroundColor: gradient,
+              }
+            : gradient,
+    ),
+);
+
+const gradientsByThreshold = computed<Record<string, GradientStyle>>(() =>
     threshold.value.reduce(
         (all, threshold, i) => ({
             ...all,
-            [threshold]: props.gradients[i],
+            [threshold]: gradientStyles.value[i],
         }),
         {},
     ),
 );
 
-const updateBackground = (): void => {
+const updateColors = (): void => {
     if (!props.target) return;
 
     const closestThreshold = findClosestValue(
@@ -54,11 +69,16 @@ const updateBackground = (): void => {
         currentThreshold.value,
     );
 
-    // eslint-disable-next-line vue/no-mutating-props
-    props.target.style.background =
-        gradients.value[
+    const { backgroundColor, color } =
+        gradientsByThreshold.value[
             getGradient(threshold.value, closestThreshold, !!isDown.value)!
-        ]!;
+        ];
+
+    // eslint-disable-next-line vue/no-mutating-props
+    props.target.style.background = backgroundColor;
+
+    // eslint-disable-next-line vue/no-mutating-props
+    if (color) props.target.style.color = color;
 };
 
 const handleIn = ({ intersectionRatio }: IntersectionObserverEntry): void => {
@@ -86,13 +106,15 @@ on("scroll", ({ scrollY }) => {
     lastScrollY.value = scrollY;
 });
 
-watch(currentThreshold, updateBackground);
+watch(currentThreshold, updateColors);
 
-onMounted(() => {
-    if (!props.target) return;
-    // eslint-disable-next-line vue/no-mutating-props
-    props.target.style.transition = `${props.transition}s`;
-});
+watch(
+    () => props.target,
+    (target) => {
+        if (!target) return;
+        target.style.transition = `${props.transition}s`;
+    },
+);
 </script>
 
 <template>

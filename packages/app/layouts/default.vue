@@ -6,6 +6,7 @@
 
 <style lang="scss" scoped>
 .main {
-    padding: 8rem 2rem;
+    padding: 0 1rem;
+    min-height: 100vh;
 }
 </style>

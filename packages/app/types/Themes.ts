@@ -1,9 +1,9 @@
 export type Themes =
-    | "theme-dark-purple"
-    | "theme-black-white"
-    | "theme-brown"
-    | "theme-purple"
-    | "theme-lavender"
-    | "theme-blue"
-    | "theme-tomato"
-    | "theme-pink";
+    | "theme-main"
+    | "theme-edgy"
+    | "theme-classy"
+    | "theme-ambition"
+    | "theme-peace"
+    | "theme-sad"
+    | "theme-brutal"
+    | "theme-love";

@@ -18,6 +18,7 @@ export default defineNuxtConfig({
         "@portfolio/ui/dist/index.css",
         "@portfolio/ui/src/assets/scss/index.scss",
     ],
+    build: { transpile: ["gsap"] },
     vite: {
         resolve: {
             alias: {
