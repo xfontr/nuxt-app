@@ -15,13 +15,23 @@ const { animate, setup, state } = useGame(props.game, props.assets, canvas);
 thisWindow.on("resize", (window) => {
     state.value.layout.width = window.innerWidth;
     state.value.layout.height = window.innerHeight;
+    const playerLocationX = document
+        .querySelector(".player-loc")
+        ?.getBoundingClientRect().x;
+
+    state.value.player.x = playerLocationX ?? state.value.player.x;
 });
 
 onMounted(() => {
     state.value.layout.width = window.innerWidth;
     state.value.layout.height = window.innerHeight;
+    const playerLocationX = document
+        .querySelector(".player-loc")
+        ?.getBoundingClientRect().x;
 
     if (!canvas.value) return;
+
+    state.value.player.x = playerLocationX ?? state.value.player.x;
 
     setup();
     animate();
