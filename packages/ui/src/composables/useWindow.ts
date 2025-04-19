@@ -29,7 +29,11 @@ const useWindow = () => {
         if (options?.immediate) immediateCallbacks.add(fullCallback);
 
         if (mounted.value)
-            window.addEventListener(event.toLocaleLowerCase(), fullCallback);
+            window.addEventListener(
+                event.toLocaleLowerCase(),
+                fullCallback,
+                options?.passive ? { passive: options.passive } : {},
+            );
     };
 
     onMounted(() => {

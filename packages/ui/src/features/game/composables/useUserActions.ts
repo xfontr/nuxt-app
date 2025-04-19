@@ -1,6 +1,6 @@
 import type { Ref } from "vue";
 import type { Game, GameState } from "../types/Game";
-import { isRightKey, isUpKey } from "../utils/keyboard";
+import { isLeftKey, isRightKey, isUpKey } from "../utils/keyboard";
 
 const useUserActions = (state: Ref<GameState>, game: Game) => {
     const keyDown = (e: KeyboardEvent) => {
@@ -14,9 +14,18 @@ const useUserActions = (state: Ref<GameState>, game: Game) => {
             state.value.jumpKeyHeld = true;
         }
 
-        if (isRightKey(e.key) && !state.value.boosted) {
-            state.value.gameSpeed *= game.physics.boostMultiplier;
-            state.value.boosted = true;
+        if (isRightKey(e.key)) {
+            state.value.gameSpeed =
+                game.physics.boostMultiplier * game.physics.baseSpeed;
+
+            if (state.value.player.image === "player-neutral") {
+                state.value.player.image = "player-fast";
+            }
+        }
+
+        if (isLeftKey(e.key)) {
+            state.value.gameSpeed =
+                game.physics.slowMultiplier * game.physics.baseSpeed;
         }
 
         if (e.code === "Space") {
@@ -29,9 +38,16 @@ const useUserActions = (state: Ref<GameState>, game: Game) => {
 
         if (isUpKey(e.key)) state.value.jumpKeyHeld = false;
 
-        if (isRightKey(e.key) && state.value.boosted) {
-            state.value.gameSpeed /= game.physics.boostMultiplier;
-            state.value.boosted = false;
+        if (isRightKey(e.key)) {
+            state.value.gameSpeed = game.physics.baseSpeed;
+
+            if (state.value.player.image === "player-fast") {
+                state.value.player.image = "player-neutral";
+            }
+        }
+
+        if (isLeftKey(e.key)) {
+            state.value.gameSpeed = game.physics.baseSpeed;
         }
 
         if (e.code === "Space") {
