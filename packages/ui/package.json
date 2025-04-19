@@ -15,6 +15,8 @@
         "postinstall": "pnpm build",
         "custom-pack": "npm pack && mv ./*.tgz ../portfolio-ui.tgz",
         "build": "vue-tsc -b && vite build",
+        "build:tsc-watch": "vue-tsc -b --watch",
+        "build:vue-watch": "vite build --watch",
         "preview": "vite preview",
         "stylegen": "npx sass --no-source-map src/assets/scss/_global.scss _temp.css && stylegen stylegen.json && rm _temp.css",
         "lint": "eslint .",

@@ -4,11 +4,17 @@ export type Game = {
         baseJumpStrength: number;
         jumpStrength: number;
         boostMultiplier: number;
+        slowMultiplier: number;
         baseSpeed: number;
     };
     player: {
         size: number;
-        offsetX: 550;
+        offsetX: number;
+        lives: number;
+    };
+    score: {
+        bugKilled: number;
+        frameToDistance: number;
     };
     laser: {
         offset: number;
@@ -24,28 +30,26 @@ export type Game = {
         obstacleSpacing: number;
         obstacleStartOffset: number;
         obstacleThresholds: number[];
+        // TODO: This might be no longer needed
         canvas: {
-            /**
-             * 0 for full width
-             */
             width: number;
-            /**
-             * 0 for full height
-             */
             height: number;
         };
     };
 };
 
 export type GameState = {
+    status: "IDLE" | "ON";
     velocityY: number;
     jumpKeyHeld: boolean;
     isJumping: boolean;
     isLasering: boolean;
+    isColliding: boolean;
     laserLeft: number;
     laserReach: number;
-    boosted: boolean;
     gameSpeed: number;
-    player: { x: number; y: number; image: string };
+    player: { x: number; y: number; image: string; lives: number };
     layout: { width: number; height: number };
+    bugsKilled: number;
+    framesAlive: number;
 };

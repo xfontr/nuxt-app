@@ -38,7 +38,10 @@ export const useLaser = (state: Ref<GameState>, game: Game) => {
     };
 
     const reset = () => {
-        state.value.player.image = "player-neutral";
+        if (state.value.player.image === "player-laser") {
+            state.value.player.image = "player-neutral";
+        }
+
         state.value.laserReach = game.laser.minReach;
         laser.value = undefined;
     };

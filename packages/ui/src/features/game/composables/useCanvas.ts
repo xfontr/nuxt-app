@@ -16,7 +16,7 @@ const useCanvas = (
         options: CanvasDrawOptions,
     ) => {
         if (!assets.value[image]) {
-            throw new Error("Could not find requested asset");
+            throw new Error(`Could not find requested asset: ${image}`);
         }
 
         ctx.value!.drawImage(

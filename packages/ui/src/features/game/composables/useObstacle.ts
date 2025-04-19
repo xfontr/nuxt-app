@@ -5,7 +5,6 @@ import type { CanvasDrawOptions } from "../types/Canvas";
 import { random } from "../../../utils";
 
 const DEFAULT_OPTIONS: Required<ObstacleOptions> = {
-    canScale: false,
     width: 20,
     height: 20,
     speedMultiplier: 1,
@@ -30,8 +29,6 @@ const useObstacle = (
     const minSpacing = layout.obstacleSpacing;
 
     const generateObstacle = (): CanvasDrawOptions => {
-        const scale = opts.canScale ? 0.5 + Math.random() * 1.5 : 1;
-
         return {
             x: canvas.width + random(0, 50),
             y:
@@ -39,9 +36,8 @@ const useObstacle = (
                 layout.obstacleThresholds[
                     random(0, layout.obstacleThresholds.length)
                 ],
-            width: opts.width * scale,
-            height: opts.height * scale,
-            ...(opts.canScale ? { scale } : {}),
+            width: opts.width,
+            height: opts.height,
         };
     };
 

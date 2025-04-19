@@ -2,8 +2,13 @@
 import { Game, GradientScroll, gradients } from "@portfolio/ui";
 import { ASSETS, GAME_DATA } from "~/configs/game";
 
+const { ts } = useI18n();
+
 const title = ref<HTMLHeadingElement>();
 const target = ref<HTMLElement>();
+const translations = ref({
+    linterRay: ts("game.linter_ray"),
+});
 
 onMounted(() => {
     target.value = document.body;
@@ -19,9 +24,20 @@ onMounted(() => {
     >
         <template #reference>
             <section class="atf">
+                <img
+                    class="atf__img"
+                    :style="{}"
+                    src="/img/game/background-mountain.svg"
+                />
+                <img
+                    class="atf__img"
+                    :style="{ 'z-index': -1, bottom: '14rem' }"
+                    src="/img/game/background-clouds.svg"
+                />
+
                 <h1
                     ref="title"
-                    class="header__title"
+                    class="atf__title"
                     v-html="$t('landing.title')"
                 />
 
@@ -29,30 +45,48 @@ onMounted(() => {
                     class="game"
                     :game="GAME_DATA"
                     :assets="ASSETS"
+                    :t="translations"
                 />
             </section>
         </template>
-        <div>wharevs</div>
+        <div class="atf">wharevs</div>
     </GradientScroll>
 </template>
 
 <style lang="scss">
+.ground-layer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 150px;
+    background: linear-gradient(to top, #f1e9d2 0%, transparent 100%);
+    z-index: 1;
+}
+
 .atf {
     min-height: 100vh;
     display: flex;
     align-items: flex-end;
-}
 
-.header {
+    &__img {
+        position: absolute;
+        height: 100vh;
+        width: 100vw;
+        bottom: 11rem;
+        object-fit: cover;
+    }
+
     &__title {
+        padding-left: 2rem;
+        filter: drop-shadow(15px 30px 6px rgba(0, 0, 0, 0.1));
         max-width: 80%;
         position: absolute;
-        bottom: -2.3vw;
-        color: white;
+        bottom: calc(-2.3vw + 2rem);
         font-size: clamp(100px, 20vw, 20vw);
         line-height: 40%;
-        -webkit-text-stroke: 1px $colors-primary;
-        -webkit-text-fill-color: 1px $colors-secondary;
+        -webkit-text-stroke: 1px $colors-primary-very-light;
+        -webkit-text-fill-color: $colors-secondary;
         font-weight: $fonts-extra-bold;
         letter-spacing: -0.5rem;
 
@@ -84,9 +118,8 @@ onMounted(() => {
 
 .game {
     position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
+    bottom: 1.55rem;
+    z-index: -2;
 }
 </style>
 

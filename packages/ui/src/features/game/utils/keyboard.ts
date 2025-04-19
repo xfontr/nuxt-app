@@ -3,3 +3,6 @@ export const isUpKey = (key?: string): boolean =>
 
 export const isRightKey = (key?: string): boolean =>
     key === "d" || key === "ArrowRight";
+
+export const isLeftKey = (key?: string): boolean =>
+    key === "a" || key === "ArrowLeft";
