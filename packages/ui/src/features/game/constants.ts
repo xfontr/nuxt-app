@@ -24,3 +24,5 @@ export const OBSTACLE_OPTIONS: Required<ObstacleOptions> = {
     height: 20,
     speedMultiplier: 1,
 };
+
+export const PLAYER_LOCATION_CLASS = ".player-loc";

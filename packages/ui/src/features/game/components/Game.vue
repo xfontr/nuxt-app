@@ -5,39 +5,39 @@ import type { Asset } from "../types/Asset";
 import GameInterface from "./GameInterface.vue";
 import useGame from "../composables/useGame";
 import { useWindow } from "../../../composables";
+import { PLAYER_LOCATION_CLASS } from "../constants";
 
 const thisWindow = useWindow();
+const canvas = ref<HTMLCanvasElement>();
+
 const props = defineProps<{
     game: Game;
     assets: Asset[];
     t: { linterRay: string };
 }>();
 
-const canvas = ref<HTMLCanvasElement>();
-
 const { animate, setup, state } = useGame(props.game, props.assets, canvas);
 
-thisWindow.on("resize", (window) => {
+const updateLayoutAndPlayerPosition = () => {
     state.value.layout.width = window.innerWidth;
     state.value.layout.height = window.innerHeight;
-    const playerLocationX = document
-        .querySelector(".player-loc")
+
+    const x = document
+        .querySelector(PLAYER_LOCATION_CLASS)
         ?.getBoundingClientRect().x;
 
-    state.value.player.x = playerLocationX ?? state.value.player.x;
-});
+    if (x === undefined) return;
+
+    if (state.value.status === "ON") state.value.player.x = x;
+    if (state.value.status === "IDLE") state.value.player.offsetX = x;
+};
+
+thisWindow.on("resize", updateLayoutAndPlayerPosition);
 
 onMounted(() => {
-    state.value.layout.width = window.innerWidth;
-    state.value.layout.height = window.innerHeight;
-    const playerLocationX = document
-        .querySelector(".player-loc")
-        ?.getBoundingClientRect().x;
-
     if (!canvas.value) return;
 
-    state.value.player.x = playerLocationX ?? state.value.player.x;
-
+    updateLayoutAndPlayerPosition();
     setup();
     animate();
 });
@@ -58,24 +58,15 @@ onMounted(() => {
     </GameInterface>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .canvas {
-    // background: linear-gradient(to top, #f1e9d2 0%, transparent 100%); //old
     background: linear-gradient(
         to bottom,
         #e8fcff 0%,
         #c2f7ff 30%,
         #f7feff 70%,
         white 70%
-    ); //new
-    // background: linear-gradient(
-    //     180deg,
-    //     #ffffff 0%,
-    //     #ffffff 70%,
-    //     #f4f4f4 70%
-    // ); //new
-    // background: url("./img/game/grid.png");
-    // background-size: 30%;
+    );
     z-index: 1;
 }
 </style>

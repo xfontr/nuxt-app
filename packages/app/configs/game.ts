@@ -15,7 +15,6 @@ export const GAME_DATA: GameOptions = {
     },
     player: {
         size: 40,
-        offsetX: 550,
         lives: 3,
     },
     laser: {

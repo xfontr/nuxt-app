@@ -9,7 +9,6 @@ export type Game = {
     };
     player: {
         size: number;
-        offsetX: number;
         lives: number;
     };
     score: {
@@ -50,6 +49,7 @@ export type GameState = {
     laserReach: number;
     gameSpeed: number;
     player: {
+        offsetX: number;
         x: number;
         y: number;
         image:

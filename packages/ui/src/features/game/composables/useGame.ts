@@ -34,6 +34,7 @@ const useGame = (
         laserReach: game.laser.minReach,
         gameSpeed: game.physics.baseSpeed,
         player: {
+            offsetX: 0,
             x: 0,
             y: 0,
             image: "player-neutral",
@@ -89,16 +90,15 @@ const useGame = (
     };
 
     const spawnPlayer = () => {
-        const speed = 5;
-        const targetX = game.player.offsetX;
         const { player } = state.value;
 
-        if (player.x < targetX) {
-            player.x += speed;
-        } else {
-            player.x = targetX;
-            state.value.isSpawning = false;
+        if (player.x < player.offsetX) {
+            player.x += state.value.gameSpeed;
+            return;
         }
+
+        player.x = player.offsetX;
+        state.value.isSpawning = false;
     };
 
     const applyGravity = () => {
