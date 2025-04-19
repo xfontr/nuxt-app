@@ -1,51 +1,38 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
-import type { Game } from "../types";
+import type { Asset, Game } from "../types";
 import type { GameState } from "../types/Game";
 import { colors } from "../../../configs";
 import { ASSETS, AVAILABLE_KEYS } from "../constants";
+import type { Unit } from "../../../types/Unit";
 
-const PROGRESS_BAR_WIDTH = 100; // we should probably make this dynamic
+const PROGRESS_BAR_WIDTH = 100;
 
 const props = defineProps<{
     game: Game;
     state: GameState;
-    t: {
-        linterRay: string;
-    };
+    t: { linterRay: string };
 }>();
 
-const getAsset = (name: string) => `${ASSETS}${name}.png`;
-
 const heartImages = useTemplateRef<HTMLImageElement[]>("heart");
-
 const availableKeys = ref(AVAILABLE_KEYS);
+const linterLaser = ref<HTMLDivElement>();
 
-const ratio = computed(() => props.game.laser.max / PROGRESS_BAR_WIDTH);
+const getAsset = (name: string): Asset => `${ASSETS}${name}.png`;
 
-const bar = computed(
-    () => (props.game.laser.min / ratio.value).toString() + "px",
+const ratio = computed<number>(() => props.game.laser.max / PROGRESS_BAR_WIDTH);
+const minBarWidth = computed<`${string}${Unit}`>(
+    () => `${props.game.laser.min / ratio.value}px`,
 );
 
-const lives = computed<boolean[]>(() => {
-    const list: boolean[] = [];
-    const max = props.game.player.lives;
+const lives = computed<boolean[]>(() =>
+    Array.from(
+        { length: props.game.player.lives },
+        (_, i) => props.state.player.lives > i,
+    ),
+);
 
-    for (let i = 0; i < max; i += 1) {
-        list.push(props.state.player.lives > i);
-    }
-
-    list?.forEach((img, i) => {
-        if (!heartImages.value?.[i]) return;
-        heartImages.value[i].src = img
-            ? getAsset("heart-full")
-            : getAsset("heart-empty");
-    });
-
-    return list;
-});
-
-const distance = computed(
+const distance = computed<number>(
     () =>
         +(props.state.framesAlive * props.game.score.frameToDistance).toFixed(
             0,
@@ -56,24 +43,29 @@ const score = computed(
     () => props.state.bugsKilled * props.game.score.bugKilled + distance.value,
 );
 
-const linterLaser = ref<HTMLDivElement>();
-
-// Prevents unexpected vue bug
-const customVBind = () => {
+const applyLaserBarStyles = () => {
     if (!linterLaser.value) return;
-    linterLaser.value.style.setProperty("--min-bar", bar.value);
 
-    if (props.game.laser.min > props.state.laserLeft) {
-        linterLaser.value.style.setProperty(
-            "--min-bar-color",
-            colors.THEME_MAIN.colorsPrimary,
-        );
-    }
+    const isBelowMin = props.game.laser.min > props.state.laserLeft;
+
+    const color = isBelowMin
+        ? colors.THEME_MAIN.colorsPrimary
+        : colors.THEME_MAIN.colorsSecondary;
+
+    linterLaser.value.style.setProperty("--min-bar", minBarWidth.value);
+    linterLaser.value.style.setProperty("--min-bar-color", color);
 };
 
-onMounted(customVBind);
+onMounted(applyLaserBarStyles);
 
-watch(() => props.state.laserLeft, customVBind);
+watch(() => props.state.laserLeft, applyLaserBarStyles);
+
+watch(lives, (newLives) => {
+    newLives.forEach((alive, i) => {
+        const img = heartImages.value?.[i];
+        if (img) img.src = getAsset(alive ? "heart-full" : "heart-empty");
+    });
+});
 </script>
 
 <template>
@@ -207,7 +199,7 @@ watch(() => props.state.laserLeft, customVBind);
             top: 0;
             bottom: 0;
             width: 1px;
-            background-color: var(--min-bar-color, $colors-secondary);
+            background-color: var(--min-bar-color);
             left: var(--min-bar);
             pointer-events: none;
             z-index: 1;
