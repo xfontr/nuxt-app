@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { GradientScroll, Pointer, gradients } from "@portfolio/ui";
+import { Game, GradientScroll, Pointer, gradients } from "@portfolio/ui";
+import { ASSETS, GAME_DATA } from "~/configs/game";
 
 const title = ref<HTMLHeadingElement>();
 const target = ref<HTMLElement>();
@@ -19,66 +20,37 @@ onMounted(() => {
     >
         <template #reference>
             <section class="atf">
-                <Pointer
-                    class="header"
-                    :size="20"
-                    unit="vw"
-                    :always-visible="true"
-                    :animate="true"
-                    :can-overflow="false"
-                >
-                    <h1
-                        ref="title"
-                        class="header__title"
-                        v-html="$t('landing.title')"
-                    />
+                <h1
+                    ref="title"
+                    class="header__title"
+                    v-html="$t('landing.title')"
+                />
 
-                    <template #pointer>
-                        <div class="custom-pointer" />
-                    </template>
-                </Pointer>
                 <Game
                     class="game"
-                    :width="1920"
-                    :height="600"
+                    :game="GAME_DATA"
+                    :assets="ASSETS"
                 />
-                <p
-                    :style="{
-                        width: '30rem',
-                        'padding-top': '3rem',
-                        'line-height': '1rem',
-                        'font-size': '16px',
-                    }"
-                >
-                    {{ $t("landing.description") }}
-                </p>
             </section>
         </template>
-
-        <section :style="{ height: '110vh' }">
-            <p
-                :style="{
-                    width: '30rem',
-                    'padding-top': '3rem',
-                    'line-height': '1rem',
-                    'font-size': '16px',
-                }"
-            >
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book.
-            </p>
-        </section>
+        <div>wharevs</div>
     </GradientScroll>
 </template>
 
 <style lang="scss">
+.atf {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-end;
+}
+
 .header {
     &__title {
+        max-width: 80%;
+        position: absolute;
+        bottom: -2.3vw;
         color: white;
-        font-size: 14rem;
-        height: 650px;
+        font-size: clamp(100px, 20vw, 20vw);
         line-height: 40%;
         -webkit-text-stroke: 1px $colors-primary;
         -webkit-text-fill-color: 1px $colors-secondary;
@@ -91,16 +63,7 @@ onMounted(() => {
         justify-content: end;
         flex-wrap: wrap;
         justify-content: start;
-        margin: -5rem 0;
-
-        :deep(.space-left) {
-            padding: 10px;
-        }
-    }
-
-    .custom-pointer {
-        mix-blend-mode: difference;
-        background-color: $colors-secondary;
+        user-select: none;
     }
 }
 
@@ -113,22 +76,27 @@ onMounted(() => {
     background-size: cover;
     background-clip: text;
     font-weight: $fonts-extra-bold;
-    height: 230px;
+    height: 20vw;
     display: flex;
     align-items: center;
     padding-right: 10px;
-    margin-top: -10rem;
+    margin-top: -4%;
 }
 
 .game {
     position: absolute;
     top: 0;
-    left: 550px;
+    left: 0;
+    z-index: -1;
 }
 </style>
 
 <style lang="scss">
 :root {
     background-color: transparent !important;
+}
+
+.player-loc {
+    margin-left: 2rem;
 }
 </style>

@@ -1,6 +1,6 @@
 {
     "landing": {
-        "title": "Just another <span class='matrix'>dev</span>",
+        "title": "Just another <span class='matrix'>dev</span><div class='player-loc' />",
         "description": "Seriously, you must be tired of all the pretentious web developer portfolios. Aaaaand here comes another one. Sorry mate, that's just the way it is. I was looking for some standard matrix gif and this Neo gif popped up. But hey, this Neo gif is as clean as it gets, so you can just stare at it or something."
     }
 }
