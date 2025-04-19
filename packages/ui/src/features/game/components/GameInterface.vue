@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { computed, ref, useTemplateRef } from "vue";
+import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import type { Game } from "../types";
 import type { GameState } from "../types/Game";
+import { colors } from "../../../configs";
 
 const ASSETS = "./img/game/";
 const PROGRESS_BAR_WIDTH = 100; // we should probably make this dynamic
@@ -71,6 +72,25 @@ const distance = computed(
 const score = computed(
     () => props.state.bugsKilled * props.game.score.bugKilled + distance.value,
 );
+
+const linterLaser = ref<HTMLDivElement>();
+
+// Prevents unexpected vue bug
+const customVBind = () => {
+    if (!linterLaser.value) return;
+    linterLaser.value.style.setProperty("--min-bar", bar.value);
+
+    if (props.game.laser.min > props.state.laserLeft) {
+        linterLaser.value.style.setProperty(
+            "--min-bar-color",
+            colors.THEME_MAIN.colorsPrimary,
+        );
+    }
+};
+
+onMounted(customVBind);
+
+watch(() => props.state.laserLeft, customVBind);
 </script>
 
 <template>
@@ -112,6 +132,7 @@ const score = computed(
                         >{{ t.linterRay }}</label
                     >
                     <progress
+                        ref="linterLaser"
                         id="linter-laser"
                         class="laser__progress"
                         :value="state.laserLeft"
@@ -207,8 +228,8 @@ const score = computed(
             top: 0;
             bottom: 0;
             width: 1px;
-            background-color: $colors-contrast;
-            left: v-bind(bar); // e.g., "25%"
+            background-color: var(--min-bar-color, $colors-secondary);
+            left: var(--min-bar);
             pointer-events: none;
             z-index: 1;
         }
