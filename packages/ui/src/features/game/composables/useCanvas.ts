@@ -1,10 +1,11 @@
 import { onMounted, ref, type Ref } from "vue";
 import type { CanvasDrawOptions } from "../types/Canvas";
 import type { Asset } from "..";
-
-const ASSETS_DIR = "./img/game/";
+import { ASSETS } from "../constants";
+import type { GameState } from "../types/Game";
 
 const useCanvas = (
+    state: Ref<GameState>,
     canvas: Ref<HTMLCanvasElement | undefined>,
     assetsSrc: Asset[],
 ) => {
@@ -28,13 +29,22 @@ const useCanvas = (
         );
     };
 
+    const reset = () => {
+        ctx.value!.clearRect(
+            0,
+            0,
+            state.value.layout.width,
+            state.value.layout.height,
+        );
+    };
+
     onMounted(() => {
         if (!canvas.value) return;
         ctx.value = canvas.value.getContext("2d")!;
 
         assetsSrc.forEach((asset) => {
             const image = new Image();
-            image.src = `${ASSETS_DIR}${asset}`;
+            image.src = `${ASSETS}${asset}`;
             assets.value[asset.split(".")[0]] = image;
         });
     });
@@ -43,6 +53,7 @@ const useCanvas = (
         ctx,
         draw: { image: drawImage },
         assets,
+        reset,
     };
 };
 

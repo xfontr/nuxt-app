@@ -6,3 +6,5 @@ export const isRightKey = (key?: string): boolean =>
 
 export const isLeftKey = (key?: string): boolean =>
     key === "a" || key === "ArrowLeft";
+
+export const isSpaceKey = (code?: string): boolean => code === "Space";

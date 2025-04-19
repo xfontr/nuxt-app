@@ -3,8 +3,8 @@ import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import type { Game } from "../types";
 import type { GameState } from "../types/Game";
 import { colors } from "../../../configs";
+import { ASSETS, AVAILABLE_KEYS } from "../constants";
 
-const ASSETS = "./img/game/";
 const PROGRESS_BAR_WIDTH = 100; // we should probably make this dynamic
 
 const props = defineProps<{
@@ -19,24 +19,7 @@ const getAsset = (name: string) => `${ASSETS}${name}.png`;
 
 const heartImages = useTemplateRef<HTMLImageElement[]>("heart");
 
-const availableKeys = ref<
-    {
-        src: string;
-        alt?: string;
-        title?: string;
-    }[]
->([
-    { src: "keyboard-space", alt: "Keyboard space bar" },
-    {
-        src: "keyboard-left",
-        alt: "Keyboard left arrow",
-    },
-    { src: "keyboard-up", alt: "Keyboard up arrow" },
-    {
-        src: "keyboard-right",
-        alt: "Keyboard right arrow",
-    },
-]);
+const availableKeys = ref(AVAILABLE_KEYS);
 
 const ratio = computed(() => props.game.laser.max / PROGRESS_BAR_WIDTH);
 
@@ -141,13 +124,12 @@ watch(() => props.state.laserLeft, customVBind);
                 </div>
                 <ul class="bottom__instructions">
                     <li
-                        v-for="{ src, alt, title } in availableKeys"
+                        v-for="{ src, alt } in availableKeys"
                         :key="src"
                     >
                         <img
                             :src="getAsset(src)"
                             :alt
-                            :title
                             height="24"
                         />
                     </li>
@@ -207,7 +189,6 @@ watch(() => props.state.laserLeft, customVBind);
         position: relative;
         overflow: hidden;
 
-        // WebKit-based browsers
         &::-webkit-progress-bar {
             background-color: $colors-secondary;
         }
@@ -216,12 +197,10 @@ watch(() => props.state.laserLeft, customVBind);
             background-color: $colors-primary;
         }
 
-        // Firefox
         &::-moz-progress-bar {
             background-color: $colors-primary;
         }
 
-        // The vertical line at game.laser.min %
         &::after {
             content: "";
             position: absolute;

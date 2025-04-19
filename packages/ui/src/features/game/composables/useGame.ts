@@ -11,9 +11,9 @@ import { drawBeam } from "../utils/beam";
 import { random } from "../../../utils";
 import { useWindow } from "../../../composables";
 
-const AVAILABLE_OBSTACLE_IMAGES = ["bug-1", "bug-2"];
-const DISGUSTED_FACE_TIMER = 2000;
-const DEATH_COOLDOWN = 500;
+const OBSTACLE_IMAGES = ["bug-1", "bug-2"];
+const FACE_TIMER = 2000;
+const COLLISION_COOLDOWN = 500;
 
 const useGame = (
     game: Game,
@@ -29,11 +29,12 @@ const useGame = (
         isJumping: false,
         isLasering: false,
         isColliding: false,
+        isSpawning: true,
         laserLeft: game.laser.offset,
         laserReach: game.laser.minReach,
         gameSpeed: game.physics.baseSpeed,
         player: {
-            x: game.player.offsetX,
+            x: 0,
             y: 0,
             image: "player-neutral",
             lives: game.player.lives,
@@ -49,46 +50,159 @@ const useGame = (
     const thisWindow = useWindow();
     const lasers = useLaser(state, game);
     const { keyDown, keyUp } = useUserActions(state, game);
-    const canvas = useCanvas(canvasElement, assets);
-    const bullets = useObstacle(state, game);
+    const canvas = useCanvas(state, canvasElement, assets);
+    const bugs = useObstacle(state, game);
     const clouds = useClouds(state);
 
     thisWindow.on<KeyboardEvent>("keyup", (_, e) => keyUp(e));
     thisWindow.on<KeyboardEvent>("keydown", (_, e) => keyDown(e));
 
-    const size = state.value.layout;
+    const groundY = () =>
+        state.value.layout.height - game.player.size - game.layout.floorPadding;
 
     const restartGame = () => {
-        state.value.player.y =
-            size.height - game.player.size - game.layout.floorPadding;
-        state.value.velocityY = 0;
-        state.value.isJumping = false;
-        state.value.isColliding = false;
-        state.value.laserLeft = game.laser.offset;
-        state.value.gameSpeed = game.physics.baseSpeed;
-        state.value.player.lives = game.player.lives;
-        state.value.bugsKilled = 0;
-        state.value.framesAlive = 0;
-        game.physics.jumpStrength = game.physics.baseJumpStrength;
+        Object.assign(state.value, {
+            player: {
+                ...state.value.player,
+                x: 0,
+                y: groundY(),
+                image: "player-neutral",
+                lives: game.player.lives,
+            },
+            velocityY: 0,
+            isJumping: false,
+            isColliding: false,
+            laserLeft: game.laser.offset,
+            gameSpeed: game.physics.baseSpeed,
+            bugsKilled: 0,
+            framesAlive: 0,
+        });
 
-        bullets.reset();
+        game.physics.jumpStrength = game.physics.baseJumpStrength;
+        bugs.reset();
     };
 
     const setup = () => {
         restartGame();
-        state.value.player.y =
-            size.height - game.player.size - game.layout.floorPadding;
         clouds.init();
         state.value.status = "ON";
     };
 
-    const drawPlayer = () => {
-        if (state.value.isColliding && state.value.framesAlive % 2 === 0)
-            return;
+    const spawnPlayer = () => {
+        const speed = 5;
+        const targetX = game.player.offsetX;
+        const { player } = state.value;
 
-        canvas.draw.image(state.value.player.image, {
-            x: state.value.player.x,
-            y: state.value.player.y,
+        if (player.x < targetX) {
+            player.x += speed;
+        } else {
+            player.x = targetX;
+            state.value.isSpawning = false;
+        }
+    };
+
+    const applyGravity = () => {
+        const gravity = game.physics.gravity;
+        const velocity = state.value.jumpKeyHeld ? gravity * 0.5 : gravity;
+
+        state.value.player.y += state.value.velocityY;
+        state.value.velocityY += velocity;
+
+        if (state.value.player.y >= groundY()) {
+            state.value.player.y = groundY();
+            state.value.velocityY = 0;
+            state.value.isJumping = false;
+        }
+    };
+
+    const handleLaserHits = () => {
+        const laser = lasers.laser.value;
+        if (!laser) return;
+
+        bugs.list.value = bugs.list.value.filter(({ y, x, height }) => {
+            const laserEnd =
+                state.value.player.x + game.player.size + laser.width;
+
+            const yHit = laser.y < y + height && laser.y + laser.height > y;
+            const xHit = x < laserEnd;
+
+            const hit = yHit && xHit;
+
+            if (hit) state.value.bugsKilled += 1;
+
+            return !hit;
+        });
+    };
+
+    const checkCollision =
+        (x: number, y: number, size: number) => (obstacle: CanvasDrawOptions) =>
+            x < obstacle.x + obstacle.width &&
+            x + size > obstacle.x &&
+            y < obstacle.y + obstacle.height &&
+            y + size > obstacle.y;
+
+    const resetStatePostCollision = () => {
+        collisionTimeout.value ??= setTimeout(() => {
+            state.value.isColliding = false;
+            collisionTimeout.value = undefined;
+        }, COLLISION_COOLDOWN);
+
+        disgustedTimeout.value ??= setTimeout(() => {
+            disgustedTimeout.value = undefined;
+
+            if (state.value.player.image !== "player-disgusted") return;
+            state.value.player.image = "player-neutral";
+        }, FACE_TIMER);
+    };
+
+    const handleCollisions = () => {
+        const { x, y } = state.value.player;
+        const { size } = game.player;
+
+        const isColliding = checkCollision(x, y, size);
+
+        for (const obstacle of bugs.list.value) {
+            if (!isColliding(obstacle) || state.value.isColliding) continue;
+
+            state.value.player.lives -= 1;
+            state.value.isColliding = true;
+            state.value.player.image = "player-disgusted";
+
+            resetStatePostCollision();
+
+            if (state.value.player.lives > 0) return;
+
+            state.value.status = "IDLE";
+        }
+    };
+
+    const updateGame = () => {
+        if (state.value.isSpawning) return spawnPlayer();
+        if (state.value.status !== "ON") return;
+
+        bugs.update();
+        clouds.update();
+        lasers.update();
+        handleLaserHits();
+        applyGravity();
+        handleCollisions();
+    };
+
+    const drawScene = () => {
+        canvas.reset();
+        draw("cloud", clouds.list.value);
+        draw(randomObstacleImage(), bugs.list.value);
+        drawPlayer();
+        drawLasers();
+    };
+
+    const drawPlayer = () => {
+        const { player, framesAlive, isColliding } = state.value;
+        if (isColliding && framesAlive % 2 === 0) return;
+
+        canvas.draw.image(player.image, {
+            x: player.x,
+            y: player.y,
             width: game.player.size,
             height: game.player.size,
         });
@@ -100,112 +214,15 @@ const useGame = (
     };
 
     const draw = (image: string, pool: CanvasDrawOptions[]) => {
-        pool.forEach((option) => {
-            canvas.draw.image(image, option);
-        });
+        pool.forEach((option) => canvas.draw.image(image, option));
     };
 
-    const updateGame = () => {
-        if (state.value.status === "ON") bullets.update();
-        clouds.update();
-        if (state.value.status === "ON") lasers.update();
-
-        // Check laser collisions
-
-        bullets.list.value = bullets.list.value.filter((obstacle) => {
-            const laserBeam = lasers.laser.value;
-            if (!laserBeam) return true;
-
-            // Laser ends at this world X position
-            const laserEndX =
-                state.value.player.x +
-                game.player.size +
-                state.value.layout.width * state.value.laserReach;
-
-            const verticalHit =
-                laserBeam.y < obstacle.y + obstacle.height &&
-                laserBeam.y + laserBeam.height > obstacle.y;
-
-            const horizontalHit = obstacle.x < laserEndX;
-
-            const hit = verticalHit && horizontalHit;
-
-            if (hit) {
-                state.value.bugsKilled += 1;
-            }
-
-            return !hit;
-        });
-
-        // Apply gravity
-        state.value.player.y += state.value.velocityY;
-        state.value.velocityY += state.value.jumpKeyHeld
-            ? game.physics.gravity * 0.5
-            : game.physics.gravity;
-
-        // Ground check
-        const groundY =
-            size.height - game.player.size - game.layout.floorPadding;
-        if (state.value.player.y >= groundY) {
-            state.value.player.y = groundY;
-            state.value.velocityY = 0;
-            state.value.isJumping = false;
-        }
-
-        // Collision check
-
-        for (const obstacle of bullets.list.value) {
-            const collisionX =
-                state.value.player.x < obstacle.x + obstacle.width &&
-                state.value.player.x + game.player.size > obstacle.x;
-
-            const collisionY =
-                state.value.player.y < obstacle.y + obstacle.height &&
-                state.value.player.y + game.player.size > obstacle.y;
-
-            if (collisionX && collisionY) {
-                if (!state.value.isColliding) {
-                    state.value.player.lives -= 1;
-                    state.value.isColliding = true;
-                    state.value.player.image = "player-disgusted";
-
-                    collisionTimeout.value ??= setTimeout(() => {
-                        state.value.isColliding = false;
-                        collisionTimeout.value = undefined;
-                    }, DEATH_COOLDOWN);
-
-                    disgustedTimeout.value ??= setTimeout(() => {
-                        if (state.value.player.image === "player-disgusted") {
-                            state.value.player.image = "player-neutral";
-                        }
-                        disgustedTimeout.value = undefined;
-                    }, DISGUSTED_FACE_TIMER);
-
-                    if (!state.value.player.lives) {
-                        state.value.status = "IDLE";
-                    }
-                }
-            }
-        }
-    };
-
-    const obstacle = () =>
-        AVAILABLE_OBSTACLE_IMAGES[
-            random(0, AVAILABLE_OBSTACLE_IMAGES.length - 1)
-        ];
+    const randomObstacleImage = () =>
+        OBSTACLE_IMAGES[random(0, OBSTACLE_IMAGES.length - 1)];
 
     const animate = () => {
-        if (state.value.status === "ON") state.value.framesAlive += 1;
-        canvas.ctx.value!.clearRect(
-            0,
-            0,
-            state.value.layout.width,
-            state.value.layout.height,
-        );
-        draw(obstacle(), bullets.list.value);
-        draw("cloud", clouds.list.value);
-        drawPlayer();
-        drawLasers();
+        if (state.value.status === "ON") state.value.framesAlive++;
+        drawScene();
         updateGame();
         requestAnimationFrame(animate);
     };
