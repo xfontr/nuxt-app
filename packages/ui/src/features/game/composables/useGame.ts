@@ -83,6 +83,10 @@ const useGame = (
     };
 
     const drawPlayer = () => {
+        // Make player flash every other frame
+        if (state.value.isColliding && state.value.framesAlive % 2 === 0)
+            return;
+
         canvas.draw.image(state.value.player.image, {
             x: state.value.player.x,
             y: state.value.player.y,
