@@ -1,9 +1,12 @@
 <script lang="ts" setup>
-import { computed, useTemplateRef } from "vue";
+import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import type { Game } from "../types";
 import type { GameState } from "../types/Game";
+import { colors } from "../../../configs";
 
+const ASSETS = "./img/game/";
 const PROGRESS_BAR_WIDTH = 100; // we should probably make this dynamic
+
 const props = defineProps<{
     game: Game;
     state: GameState;
@@ -12,7 +15,28 @@ const props = defineProps<{
     };
 }>();
 
+const getAsset = (name: string) => `${ASSETS}${name}.png`;
+
 const heartImages = useTemplateRef<HTMLImageElement[]>("heart");
+
+const availableKeys = ref<
+    {
+        src: string;
+        alt?: string;
+        title?: string;
+    }[]
+>([
+    { src: "keyboard-space", alt: "Keyboard space bar" },
+    {
+        src: "keyboard-left",
+        alt: "Keyboard left arrow",
+    },
+    { src: "keyboard-up", alt: "Keyboard up arrow" },
+    {
+        src: "keyboard-right",
+        alt: "Keyboard right arrow",
+    },
+]);
 
 const ratio = computed(() => props.game.laser.max / PROGRESS_BAR_WIDTH);
 
@@ -31,8 +55,8 @@ const lives = computed<boolean[]>(() => {
     list?.forEach((img, i) => {
         if (!heartImages.value?.[i]) return;
         heartImages.value[i].src = img
-            ? "./img/game/heart-full.png"
-            : "./img/game/heart-empty.png";
+            ? getAsset("heart-full")
+            : getAsset("heart-empty");
     });
 
     return list;
@@ -48,6 +72,25 @@ const distance = computed(
 const score = computed(
     () => props.state.bugsKilled * props.game.score.bugKilled + distance.value,
 );
+
+const linterLaser = ref<HTMLDivElement>();
+
+// Prevents unexpected vue bug
+const customVBind = () => {
+    if (!linterLaser.value) return;
+    linterLaser.value.style.setProperty("--min-bar", bar.value);
+
+    if (props.game.laser.min > props.state.laserLeft) {
+        linterLaser.value.style.setProperty(
+            "--min-bar-color",
+            colors.THEME_MAIN.colorsPrimary,
+        );
+    }
+};
+
+onMounted(customVBind);
+
+watch(() => props.state.laserLeft, customVBind);
 </script>
 
 <template>
@@ -55,7 +98,7 @@ const score = computed(
         <slot />
 
         <nav class="interface-navigation">
-            <div class="stats">
+            <div class="up">
                 <div class="lives">
                     <ul class="lives__list">
                         <li
@@ -81,18 +124,34 @@ const score = computed(
                 </span>
             </div>
 
-            <div class="laser">
-                <label
-                    class="laser__label"
-                    for="linter-laser"
-                    >{{ t.linterRay }}</label
-                >
-                <progress
-                    id="linter-laser"
-                    class="laser__progress"
-                    :value="state.laserLeft"
-                    :max="game.laser.max"
-                />
+            <div class="bottom">
+                <div class="bottom__laser">
+                    <label
+                        class="laser__label"
+                        for="linter-laser"
+                        >{{ t.linterRay }}</label
+                    >
+                    <progress
+                        ref="linterLaser"
+                        id="linter-laser"
+                        class="laser__progress"
+                        :value="state.laserLeft"
+                        :max="game.laser.max"
+                    />
+                </div>
+                <ul class="bottom__instructions">
+                    <li
+                        v-for="{ src, alt, title } in availableKeys"
+                        :key="src"
+                    >
+                        <img
+                            :src="getAsset(src)"
+                            :alt
+                            :title
+                            height="24"
+                        />
+                    </li>
+                </ul>
             </div>
         </nav>
     </div>
@@ -104,21 +163,35 @@ const score = computed(
 
 .interface-navigation {
     position: absolute;
-    bottom: 1rem;
+    bottom: 0;
     right: 1rem;
+    left: 1rem;
     font-size: $fonts-size-small;
     display: flex;
     flex-direction: column;
     align-items: end;
     justify-content: space-between;
-    height: 8rem;
+    height: 9rem;
+}
+
+.bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    &__instructions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    &__laser {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
 }
 
 .laser {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-
     &__label {
         text-align: right;
     }
@@ -155,8 +228,8 @@ const score = computed(
             top: 0;
             bottom: 0;
             width: 1px;
-            background-color: $colors-contrast;
-            left: v-bind(bar); // e.g., "25%"
+            background-color: var(--min-bar-color, $colors-secondary);
+            left: var(--min-bar);
             pointer-events: none;
             z-index: 1;
         }
@@ -168,7 +241,7 @@ const score = computed(
     gap: 0.5rem;
 }
 
-.stats {
+.up {
     display: flex;
     align-items: flex-end;
     flex-direction: column;
