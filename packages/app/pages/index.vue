@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Game, GradientScroll, Pointer, gradients } from "@portfolio/ui";
+import { Game, GradientScroll, gradients } from "@portfolio/ui";
 import { ASSETS, GAME_DATA } from "~/configs/game";
 
 const title = ref<HTMLHeadingElement>();
@@ -7,7 +7,6 @@ const target = ref<HTMLElement>();
 
 onMounted(() => {
     target.value = document.body;
-
     if (!title.value) return;
 });
 </script>

@@ -24,10 +24,7 @@
         "@changesets/cli": "^2.28.1"
     },
     "workspaces": [
-        "stylegen",
-        "ui",
-        "app",
-        "configs"
+        "packages/*"
     ],
     "devDependencies": {
         "husky": "^9.1.7"
