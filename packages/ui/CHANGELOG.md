@@ -1,5 +1,11 @@
 # @portfolio/ui
 
+## 0.1.0
+
+### Minor Changes
+
+- 9c4fe65: Add Game component
+
 ## 0.0.3
 
 ### Patch Changes
