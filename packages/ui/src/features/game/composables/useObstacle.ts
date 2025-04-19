@@ -5,7 +5,6 @@ import type { CanvasDrawOptions } from "../types/Canvas";
 import { random } from "../../../utils";
 
 const DEFAULT_OPTIONS: Required<ObstacleOptions> = {
-    amount: 40,
     canScale: false,
     width: 20,
     height: 20,
@@ -13,57 +12,57 @@ const DEFAULT_OPTIONS: Required<ObstacleOptions> = {
 };
 
 const useObstacle = (
-    gameOptions: Game,
-    gameState: Ref<GameState>,
+    state: Ref<GameState>,
+    game: Game,
     options: ObstacleOptions = {},
 ) => {
+    const canvas = state.value.layout;
     const {
         game: { layout },
         ...opts
     } = {
         ...DEFAULT_OPTIONS,
         ...options,
-        game: gameOptions,
+        game: game,
     };
 
-    const obstacles = ref<CanvasDrawOptions[]>(
-        Array.from({ length: opts.amount }, (_, i) => {
-            const scale = opts.canScale ? 0.5 + Math.random() * 1.5 : undefined;
+    const obstacles = ref<CanvasDrawOptions[]>([]);
+    const minSpacing = layout.obstacleSpacing;
 
-            return {
-                x:
-                    i * layout.obstacleStartOffset +
-                    layout.obstacleSpacing +
-                    random(-50, 50),
-                y:
-                    layout.canvas.height -
-                    layout.obstacleThresholds[
-                        random(0, layout.obstacleThresholds.length)
-                    ],
-                width: opts.width * (scale ?? 1),
-                height: opts.height * (scale ?? 1),
-                ...(scale ? { scale } : {}),
-            };
-        }),
-    );
+    const generateObstacle = (): CanvasDrawOptions => {
+        const scale = opts.canScale ? 0.5 + Math.random() * 1.5 : 1;
+
+        return {
+            x: canvas.width + random(0, 50),
+            y:
+                canvas.height -
+                layout.obstacleThresholds[
+                    random(0, layout.obstacleThresholds.length)
+                ],
+            width: opts.width * scale,
+            height: opts.height * scale,
+            ...(opts.canScale ? { scale } : {}),
+        };
+    };
 
     const update = () => {
-        obstacles.value.forEach((obstacle) => {
-            obstacle.x -= gameState.value.gameSpeed * opts.speedMultiplier;
-
-            if (obstacle.x + obstacle.width < 0) {
-                const farthestX = Math.max(...obstacles.value.map((o) => o.x));
-                obstacle.x =
-                    farthestX + layout.obstacleSpacing + random(-20, 20);
-            }
+        // Move obstacles
+        obstacles.value.forEach((o) => {
+            o.x -= state.value.gameSpeed * opts.speedMultiplier;
         });
+
+        // Remove those out of view
+        obstacles.value = obstacles.value.filter((o) => o.x + o.width > 0);
+
+        // Check if it's time to add a new one
+        const lastX = obstacles.value.at(-1)?.x ?? -Infinity;
+        if (lastX < canvas.width - minSpacing) {
+            obstacles.value.push(generateObstacle());
+        }
     };
 
     const reset = () => {
-        obstacles.value.forEach((obstacle, i) => {
-            obstacle.x =
-                i * layout.obstacleSpacing + layout.obstacleStartOffset;
-        });
+        obstacles.value = [];
     };
 
     return {

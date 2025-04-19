@@ -21,10 +21,19 @@ export type Game = {
     };
     layout: {
         floorPadding: number;
-        canvas: { width: number; height: number };
         obstacleSpacing: number;
         obstacleStartOffset: number;
         obstacleThresholds: number[];
+        canvas: {
+            /**
+             * 0 for full width
+             */
+            width: number;
+            /**
+             * 0 for full height
+             */
+            height: number;
+        };
     };
 };
 
@@ -38,4 +47,5 @@ export type GameState = {
     boosted: boolean;
     gameSpeed: number;
     player: { x: number; y: number; image: string };
+    layout: { width: number; height: number };
 };

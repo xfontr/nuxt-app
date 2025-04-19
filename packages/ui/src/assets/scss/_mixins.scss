@@ -12,7 +12,7 @@
 @mixin font-size($mobile, $desktop, $weight: $fonts-regular) {
     font-size: $mobile;
 
-    @media (min-width: $breakpoints-md) {
+    @media (min-width: $breakpoints-m) {
         font-size: $desktop;
     }
 }

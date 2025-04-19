@@ -1,166 +1,27 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
-import type { Game, GameState } from "./types/Game";
-import useCanvas from "./composables/useCanvas";
-import useObstacle from "./composables/useObstacle";
-import useWindow from "../../composables/useWindow";
-import type { CanvasDrawOptions } from "./types/Canvas";
+import type { Game } from "./types/Game";
 import type { Asset } from "./types/Asset";
-import useUserActions from "./composables/useUserActions";
-import { useLaser } from "./composables/useLaser";
-import { drawBeam } from "./utils/beam";
 import GameInterface from "./GameInterface.vue";
-
-const props = defineProps<{ game: Game; assets: Asset[] }>();
-
-const game = props.game;
-const { height, width } = game.layout.canvas;
-
-const state = ref<GameState>({
-    velocityY: 0,
-    jumpKeyHeld: false,
-    isJumping: false,
-    isLasering: false,
-    laserLeft: game.laser.offset,
-    laserReach: game.laser.minReach,
-    gameSpeed: game.physics.baseSpeed,
-    boosted: false,
-    player: {
-        x: game.player.offsetX,
-        y: 0,
-        image: "player-neutral",
-    },
-});
-
-const canvasElement = ref<HTMLCanvasElement>();
+import useGame from "./composables/useGame";
+import { useWindow } from "../../composables";
 
 const thisWindow = useWindow();
-const lasers = useLaser(state, game);
-const { keyDown, keyUp } = useUserActions(state, game);
-const canvas = useCanvas(canvasElement, props.assets);
-const bullets = useObstacle(game, state, { amount: 10 });
-const clouds = useObstacle(game, state, {
-    speedMultiplier: 0.2,
-    amount: 10,
-    canScale: true,
-    width: 60,
-    height: 40,
+const props = defineProps<{ game: Game; assets: Asset[] }>();
+const canvas = ref<HTMLCanvasElement>();
+
+const { animate, setup, state } = useGame(props.game, props.assets, canvas);
+
+thisWindow.on("resize", (window) => {
+    state.value.layout.width = window.innerWidth;
+    state.value.layout.height = window.innerHeight;
 });
 
-thisWindow.on<KeyboardEvent>("keyup", (_, e) => keyUp(e));
-thisWindow.on<KeyboardEvent>("keydown", (_, e) => keyDown(e));
-
-const restartGame = () => {
-    state.value.player.y = height - game.player.size - game.layout.floorPadding;
-    state.value.velocityY = 0;
-    state.value.isJumping = false;
-    state.value.laserLeft = game.laser.offset;
-    state.value.gameSpeed = game.physics.baseSpeed;
-    game.physics.jumpStrength = game.physics.baseJumpStrength;
-    state.value.boosted = false;
-
-    bullets.reset();
-};
-
-const setup = () => {
-    state.value.player.y = height - game.player.size - game.layout.floorPadding;
-
-    clouds.list.value = clouds.list.value.map((cloud) => ({
-        ...cloud,
-        x: Math.random() * width,
-        y: Math.random() * (height / 2),
-    }));
-};
-
-const drawPlayer = () => {
-    canvas.draw.image(state.value.player.image, {
-        x: state.value.player.x,
-        y: state.value.player.y,
-        width: game.player.size,
-        height: game.player.size,
-    });
-};
-
-const drawLasers = () => {
-    if (!lasers.laser.value) return;
-    drawBeam(lasers.laser.value, canvas.ctx.value!);
-};
-
-const draw = (image: string, pool: CanvasDrawOptions[]) => {
-    pool.forEach((option) => {
-        canvas.draw.image(image, option);
-    });
-};
-
-const updateGame = () => {
-    bullets.update();
-    clouds.update();
-    lasers.update();
-
-    // Check laser collisions
-
-    bullets.list.value = bullets.list.value.filter((obstacle) => {
-        const laserBeam = lasers.laser.value;
-        if (!laserBeam) return true;
-
-        // Laser ends at this world X position
-        const laserEndX =
-            state.value.player.x +
-            game.player.size +
-            game.layout.canvas.width * state.value.laserReach;
-
-        const verticalHit =
-            laserBeam.y < obstacle.y + obstacle.height &&
-            laserBeam.y + laserBeam.height > obstacle.y;
-
-        const horizontalHit = obstacle.x < laserEndX;
-
-        const hit = verticalHit && horizontalHit;
-
-        return !hit;
-    });
-    // Apply gravity
-    state.value.player.y += state.value.velocityY;
-    state.value.velocityY += state.value.jumpKeyHeld
-        ? game.physics.gravity * 0.5
-        : game.physics.gravity;
-
-    // Ground check
-    const groundY = height - game.player.size - game.layout.floorPadding;
-    if (state.value.player.y >= groundY) {
-        state.value.player.y = groundY;
-        state.value.velocityY = 0;
-        state.value.isJumping = false;
-    }
-
-    // Collision check
-    for (const obstacle of bullets.list.value) {
-        const collisionX =
-            state.value.player.x < obstacle.x + obstacle.width &&
-            state.value.player.x + game.player.size > obstacle.x;
-
-        const collisionY =
-            state.value.player.y < obstacle.y + obstacle.height &&
-            state.value.player.y + game.player.size > obstacle.y;
-
-        if (collisionX && collisionY) {
-            restartGame();
-            return;
-        }
-    }
-};
-const animate = () => {
-    canvas.ctx.value!.clearRect(0, 0, width, height);
-    draw("bullet", bullets.list.value);
-    draw("cloud", clouds.list.value);
-    drawPlayer();
-    drawLasers();
-    updateGame();
-    requestAnimationFrame(animate);
-};
-
 onMounted(() => {
-    if (!canvasElement.value) return;
+    state.value.layout.width = window.innerWidth;
+    state.value.layout.height = window.innerHeight;
+
+    if (!canvas.value) return;
 
     setup();
     animate();
@@ -168,11 +29,14 @@ onMounted(() => {
 </script>
 
 <template>
-    <GameInterface>
+    <GameInterface
+        :game
+        :state
+    >
         <canvas
-            ref="canvasElement"
-            :width="width"
-            :height="height"
+            ref="canvas"
+            :width="state.layout.width"
+            :height="state.layout.height"
         />
     </GameInterface>
 </template>

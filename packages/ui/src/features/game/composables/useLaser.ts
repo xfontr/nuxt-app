@@ -30,7 +30,7 @@ export const useLaser = (state: Ref<GameState>, game: Game) => {
         laser.value = {
             x: player.x + game.player.size + EYE_LEVEL_X,
             y: player.y + yOffset,
-            width: game.layout.canvas.width * state.value.laserReach,
+            width: state.value.layout.width * state.value.laserReach,
             height: BEAM_HEIGHT,
         };
 
@@ -61,11 +61,12 @@ export const useLaser = (state: Ref<GameState>, game: Game) => {
             return;
         }
 
-        if (state.value.laserReach < game.laser.maxReach)
-            state.value.laserReach += 0.1;
+        if (state.value.laserReach < game.laser.maxReach) {
+            state.value.laserReach += game.laser.cost / game.laser.max;
+        }
 
         laser.value.y = state.value.player.y + yOffset;
-        laser.value.width = game.layout.canvas.width * state.value.laserReach;
+        laser.value.width = state.value.layout.width * state.value.laserReach;
         state.value.laserLeft -= game.laser.cost;
     };
 
