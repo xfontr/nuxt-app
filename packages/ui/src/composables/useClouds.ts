@@ -58,13 +58,13 @@ const useClouds = (state: Ref<GameState>) => {
         (status) => {
             if (status === "ON") {
                 clouds.value = clouds.value.map((cloud) => {
-                    const scale = 1 + Math.random() * 2;
+                    const scale = 1 + Math.random() * 1;
 
                     return {
                         ...cloud,
                         y: 0 + random(0, 100),
-                        width: 90 * scale,
-                        height: 90 * scale,
+                        width: 110 * scale,
+                        height: 110 * scale,
                         scale,
                         image: `meteor-${random(0, 0)}`,
                         icon: `framework-${random(0, 5)}`,

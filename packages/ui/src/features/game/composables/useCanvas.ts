@@ -42,7 +42,7 @@ const useCanvas = (
         }
 
         if (options.icon && assets.value[options.icon]) {
-            const iconSize = 90;
+            const iconSize = 70;
             const centerX = options.x + options.width / 2;
             const centerY = options.y + options.height / 2;
 

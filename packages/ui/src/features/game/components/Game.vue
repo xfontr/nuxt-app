@@ -86,9 +86,9 @@ onMounted(() => {
         background: linear-gradient(
             to bottom,
             var(--color-stop-1),
-            var(--color-stop-2) 40%,
-            var(--color-stop-3) 80%,
-            #ffffff 80%
+            var(--color-stop-2) 40vh,
+            var(--color-stop-3) calc(70vh + 1%),
+            #ffffff calc(70vh + 1%)
         );
         z-index: 1;
         transition: --color-stop-1 1s ease, --color-stop-2 1s ease,
