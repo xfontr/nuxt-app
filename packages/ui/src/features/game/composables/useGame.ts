@@ -8,10 +8,8 @@ import useClouds from "../../../composables/useClouds";
 import type { Asset } from "../types";
 import type { CanvasDrawOptions } from "../types/Canvas";
 import { drawBeam } from "../utils/beam";
-import { random } from "../../../utils";
 import { useWindow } from "../../../composables";
 
-const OBSTACLE_IMAGES = ["bug-1", "bug-2"];
 const FACE_TIMER = 2000;
 const COLLISION_COOLDOWN = 500;
 
@@ -191,17 +189,18 @@ const useGame = (
 
     const drawScene = () => {
         canvas.reset();
-        draw("cloud", clouds.list.value);
-        draw(randomObstacleImage(), bugs.list.value);
+        draw(clouds.list.value);
+        draw(bugs.list.value);
         drawPlayer();
         drawLasers();
     };
 
     const drawPlayer = () => {
         const { player, framesAlive, isColliding } = state.value;
-        if (isColliding && framesAlive % 2 === 0) return;
+        if (isColliding && framesAlive % 4 === 0) return;
 
-        canvas.draw.image(player.image, {
+        canvas.draw.image({
+            image: player.image,
             x: player.x,
             y: player.y,
             width: game.player.size,
@@ -214,12 +213,9 @@ const useGame = (
         drawBeam(lasers.laser.value, canvas.ctx.value!);
     };
 
-    const draw = (image: string, pool: CanvasDrawOptions[]) => {
-        pool.forEach((option) => canvas.draw.image(image, option));
+    const draw = (pool: CanvasDrawOptions[]) => {
+        pool.forEach(canvas.draw.image);
     };
-
-    const randomObstacleImage = () =>
-        OBSTACLE_IMAGES[random(0, OBSTACLE_IMAGES.length - 1)];
 
     const animate = () => {
         if (state.value.status === "ON") state.value.framesAlive++;

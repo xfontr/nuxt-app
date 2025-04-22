@@ -82,7 +82,7 @@ onMounted(() => {
     }
 
     .canvas {
-        border-bottom: 1px solid $colors-primary-very-light;
+        border-bottom: 1px solid $colors-primary-very-light !important;
         background: linear-gradient(
             to bottom,
             var(--color-stop-1),

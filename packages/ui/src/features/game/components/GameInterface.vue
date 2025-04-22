@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
+import { computed, ref, useTemplateRef, watch } from "vue";
 import type { Asset, Game } from "../types";
 import type { GameState } from "../types/Game";
 import { colors } from "../../../configs";

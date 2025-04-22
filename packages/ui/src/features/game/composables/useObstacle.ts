@@ -8,22 +8,35 @@ const useObstacle = (state: Ref<GameState>, { layout }: Game) => {
     const { width, height, speedMultiplier } = OBSTACLE_OPTIONS;
     const canvas = state.value.layout;
 
-    const obstacles = ref<CanvasDrawOptions[]>([]);
+    const obstacles = ref<(CanvasDrawOptions & { baseY: number })[]>([]);
 
     const setY = () =>
         canvas.height -
         layout.obstacleThresholds[random(0, layout.obstacleThresholds.length)];
 
-    const generateObstacle = (): CanvasDrawOptions => ({
-        x: canvas.width + random(0, 50),
-        y: setY(),
-        width,
-        height,
-    });
+    const generateObstacle = (): CanvasDrawOptions & { baseY: number } => {
+        const baseY = setY();
+
+        return {
+            x: canvas.width + random(0, 50),
+            y: baseY,
+            baseY,
+            width,
+            height,
+            image: `bug-${random(0, 3)}`,
+            imageSecond: `bug-${random(0, 3)}`,
+            imageRate: 4,
+        };
+    };
 
     const update = () => {
-        obstacles.value.forEach((obstacle) => {
+        const frame = state.value.framesAlive;
+
+        obstacles.value.forEach((obstacle, index) => {
             obstacle.x -= state.value.gameSpeed * speedMultiplier;
+
+            const wave = Math.sin((frame + index * 13) * 0.1);
+            obstacle.y = obstacle.baseY + wave * 1.5;
         });
 
         obstacles.value = obstacles.value.filter(
