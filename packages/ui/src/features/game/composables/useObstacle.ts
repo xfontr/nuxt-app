@@ -1,60 +1,53 @@
 import { ref, type Ref } from "vue";
 import type { Game, GameState } from "../types/Game";
-import type { ObstacleOptions } from "../types/Obstacle";
 import type { CanvasDrawOptions } from "../types/Canvas";
 import { random } from "../../../utils";
+import { OBSTACLE_OPTIONS } from "../constants";
 
-const DEFAULT_OPTIONS: Required<ObstacleOptions> = {
-    width: 20,
-    height: 20,
-    speedMultiplier: 1,
-};
-
-const useObstacle = (
-    state: Ref<GameState>,
-    game: Game,
-    options: ObstacleOptions = {},
-) => {
+const useObstacle = (state: Ref<GameState>, { layout }: Game) => {
+    const { width, height, speedMultiplier } = OBSTACLE_OPTIONS;
     const canvas = state.value.layout;
-    const {
-        game: { layout },
-        ...opts
-    } = {
-        ...DEFAULT_OPTIONS,
-        ...options,
-        game: game,
-    };
 
-    const obstacles = ref<CanvasDrawOptions[]>([]);
-    const minSpacing = layout.obstacleSpacing;
+    const obstacles = ref<(CanvasDrawOptions & { baseY: number })[]>([]);
 
-    const generateObstacle = (): CanvasDrawOptions => {
+    const setY = () =>
+        canvas.height -
+        layout.obstacleThresholds[random(0, layout.obstacleThresholds.length)];
+
+    const generateObstacle = (): CanvasDrawOptions & { baseY: number } => {
+        const baseY = setY();
+
         return {
             x: canvas.width + random(0, 50),
-            y:
-                canvas.height -
-                layout.obstacleThresholds[
-                    random(0, layout.obstacleThresholds.length)
-                ],
-            width: opts.width,
-            height: opts.height,
+            y: baseY,
+            baseY,
+            width,
+            height,
+            image: `bug-${random(0, 3)}`,
+            imageSecond: `bug-${random(0, 3)}`,
+            imageRate: 4,
         };
     };
 
     const update = () => {
-        // Move obstacles
-        obstacles.value.forEach((o) => {
-            o.x -= state.value.gameSpeed * opts.speedMultiplier;
+        const frame = state.value.framesAlive;
+
+        obstacles.value.forEach((obstacle, index) => {
+            obstacle.x -= state.value.gameSpeed * speedMultiplier;
+
+            const wave = Math.sin((frame + index * 13) * 0.1);
+            obstacle.y = obstacle.baseY + wave * 1.5;
         });
 
-        // Remove those out of view
-        obstacles.value = obstacles.value.filter((o) => o.x + o.width > 0);
+        obstacles.value = obstacles.value.filter(
+            ({ x, width }) => x + width > 0,
+        );
 
-        // Check if it's time to add a new one
         const lastX = obstacles.value.at(-1)?.x ?? -Infinity;
-        if (lastX < canvas.width - minSpacing) {
-            obstacles.value.push(generateObstacle());
-        }
+
+        if (lastX >= canvas.width - layout.obstacleSpacing) return;
+
+        obstacles.value.push(generateObstacle());
     };
 
     const reset = () => {

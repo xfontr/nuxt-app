@@ -9,7 +9,6 @@ export type Game = {
     };
     player: {
         size: number;
-        offsetX: number;
         lives: number;
     };
     score: {
@@ -45,10 +44,22 @@ export type GameState = {
     isJumping: boolean;
     isLasering: boolean;
     isColliding: boolean;
+    isSpawning: boolean;
     laserLeft: number;
     laserReach: number;
     gameSpeed: number;
-    player: { x: number; y: number; image: string; lives: number };
+    player: {
+        offsetX: number;
+        x: number;
+        y: number;
+        image:
+            | "player-neutral"
+            | "player-fast"
+            | "player-slow"
+            | "player-laser"
+            | "player-disgusted";
+        lives: number;
+    };
     layout: { width: number; height: number };
     bugsKilled: number;
     framesAlive: number;

@@ -1,68 +1,40 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
-import type { Game } from "../types";
+import { computed, ref, useTemplateRef, watch } from "vue";
+import type { Asset, Game } from "../types";
 import type { GameState } from "../types/Game";
 import { colors } from "../../../configs";
+import { ASSETS } from "../constants";
+import type { Unit } from "../../../types/Unit";
+import type { Translations } from "../types/Translations";
+import Hints from "./Hints.vue";
+import Tag from "../../../components/Tag.vue";
 
-const ASSETS = "./img/game/";
-const PROGRESS_BAR_WIDTH = 100; // we should probably make this dynamic
+const PROGRESS_BAR_WIDTH = 100;
 
 const props = defineProps<{
     game: Game;
     state: GameState;
-    t: {
-        linterRay: string;
-    };
+    t: Translations;
 }>();
 
-const getAsset = (name: string) => `${ASSETS}${name}.png`;
-
 const heartImages = useTemplateRef<HTMLImageElement[]>("heart");
+const linterLaser = ref<HTMLDivElement>();
 
-const availableKeys = ref<
-    {
-        src: string;
-        alt?: string;
-        title?: string;
-    }[]
->([
-    { src: "keyboard-space", alt: "Keyboard space bar" },
-    {
-        src: "keyboard-left",
-        alt: "Keyboard left arrow",
-    },
-    { src: "keyboard-up", alt: "Keyboard up arrow" },
-    {
-        src: "keyboard-right",
-        alt: "Keyboard right arrow",
-    },
-]);
+const getAsset = (name: string): Asset => `${ASSETS}${name}.png`;
 
-const ratio = computed(() => props.game.laser.max / PROGRESS_BAR_WIDTH);
-
-const bar = computed(
-    () => (props.game.laser.min / ratio.value).toString() + "px",
+const ratio = computed<number>(() => props.game.laser.max / PROGRESS_BAR_WIDTH);
+const minBarWidth = computed<`${string}${Unit}`>(
+    () => `${props.game.laser.min / ratio.value}px`,
 );
 
-const lives = computed<boolean[]>(() => {
-    const list: boolean[] = [];
-    const max = props.game.player.lives;
+const lives = computed<boolean[]>(() =>
+    Array.from(
+        { length: props.game.player.lives },
+        (_, i) => props.state.player.lives > i,
+    ),
+);
 
-    for (let i = 0; i < max; i += 1) {
-        list.push(props.state.player.lives > i);
-    }
-
-    list?.forEach((img, i) => {
-        if (!heartImages.value?.[i]) return;
-        heartImages.value[i].src = img
-            ? getAsset("heart-full")
-            : getAsset("heart-empty");
-    });
-
-    return list;
-});
-
-const distance = computed(
+const distance = computed<number>(
     () =>
         +(props.state.framesAlive * props.game.score.frameToDistance).toFixed(
             0,
@@ -73,34 +45,57 @@ const score = computed(
     () => props.state.bugsKilled * props.game.score.bugKilled + distance.value,
 );
 
-const linterLaser = ref<HTMLDivElement>();
-
-// Prevents unexpected vue bug
-const customVBind = () => {
+const applyLaserBarStyles = () => {
     if (!linterLaser.value) return;
-    linterLaser.value.style.setProperty("--min-bar", bar.value);
 
-    if (props.game.laser.min > props.state.laserLeft) {
-        linterLaser.value.style.setProperty(
-            "--min-bar-color",
-            colors.THEME_MAIN.colorsPrimary,
-        );
-    }
+    const isBelowMin = props.game.laser.min > props.state.laserLeft;
+
+    const color = isBelowMin
+        ? colors.THEME_MAIN.colorsPrimary
+        : colors.THEME_MAIN.colorsSecondary;
+
+    linterLaser.value.style.setProperty("--min-bar", minBarWidth.value);
+    linterLaser.value.style.setProperty("--min-bar-color", color);
 };
 
-onMounted(customVBind);
+const setUpLives = () => {
+    lives.value.forEach((alive, i) => {
+        const img = heartImages.value?.[i];
+        if (img) img.src = getAsset(alive ? "heart-full" : "heart-empty");
+    });
+};
 
-watch(() => props.state.laserLeft, customVBind);
+watch(() => props.state.laserLeft, applyLaserBarStyles, { immediate: true });
+watch(lives, setUpLives, { immediate: true });
 </script>
 
 <template>
     <div class="game-interface">
         <slot />
+        <nav
+            :class="[
+                'interface-navigation',
+                { 'interface-navigation--right': state.status === 'ON' },
+            ]"
+        >
+            <Transition>
+                <Hints
+                    class="interface-navigation__hints"
+                    v-if="state.status === 'IDLE'"
+                    :t
+            /></Transition>
 
-        <nav class="interface-navigation">
-            <div class="up">
-                <div class="lives">
-                    <ul class="lives__list">
+            <div
+                class="column"
+                v-show="state.status === 'ON'"
+            >
+                <div class="up">
+                    <Tag> {{ state.bugsKilled }} bugs fixed</Tag>
+                    <span class="up__score">{{ score }} pts.</span>
+                </div>
+
+                <div class="bottom">
+                    <ul class="lives">
                         <li
                             v-for="(_, i) in lives"
                             :key="i"
@@ -113,45 +108,21 @@ watch(() => props.state.laserLeft, customVBind);
                             />
                         </li>
                     </ul>
-                </div>
-                <span>
-                    Score:
-                    {{ score }}
-                </span>
-                <span>
-                    Bugs:
-                    {{ state.bugsKilled }} | {{ distance }} m.
-                </span>
-            </div>
-
-            <div class="bottom">
-                <div class="bottom__laser">
-                    <label
-                        class="laser__label"
-                        for="linter-laser"
-                        >{{ t.linterRay }}</label
-                    >
-                    <progress
-                        ref="linterLaser"
-                        id="linter-laser"
-                        class="laser__progress"
-                        :value="state.laserLeft"
-                        :max="game.laser.max"
-                    />
-                </div>
-                <ul class="bottom__instructions">
-                    <li
-                        v-for="{ src, alt, title } in availableKeys"
-                        :key="src"
-                    >
-                        <img
-                            :src="getAsset(src)"
-                            :alt
-                            :title
-                            height="24"
+                    <div class="bottom__laser">
+                        <progress
+                            ref="linterLaser"
+                            id="linter-laser"
+                            class="laser__progress"
+                            :value="state.laserLeft"
+                            :max="game.laser.max"
                         />
-                    </li>
-                </ul>
+                        <label
+                            class="laser__label"
+                            for="linter-laser"
+                            >{{ t.linterRay }}</label
+                        >
+                    </div>
+                </div>
             </div>
         </nav>
     </div>
@@ -160,24 +131,38 @@ watch(() => props.state.laserLeft, customVBind);
 <style lang="scss">
 @use "../../../assets/scss/variables/colors" as *;
 @use "../../../assets/scss/variables/fonts" as *;
+@use "../../../assets/scss/variables/distances" as *;
 
 .interface-navigation {
     position: absolute;
-    bottom: 0;
-    right: 1rem;
-    left: 1rem;
+    bottom: $distances-xs;
+    right: 2rem;
     font-size: $fonts-size-small;
+    height: 10rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 0;
+    width: 55%;
+
+    &--right {
+        justify-content: flex-end;
+    }
+}
+
+.column {
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: end;
     justify-content: space-between;
-    height: 9rem;
 }
 
 .bottom {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    align-items: flex-end;
+    gap: 0.25rem;
 
     &__instructions {
         display: flex;
@@ -188,6 +173,7 @@ watch(() => props.state.laserLeft, customVBind);
         display: flex;
         flex-direction: column;
         align-items: flex-end;
+        gap: 0.25rem;
     }
 }
 
@@ -200,14 +186,13 @@ watch(() => props.state.laserLeft, customVBind);
         font-size: inherit;
         appearance: none;
         width: 100px;
-        height: 10px;
+        height: 5px;
+        border-radius: 5px;
         border: 1px solid $colors-primary;
         background-color: $colors-secondary;
-        border-radius: 0;
         position: relative;
         overflow: hidden;
 
-        // WebKit-based browsers
         &::-webkit-progress-bar {
             background-color: $colors-secondary;
         }
@@ -216,19 +201,17 @@ watch(() => props.state.laserLeft, customVBind);
             background-color: $colors-primary;
         }
 
-        // Firefox
         &::-moz-progress-bar {
             background-color: $colors-primary;
         }
 
-        // The vertical line at game.laser.min %
         &::after {
             content: "";
             position: absolute;
             top: 0;
             bottom: 0;
             width: 1px;
-            background-color: var(--min-bar-color, $colors-secondary);
+            background-color: var(--min-bar-color);
             left: var(--min-bar);
             pointer-events: none;
             z-index: 1;
@@ -236,17 +219,18 @@ watch(() => props.state.laserLeft, customVBind);
     }
 }
 
-.lives__list {
+.lives {
     display: flex;
-    gap: 0.5rem;
+    gap: $distances-xs;
 }
 
 .up {
     display: flex;
-    align-items: flex-end;
     flex-direction: column;
+    gap: $distances-xs;
+    align-items: flex-end;
 
-    & p {
+    &__score {
         font-size: inherit;
     }
 }

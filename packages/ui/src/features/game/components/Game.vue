@@ -5,39 +5,40 @@ import type { Asset } from "../types/Asset";
 import GameInterface from "./GameInterface.vue";
 import useGame from "../composables/useGame";
 import { useWindow } from "../../../composables";
+import { PLAYER_LOCATION_CLASS } from "../constants";
+import type { Translations } from "../types/Translations";
 
 const thisWindow = useWindow();
+const canvas = ref<HTMLCanvasElement>();
+
 const props = defineProps<{
     game: Game;
     assets: Asset[];
-    t: { linterRay: string };
+    t: Translations;
 }>();
-
-const canvas = ref<HTMLCanvasElement>();
 
 const { animate, setup, state } = useGame(props.game, props.assets, canvas);
 
-thisWindow.on("resize", (window) => {
+const updateLayoutAndPlayerPosition = () => {
     state.value.layout.width = window.innerWidth;
     state.value.layout.height = window.innerHeight;
-    const playerLocationX = document
-        .querySelector(".player-loc")
+
+    const x = document
+        .querySelector(PLAYER_LOCATION_CLASS)
         ?.getBoundingClientRect().x;
 
-    state.value.player.x = playerLocationX ?? state.value.player.x;
-});
+    if (x === undefined) return;
+
+    if (state.value.status === "ON") state.value.player.x = x;
+    if (state.value.status === "IDLE") state.value.player.offsetX = x;
+};
+
+thisWindow.on("resize", updateLayoutAndPlayerPosition);
 
 onMounted(() => {
-    state.value.layout.width = window.innerWidth;
-    state.value.layout.height = window.innerHeight;
-    const playerLocationX = document
-        .querySelector(".player-loc")
-        ?.getBoundingClientRect().x;
-
     if (!canvas.value) return;
 
-    state.value.player.x = playerLocationX ?? state.value.player.x;
-
+    updateLayoutAndPlayerPosition();
     setup();
     animate();
 });
@@ -51,7 +52,7 @@ onMounted(() => {
     >
         <canvas
             ref="canvas"
-            class="canvas"
+            :class="['canvas', { 'canvas--on': state.status === 'ON' }]"
             :width="state.layout.width"
             :height="state.layout.height"
         />
@@ -59,23 +60,49 @@ onMounted(() => {
 </template>
 
 <style lang="scss">
-.canvas {
-    // background: linear-gradient(to top, #f1e9d2 0%, transparent 100%); //old
-    background: linear-gradient(
-        to bottom,
-        #e8fcff 0%,
-        #c2f7ff 30%,
-        #f7feff 70%,
-        white 70%
-    ); //new
-    // background: linear-gradient(
-    //     180deg,
-    //     #ffffff 0%,
-    //     #ffffff 70%,
-    //     #f4f4f4 70%
-    // ); //new
-    // background: url("./img/game/grid.png");
-    // background-size: 30%;
-    z-index: 1;
+@use "../../../assets/scss/variables/colors" as *;
+
+@layer base {
+    @property --color-stop-1 {
+        syntax: "<color>";
+        initial-value: #d4e3ed;
+        inherits: false;
+    }
+
+    @property --color-stop-2 {
+        syntax: "<color>";
+        initial-value: #bcd3e3;
+        inherits: false;
+    }
+
+    @property --color-stop-3 {
+        syntax: "<color>";
+        initial-value: #a9c3da;
+        inherits: false;
+    }
+
+    .canvas {
+        border-bottom: 1px solid $colors-primary-very-light !important;
+        background: linear-gradient(
+            to bottom,
+            var(--color-stop-1),
+            var(--color-stop-2) 40vh,
+            var(--color-stop-3) calc(70vh + 1%),
+            #ffffff calc(70vh + 1%)
+        );
+        z-index: 1;
+        transition: --color-stop-1 1s ease, --color-stop-2 1s ease,
+            --color-stop-3 1s ease;
+
+        --color-stop-1: #d4e3ed;
+        --color-stop-2: #bcd3e3;
+        --color-stop-3: #a9c3da;
+
+        &--on {
+            --color-stop-1: #2b0000;
+            --color-stop-2: #8b1e1e;
+            --color-stop-3: #f94e4e;
+        }
+    }
 }
 </style>
