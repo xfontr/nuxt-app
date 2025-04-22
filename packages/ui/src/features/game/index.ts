@@ -1,5 +1,5 @@
 import { default as Game } from "./components/Game.vue";
 
-import type { Asset, Game as GameOptions } from "./types";
+import type { Asset, Game as GameOptions, Translations } from "./types";
 
-export { Game, type GameOptions, type Asset };
+export { Game, type GameOptions, type Asset, type Translations };

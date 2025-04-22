@@ -1,18 +1,13 @@
+import type { KeyboardAsset } from "./types/Asset";
 import type { ObstacleOptions } from "./types/Obstacle";
 
 export const ASSETS = "./img/game/";
 
-export const AVAILABLE_KEYS = [
-    { src: "keyboard-space", alt: "Keyboard space bar" },
-    {
-        src: "keyboard-left",
-        alt: "Keyboard left arrow",
-    },
-    { src: "keyboard-up", alt: "Keyboard up arrow" },
-    {
-        src: "keyboard-right",
-        alt: "Keyboard right arrow",
-    },
+export const AVAILABLE_KEYS: KeyboardAsset[] = [
+    { name: "space", src: "keyboard-space", alt: "Keyboard space bar" },
+    { name: "up", src: "keyboard-up", alt: "Keyboard up arrow" },
+    { name: "left", src: "keyboard-left", alt: "Keyboard left arrow" },
+    { name: "right", src: "keyboard-right", alt: "Keyboard right arrow" },
 ];
 
 export const EYE_LEVEL_Y = 0.3;

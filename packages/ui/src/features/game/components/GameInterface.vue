@@ -3,19 +3,21 @@ import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import type { Asset, Game } from "../types";
 import type { GameState } from "../types/Game";
 import { colors } from "../../../configs";
-import { ASSETS, AVAILABLE_KEYS } from "../constants";
+import { ASSETS } from "../constants";
 import type { Unit } from "../../../types/Unit";
+import type { Translations } from "../types/Translations";
+import Hints from "./Hints.vue";
+import Tag from "../../../components/Tag.vue";
 
 const PROGRESS_BAR_WIDTH = 100;
 
 const props = defineProps<{
     game: Game;
     state: GameState;
-    t: { linterRay: string };
+    t: Translations;
 }>();
 
 const heartImages = useTemplateRef<HTMLImageElement[]>("heart");
-const availableKeys = ref(AVAILABLE_KEYS);
 const linterLaser = ref<HTMLDivElement>();
 
 const getAsset = (name: string): Asset => `${ASSETS}${name}.png`;
@@ -56,26 +58,44 @@ const applyLaserBarStyles = () => {
     linterLaser.value.style.setProperty("--min-bar-color", color);
 };
 
-onMounted(applyLaserBarStyles);
-
-watch(() => props.state.laserLeft, applyLaserBarStyles);
-
-watch(lives, (newLives) => {
-    newLives.forEach((alive, i) => {
+const setUpLives = () => {
+    lives.value.forEach((alive, i) => {
         const img = heartImages.value?.[i];
         if (img) img.src = getAsset(alive ? "heart-full" : "heart-empty");
     });
-});
+};
+
+watch(() => props.state.laserLeft, applyLaserBarStyles, { immediate: true });
+watch(lives, setUpLives, { immediate: true });
 </script>
 
 <template>
     <div class="game-interface">
         <slot />
+        <nav
+            :class="[
+                'interface-navigation',
+                { 'interface-navigation--right': state.status === 'ON' },
+            ]"
+        >
+            <Transition>
+                <Hints
+                    class="interface-navigation__hints"
+                    v-if="state.status === 'IDLE'"
+                    :t
+            /></Transition>
 
-        <nav class="interface-navigation">
-            <div class="up">
-                <div class="lives">
-                    <ul class="lives__list">
+            <div
+                class="column"
+                v-show="state.status === 'ON'"
+            >
+                <div class="up">
+                    <Tag> {{ state.bugsKilled }} bugs fixed</Tag>
+                    <span class="up__score">{{ score }} pts.</span>
+                </div>
+
+                <div class="bottom">
+                    <ul class="lives">
                         <li
                             v-for="(_, i) in lives"
                             :key="i"
@@ -88,44 +108,21 @@ watch(lives, (newLives) => {
                             />
                         </li>
                     </ul>
-                </div>
-                <span>
-                    Score:
-                    {{ score }}
-                </span>
-                <span>
-                    Bugs:
-                    {{ state.bugsKilled }} | {{ distance }} m.
-                </span>
-            </div>
-
-            <div class="bottom">
-                <div class="bottom__laser">
-                    <label
-                        class="laser__label"
-                        for="linter-laser"
-                        >{{ t.linterRay }}</label
-                    >
-                    <progress
-                        ref="linterLaser"
-                        id="linter-laser"
-                        class="laser__progress"
-                        :value="state.laserLeft"
-                        :max="game.laser.max"
-                    />
-                </div>
-                <ul class="bottom__instructions">
-                    <li
-                        v-for="{ src, alt } in availableKeys"
-                        :key="src"
-                    >
-                        <img
-                            :src="getAsset(src)"
-                            :alt
-                            height="24"
+                    <div class="bottom__laser">
+                        <progress
+                            ref="linterLaser"
+                            id="linter-laser"
+                            class="laser__progress"
+                            :value="state.laserLeft"
+                            :max="game.laser.max"
                         />
-                    </li>
-                </ul>
+                        <label
+                            class="laser__label"
+                            for="linter-laser"
+                            >{{ t.linterRay }}</label
+                        >
+                    </div>
+                </div>
             </div>
         </nav>
     </div>
@@ -134,24 +131,38 @@ watch(lives, (newLives) => {
 <style lang="scss">
 @use "../../../assets/scss/variables/colors" as *;
 @use "../../../assets/scss/variables/fonts" as *;
+@use "../../../assets/scss/variables/distances" as *;
 
 .interface-navigation {
     position: absolute;
-    bottom: 0;
-    right: 1rem;
-    left: 1rem;
+    bottom: $distances-xs;
+    right: 2rem;
     font-size: $fonts-size-small;
+    height: 10rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 0;
+    width: 55%;
+
+    &--right {
+        justify-content: flex-end;
+    }
+}
+
+.column {
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: end;
     justify-content: space-between;
-    height: 9rem;
 }
 
 .bottom {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    align-items: flex-end;
+    gap: 0.25rem;
 
     &__instructions {
         display: flex;
@@ -162,6 +173,7 @@ watch(lives, (newLives) => {
         display: flex;
         flex-direction: column;
         align-items: flex-end;
+        gap: 0.25rem;
     }
 }
 
@@ -174,10 +186,10 @@ watch(lives, (newLives) => {
         font-size: inherit;
         appearance: none;
         width: 100px;
-        height: 10px;
+        height: 5px;
+        border-radius: 5px;
         border: 1px solid $colors-primary;
         background-color: $colors-secondary;
-        border-radius: 0;
         position: relative;
         overflow: hidden;
 
@@ -207,17 +219,18 @@ watch(lives, (newLives) => {
     }
 }
 
-.lives__list {
+.lives {
     display: flex;
-    gap: 0.5rem;
+    gap: $distances-xs;
 }
 
 .up {
     display: flex;
-    align-items: flex-end;
     flex-direction: column;
+    gap: $distances-xs;
+    align-items: flex-end;
 
-    & p {
+    &__score {
         font-size: inherit;
     }
 }

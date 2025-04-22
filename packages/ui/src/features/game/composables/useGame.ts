@@ -50,13 +50,14 @@ const useGame = (
 
     const thisWindow = useWindow();
     const lasers = useLaser(state, game);
-    const { keyDown, keyUp } = useUserActions(state, game);
+    const { keyDown, keyUp, click } = useUserActions(state, game);
     const canvas = useCanvas(state, canvasElement, assets);
     const bugs = useObstacle(state, game);
     const clouds = useClouds(state);
 
     thisWindow.on<KeyboardEvent>("keyup", (_, e) => keyUp(e));
     thisWindow.on<KeyboardEvent>("keydown", (_, e) => keyDown(e));
+    thisWindow.on<MouseEvent>("click", (_, e) => click(e));
 
     const groundY = () =>
         state.value.layout.height - game.player.size - game.layout.floorPadding;
@@ -86,7 +87,6 @@ const useGame = (
     const setup = () => {
         restartGame();
         clouds.init();
-        state.value.status = "ON";
     };
 
     const spawnPlayer = () => {
@@ -177,11 +177,12 @@ const useGame = (
     };
 
     const updateGame = () => {
+        clouds.update();
+
         if (state.value.isSpawning) return spawnPlayer();
         if (state.value.status !== "ON") return;
 
         bugs.update();
-        clouds.update();
         lasers.update();
         handleLaserHits();
         applyGravity();

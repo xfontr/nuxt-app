@@ -1,10 +1,25 @@
-import type { Ref } from "vue";
+import { computed, type Ref } from "vue";
 import type { Game, GameState } from "../types/Game";
 import { isLeftKey, isRightKey, isSpaceKey, isUpKey } from "../utils/keyboard";
 
 const useUserActions = (state: Ref<GameState>, game: Game) => {
+    const enabled = computed(() => state.value.status === "ON");
+
     const keyDown = (e: KeyboardEvent) => {
         e.preventDefault();
+
+        if (isSpaceKey(e.code) && !enabled.value) {
+            state.value.status = "ON";
+            return;
+        }
+
+        if (!enabled.value) return;
+
+        if (isSpaceKey(e.code)) {
+            state.value.isLasering = true;
+        }
+
+        if (!enabled.value) return;
 
         if (isUpKey(e.key)) {
             if (state.value.isJumping) return;
@@ -26,13 +41,11 @@ const useUserActions = (state: Ref<GameState>, game: Game) => {
             state.value.gameSpeed =
                 game.physics.slowMultiplier * game.physics.baseSpeed;
         }
-
-        if (isSpaceKey(e.code)) {
-            state.value.isLasering = true;
-        }
     };
 
     const keyUp = (e: KeyboardEvent) => {
+        if (!enabled.value) return;
+
         e.preventDefault();
 
         if (isUpKey(e.key)) state.value.jumpKeyHeld = false;
@@ -53,7 +66,12 @@ const useUserActions = (state: Ref<GameState>, game: Game) => {
         }
     };
 
-    return { keyDown, keyUp };
+    const click = (e: MouseEvent) => {
+        e.preventDefault();
+        state.value.status = "IDLE";
+    };
+
+    return { keyDown, keyUp, click };
 };
 
 export default useUserActions;

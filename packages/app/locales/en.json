@@ -1,9 +1,18 @@
 {
     "landing": {
-        "title": "Just another <span class='matrix'>dev</span><div class='player-loc' />",
+        "title": "Just another dev<span class='player-loc' />",
         "description": "Seriously, you must be tired of all the pretentious web developer portfolios. Aaaaand here comes another one. Sorry mate, that's just the way it is. I was looking for some standard matrix gif and this Neo gif popped up. But hey, this Neo gif is as clean as it gets, so you can just stare at it or something."
     },
     "game": {
-        "linter_ray": "Linter ray"
+        "linter_ray": "Linter ray",
+        "keyboard": {
+            "up": "Jump",
+            "left": "Slow down",
+            "right": "Speed up",
+            "space": "Linter ray"
+        },
+        "instructions": {
+            "start": "Start"
+        }
     }
 }
