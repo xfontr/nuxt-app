@@ -1,4 +1,4 @@
-import { computed, ref, type Ref } from "vue";
+import { ref, type Ref } from "vue";
 import type { Game, GameState } from "../types/Game";
 import { useLaser } from "./useLaser";
 import useUserActions from "./useUserActions";
@@ -28,22 +28,21 @@ const useGame = (
     const { keyDown, keyUp } = useUserActions(state, game);
     const canvas = useCanvas(state, canvasElement, assets);
     const bugs = useObstacle(state, game);
-    const clouds = useBackground(state);
+    const background = useBackground(state);
 
     thisWindow.on<KeyboardEvent>("keyup", (_, e) => keyUp(e));
     thisWindow.on<KeyboardEvent>("keydown", (_, e) => keyDown(e));
 
-    const groundY = () =>
-        state.value.layout.height - game.player.size - game.layout.floorPadding;
+    const groundY = () => state.value.layout.height - game.player.size;
 
     const restartGame = () => {
-        restartState(game, state.value);
+        state.value = restartState(game, state.value);
         bugs.reset();
     };
 
     const setup = () => {
         state.value.player.y = groundY();
-        clouds.init();
+        background.init();
     };
 
     const spawnPlayer = () => {
@@ -76,12 +75,12 @@ const useGame = (
         const laser = lasers.laser.value;
         if (!laser) return;
 
-        bugs.list.value = bugs.list.value.filter(({ y, x, height }) => {
-            const laserEnd =
-                state.value.player.x + game.player.size + laser.width;
+        bugs.list.value = bugs.list.value.filter(({ y, x, height, width }) => {
+            const laserStart = state.value.player.x + game.player.size;
+            const laserEnd = laserStart + laser.width;
 
             const yHit = laser.y < y + height && laser.y + laser.height > y;
-            const xHit = x < laserEnd;
+            const xHit = x < laserEnd && x + width > laserStart;
 
             const hit = yHit && xHit;
 
@@ -135,7 +134,7 @@ const useGame = (
     };
 
     const updateGame = () => {
-        clouds.update();
+        background.update();
 
         if (state.value.isSpawning) return spawnPlayer();
         if (!state.value.isSpawning && state.value.status === "LOADING") {
@@ -151,10 +150,8 @@ const useGame = (
         handleCollisions();
     };
 
-    const drawScene = () => {
-        canvas.reset();
-
-        clouds.list.value.forEach((item) => {
+    const drawBackground = () => {
+        background.list.value.forEach((item) => {
             if (item.isCircle) {
                 canvas.ctx.value!.beginPath();
                 canvas.ctx.value!.arc(
@@ -170,15 +167,20 @@ const useGame = (
                 canvas.draw.image(item);
             }
         });
+    };
 
-        draw(bugs.list.value);
+    const drawScene = () => {
+        canvas.reset();
+
+        drawBackground();
+        drawBugs();
         drawPlayer();
         drawLasers();
     };
 
     const drawPlayer = () => {
-        const { player, framesAlive, isColliding } = state.value;
-        if (isColliding && framesAlive % 4 === 0) return;
+        const { player, frameCount, isColliding } = state.value;
+        if (isColliding && frameCount % 4 === 0) return;
 
         canvas.draw.image({
             image: player.image,
@@ -194,12 +196,26 @@ const useGame = (
         drawBeam(lasers.laser.value, canvas.ctx.value!);
     };
 
-    const draw = (pool: CanvasDrawOptions[]) => {
-        pool.forEach(canvas.draw.image);
+    const drawBugs = () => {
+        bugs.list.value.forEach(canvas.draw.image);
+    };
+
+    const updateFrameCount = () => {
+        if (state.value.status !== "ON") return;
+
+        state.value.frameCount += 1;
+
+        if (state.value.gameSpeed === game.physics.baseSpeed) {
+            state.value.distanceCount += 3;
+            return;
+        }
+
+        state.value.distanceCount +=
+            state.value.gameSpeed > game.physics.baseSpeed ? 4 : 2;
     };
 
     const animate = () => {
-        if (state.value.status === "ON") state.value.framesAlive++;
+        updateFrameCount();
         drawScene();
         updateGame();
         requestAnimationFrame(animate);

@@ -9,7 +9,9 @@ const TILT_X = 0.01;
 const TILT_Y = 0.004;
 const BASE_WIDTH = 60;
 const BASE_HEIGHT = 40;
+const BASE_SIZE_MULTIPLIER = 4;
 const STAR_DENSITY = 100;
+const CLOUD_DENSITY = 10;
 
 type Background = CanvasDrawOptions & BackgroundOptions;
 
@@ -19,10 +21,18 @@ const useBackground = (state: Ref<GameState>) => {
 
     const day = ref<Background[]>([]);
     const night = ref<Background[]>([]);
-
     const mouse = ref({ x: canvas.width / 2, y: canvas.height / 2 });
     const lastMouse = ref({ x: mouse.value.x, y: mouse.value.y });
     const lastScrollY = ref<number>(0);
+
+    const sizeMultiplier = ref<number>(BASE_SIZE_MULTIPLIER);
+
+    const updateSizeMultiplier = ({ width }: typeof canvas) => {
+        sizeMultiplier.value = Math.min(
+            BASE_SIZE_MULTIPLIER * (width / 1920) + 1,
+            BASE_SIZE_MULTIPLIER,
+        );
+    };
 
     const mode = computed<"day" | "night">(() =>
         state.value.status === "ON" ? "night" : "day",
@@ -55,6 +65,8 @@ const useBackground = (state: Ref<GameState>) => {
         });
     };
 
+    watch(() => canvas, updateSizeMultiplier, { deep: true });
+
     watch(
         () => state.value.status,
         (status, prevStatus) => {
@@ -62,8 +74,7 @@ const useBackground = (state: Ref<GameState>) => {
 
             if (status === "IDLE" || status === "OVER") {
                 day.value = day.value.map((cloud) => {
-                    const scale = 1 + Math.random() * 4;
-
+                    const scale = 1 + Math.random() * sizeMultiplier.value;
                     return {
                         ...cloud,
                         width: BASE_WIDTH * scale,
@@ -75,13 +86,15 @@ const useBackground = (state: Ref<GameState>) => {
                 });
             }
 
-            if (status === "ON") initNight(STAR_DENSITY);
+            if (status === "ON") initNight();
         },
     );
 
-    const init = (amount = 10) => {
-        day.value = Array.from({ length: amount }, () => {
-            const scale = 1 + Math.random() * 4;
+    const init = () => {
+        updateSizeMultiplier(canvas);
+
+        day.value = Array.from({ length: CLOUD_DENSITY }, () => {
+            const scale = 1 + Math.random() * sizeMultiplier.value;
 
             return {
                 x: Math.random() * canvas.width,
@@ -97,8 +110,8 @@ const useBackground = (state: Ref<GameState>) => {
         });
     };
 
-    const initNight = (density: number) => {
-        night.value = Array.from({ length: density }, () => {
+    const initNight = () => {
+        night.value = Array.from({ length: STAR_DENSITY }, () => {
             const size = random(2, 5);
             return {
                 x: random(0, canvas.width),
@@ -109,7 +122,8 @@ const useBackground = (state: Ref<GameState>) => {
                 offsetX: 0,
                 offsetY: 0,
                 isCircle: true,
-            };
+                scale: 1,
+            } satisfies Background;
         });
     };
 

@@ -17,12 +17,10 @@ const useCanvas = (
             throw new Error(`Could not find requested asset: ${options.image}`);
         }
 
-        const ctxRef = ctx.value!;
-
         if (options.imageSecond) {
-            ctxRef.drawImage(
+            ctx.value!.drawImage(
                 assets.value[
-                    state.value.framesAlive % (options.imageRate ?? 2) === 0
+                    state.value.frameCount % (options.imageRate ?? 4) === 0
                         ? options.image
                         : options.imageSecond
                 ],
@@ -32,26 +30,12 @@ const useCanvas = (
                 options.height,
             );
         } else {
-            ctxRef.drawImage(
+            ctx.value!.drawImage(
                 assets.value[options.image],
                 options.x,
                 options.y,
                 options.width,
                 options.height,
-            );
-        }
-
-        if (options.icon && assets.value[options.icon]) {
-            const iconSize = 70;
-            const centerX = options.x + options.width / 2;
-            const centerY = options.y + options.height / 2;
-
-            ctxRef.drawImage(
-                assets.value[options.icon],
-                centerX - iconSize / 2,
-                centerY - iconSize / 2,
-                iconSize,
-                iconSize,
             );
         }
     };

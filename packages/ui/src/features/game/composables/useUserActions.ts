@@ -1,12 +1,24 @@
-import { computed, type Ref } from "vue";
+import { computed, onUnmounted, ref, watch, type Ref } from "vue";
 import type { Game, GameState } from "../types/Game";
 import { isLeftKey, isRightKey, isSpaceKey, isUpKey } from "../utils/keyboard";
 
+const COOLDOWN = 500;
+
 const useUserActions = (state: Ref<GameState>, game: Game) => {
-    const enabled = computed(() => state.value.status !== "LOADING");
-    const isOn = computed(() => state.value.status === "ON");
-    const isIdle = computed(() => state.value.status === "IDLE");
-    const isOver = computed(() => state.value.status === "OVER");
+    const blockedTimer = ref<NodeJS.Timeout>();
+    const enabled = computed(
+        () => !blockedTimer.value && state.value.status !== "LOADING",
+    );
+
+    watch(
+        () => state.value.status,
+        () => {
+            clearTimeout(blockedTimer.value);
+            blockedTimer.value = setTimeout(() => {
+                blockedTimer.value = undefined;
+            }, COOLDOWN);
+        },
+    );
 
     const keyDown = (e: KeyboardEvent) => {
         e.preventDefault();
@@ -16,13 +28,13 @@ const useUserActions = (state: Ref<GameState>, game: Game) => {
         if (
             !state.value.isLasering &&
             isSpaceKey(e.code) &&
-            (isIdle.value || isOver.value)
+            (state.value.status === "IDLE" || state.value.status === "OVER")
         ) {
             state.value.status = "ON";
             return;
         }
 
-        if (!isOn.value) return;
+        if (state.value.status !== "ON") return;
 
         if (isSpaceKey(e.code)) {
             state.value.isLasering = true;
@@ -57,7 +69,7 @@ const useUserActions = (state: Ref<GameState>, game: Game) => {
             state.value.isLasering = false;
         }
 
-        if (!isOn.value || !enabled.value) return;
+        if (state.value.status !== "ON" || !enabled.value) return;
 
         if (isUpKey(e.key)) state.value.jumpKeyHeld = false;
 
@@ -72,6 +84,10 @@ const useUserActions = (state: Ref<GameState>, game: Game) => {
             state.value.gameSpeed = game.physics.baseSpeed;
         }
     };
+
+    onUnmounted(() => {
+        clearTimeout(blockedTimer.value);
+    });
 
     return { keyDown, keyUp };
 };
