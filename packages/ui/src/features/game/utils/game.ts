@@ -22,17 +22,23 @@ export const getInitialState = ({
         image: "player-neutral",
         lives: player.lives,
     },
-    framesAlive: 0,
+    frameCount: 0,
+    distanceCount: 0,
     bugsKilled: 0,
     layout: {
         width: 0,
         height: 0,
     },
+    difficulty: 0,
     stats: [],
 });
 
 const distance = (game: Game, state: GameState) =>
-    +(state.framesAlive * game.score.frameToDistance).toFixed(0);
+    +(
+        state.distanceCount *
+        (game.score.frameToDistance +
+            game.score.difficultyMultiplier * state.difficulty)
+    ).toFixed(0);
 
 const score = (game: Game, state: GameState) =>
     state.bugsKilled * game.score.bugKilled + distance(game, state);
@@ -42,6 +48,7 @@ export const restartState = (game: Game, state: GameState): GameState => {
 
     return {
         ...initialState,
+        status: state.status,
         player: {
             ...initialState.player,
             offsetX: state.player.offsetX,
@@ -55,7 +62,7 @@ export const restartState = (game: Game, state: GameState): GameState => {
             ...state.stats,
             {
                 bugsKilled: state.bugsKilled,
-                framesAlive: state.framesAlive,
+                frameCount: state.frameCount,
                 score: score(game, state),
             },
         ],

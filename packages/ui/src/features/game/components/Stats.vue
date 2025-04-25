@@ -5,10 +5,9 @@ import type { Translations } from "../types";
 
 const props = defineProps<{ state: GameState; t: Translations }>();
 
-const bestScore = computed<GameState["stats"][number]>(() => {
-    const stats = [...props.state.stats];
-    return stats.sort((a, b) => b.score - a.score)[0];
-});
+const bestScore = computed<GameState["stats"][number]>(
+    () => [...props.state.stats].sort((a, b) => b.score - a.score)[0],
+);
 
 const current = computed<GameState["stats"][number] | undefined>(() =>
     props.state.stats.at(-1),

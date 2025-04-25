@@ -14,13 +14,13 @@ withDefaults(defineProps<{ contrast?: boolean }>(), { contrast: false });
     display: flex;
     justify-content: center;
     align-items: center;
+    width: fit-content;
     padding: $distances-xxs $distances-xs;
     box-shadow: 3px 3px 7px 3px rgba(0, 0, 0, 0.08);
     background-color: $colors-secondary;
     color: $colors-primary;
     gap: $distances-xs;
     border-radius: 5px;
-
     font-size: 0.9rem;
 
     &--contrast {

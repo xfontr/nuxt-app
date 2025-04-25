@@ -5,7 +5,7 @@ import type { GameState } from "../types/Game";
 import { colors } from "../../../configs";
 import type { Unit } from "../../../types/Unit";
 import type { Translations } from "../types/Translations";
-import Hints from "./Hints.vue";
+import Instructions from "./Instructions.vue";
 import Tag from "../../../components/Tag.vue";
 import Lives from "./Lives.vue";
 import Stats from "./Stats.vue";
@@ -27,9 +27,11 @@ const minBarWidth = computed<`${string}${Unit}`>(
 
 const distance = computed<number>(
     () =>
-        +(props.state.framesAlive * props.game.score.frameToDistance).toFixed(
-            0,
-        ),
+        +(
+            props.state.distanceCount *
+            (props.game.score.frameToDistance +
+                props.game.score.difficultyMultiplier * props.state.difficulty)
+        ).toFixed(0),
 );
 
 const score = computed(
@@ -58,30 +60,27 @@ watch(() => props.state.laserLeft, applyLaserBarStyles, { immediate: true });
         <nav
             :class="[
                 'interface-navigation',
-                { 'interface-navigation--right': state.status === 'ON' },
+                { 'interface-navigation--spaced': state.status === 'OVER' },
             ]"
         >
-            <div v-show="state.status === 'OVER'">
-                <Stats
-                    :t
-                    :state
-                />
-            </div>
+            <Stats
+                v-show="state.status === 'OVER'"
+                :t
+                :state
+            />
 
-            <Transition>
-                <Hints
-                    class="interface-navigation__hints"
-                    v-if="state.status === 'IDLE' || state.status === 'OVER'"
-                    :t
-                    :state
-            /></Transition>
+            <Instructions
+                v-if="state.status === 'IDLE' || state.status === 'OVER'"
+                :t
+                :state
+            />
 
             <div
                 class="column"
                 v-show="state.status === 'ON'"
             >
                 <div class="up">
-                    <Tag> {{ state.bugsKilled }} {{ t.stats.bugs_fixed }}</Tag>
+                    <Tag>{{ state.bugsKilled }} {{ t.stats.bugs_fixed }}</Tag>
                     <span class="up__score"
                         >{{ score }} {{ t.stats.points }}</span
                     >
@@ -116,22 +115,28 @@ watch(() => props.state.laserLeft, applyLaserBarStyles, { immediate: true });
 @use "../../../assets/scss/variables/colors" as *;
 @use "../../../assets/scss/variables/fonts" as *;
 @use "../../../assets/scss/variables/distances" as *;
+@use "../../../assets/scss/variables/breakpoints" as *;
 
 .interface-navigation {
     position: absolute;
-    bottom: $distances-xs;
-    right: 2rem;
+    bottom: $distances-s;
+    right: $distances-s;
     font-size: $fonts-size-small;
-    height: 10rem;
+    height: 13.5rem;
     gap: 0;
-    width: 55%;
     display: flex;
-    flex-direction: column;
-    justify-content: end;
     gap: $distances-s;
+    justify-content: flex-end;
+    align-items: flex-end;
+    width: 75%;
 
-    &--right {
-        justify-content: flex-end;
+    &--spaced {
+        justify-content: space-between;
+    }
+
+    @media (min-width: $breakpoints-xl) {
+        height: 9.5rem;
+        width: 55%;
     }
 }
 

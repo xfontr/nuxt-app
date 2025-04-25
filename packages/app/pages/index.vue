@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import {
     Game,
+    GamePlayerLoc,
     GradientScroll,
     gradients,
     type Translations,
@@ -47,15 +48,16 @@ onMounted(() => {
             <section class="atf">
                 <img
                     class="atf__img"
-                    :style="{}"
                     src="/img/game/background-mountain.svg"
                 />
 
                 <h1
                     ref="title"
                     class="atf__title"
-                    v-html="$t('landing.title')"
-                />
+                >
+                    {{ $t("landing.title") }}
+                    <GamePlayerLoc />
+                </h1>
 
                 <Game
                     class="game"
@@ -88,23 +90,37 @@ onMounted(() => {
     &__img {
         position: absolute;
         height: 100vh;
-        width: 100vw;
-        bottom: 13rem;
+        width: 100%;
         object-fit: cover;
+        object-position: left;
+
+        bottom: 33vh;
+
+        @media (min-width: $breakpoints-xl) {
+            width: 100vw;
+            bottom: 13rem;
+        }
     }
 
     &__title {
         padding-left: 2rem;
         filter: drop-shadow(10px 10px 4px rgba(0, 0, 0, 0.05));
         max-width: 80%;
-        margin-bottom: 10%;
-
         line-height: 45%;
         font-size: clamp(100px, 20vw, 20vw);
         -webkit-text-stroke: 1px $colors-primary-very-light;
         -webkit-text-fill-color: $colors-secondary;
         font-weight: $fonts-extra-bold;
         letter-spacing: -0.5rem;
+        margin-bottom: 33vh;
+
+        @media (min-width: $breakpoints-m) {
+            margin-bottom: 30vh;
+        }
+
+        @media (min-width: $breakpoints-xl) {
+            margin-bottom: 12%;
+        }
     }
 }
 
@@ -122,5 +138,10 @@ onMounted(() => {
 
 .player-loc {
     margin-left: 0.5rem;
+    display: block;
+
+    @media (min-width: $breakpoints-xl) {
+        display: inline;
+    }
 }
 </style>

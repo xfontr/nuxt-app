@@ -17,11 +17,9 @@ export const drawBeam = (
     ctx.filter = "blur(1.5px)";
     ctx.globalCompositeOperation = "lighter";
 
-    // Outer beam glow
     ctx.fillStyle = "rgba(255, 0, 0, 0.3)";
     ctx.fillRect(x - 2, y - 2, width + 4, height + 4);
 
-    // Inner hot core
     ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
     ctx.fillRect(x, y, width, height);
 
