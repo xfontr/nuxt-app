@@ -1,13 +1,14 @@
 <script lang="ts" setup>
-import { computed, ref, useTemplateRef, watch } from "vue";
-import type { Asset, Game } from "../types";
+import { computed, ref, watch } from "vue";
+import type { Game } from "../types";
 import type { GameState } from "../types/Game";
 import { colors } from "../../../configs";
-import { ASSETS } from "../constants";
 import type { Unit } from "../../../types/Unit";
 import type { Translations } from "../types/Translations";
-import Hints from "./Hints.vue";
+import Instructions from "./Instructions.vue";
 import Tag from "../../../components/Tag.vue";
+import Lives from "./Lives.vue";
+import Stats from "./Stats.vue";
 
 const PROGRESS_BAR_WIDTH = 100;
 
@@ -17,28 +18,20 @@ const props = defineProps<{
     t: Translations;
 }>();
 
-const heartImages = useTemplateRef<HTMLImageElement[]>("heart");
 const linterLaser = ref<HTMLDivElement>();
-
-const getAsset = (name: string): Asset => `${ASSETS}${name}.png`;
 
 const ratio = computed<number>(() => props.game.laser.max / PROGRESS_BAR_WIDTH);
 const minBarWidth = computed<`${string}${Unit}`>(
     () => `${props.game.laser.min / ratio.value}px`,
 );
 
-const lives = computed<boolean[]>(() =>
-    Array.from(
-        { length: props.game.player.lives },
-        (_, i) => props.state.player.lives > i,
-    ),
-);
-
 const distance = computed<number>(
     () =>
-        +(props.state.framesAlive * props.game.score.frameToDistance).toFixed(
-            0,
-        ),
+        +(
+            props.state.distanceCount *
+            (props.game.score.frameToDistance +
+                props.game.score.difficultyMultiplier * props.state.difficulty)
+        ).toFixed(0),
 );
 
 const score = computed(
@@ -58,15 +51,7 @@ const applyLaserBarStyles = () => {
     linterLaser.value.style.setProperty("--min-bar-color", color);
 };
 
-const setUpLives = () => {
-    lives.value.forEach((alive, i) => {
-        const img = heartImages.value?.[i];
-        if (img) img.src = getAsset(alive ? "heart-full" : "heart-empty");
-    });
-};
-
 watch(() => props.state.laserLeft, applyLaserBarStyles, { immediate: true });
-watch(lives, setUpLives, { immediate: true });
 </script>
 
 <template>
@@ -75,39 +60,37 @@ watch(lives, setUpLives, { immediate: true });
         <nav
             :class="[
                 'interface-navigation',
-                { 'interface-navigation--right': state.status === 'ON' },
+                { 'interface-navigation--spaced': state.status === 'OVER' },
             ]"
         >
-            <Transition>
-                <Hints
-                    class="interface-navigation__hints"
-                    v-if="state.status === 'IDLE'"
-                    :t
-            /></Transition>
+            <Stats
+                v-show="state.status === 'OVER'"
+                :t
+                :state
+            />
+
+            <Instructions
+                v-if="state.status === 'IDLE' || state.status === 'OVER'"
+                :t
+                :state
+            />
 
             <div
                 class="column"
                 v-show="state.status === 'ON'"
             >
                 <div class="up">
-                    <Tag> {{ state.bugsKilled }} bugs fixed</Tag>
-                    <span class="up__score">{{ score }} pts.</span>
+                    <Tag>{{ state.bugsKilled }} {{ t.stats.bugs_fixed }}</Tag>
+                    <span class="up__score"
+                        >{{ score }} {{ t.stats.points }}</span
+                    >
                 </div>
 
                 <div class="bottom">
-                    <ul class="lives">
-                        <li
-                            v-for="(_, i) in lives"
-                            :key="i"
-                        >
-                            <img
-                                ref="heart"
-                                alt="Heart"
-                                width="16"
-                                height="16"
-                            />
-                        </li>
-                    </ul>
+                    <Lives
+                        :lives="game.player.lives"
+                        :state
+                    />
                     <div class="bottom__laser">
                         <progress
                             ref="linterLaser"
@@ -132,21 +115,28 @@ watch(lives, setUpLives, { immediate: true });
 @use "../../../assets/scss/variables/colors" as *;
 @use "../../../assets/scss/variables/fonts" as *;
 @use "../../../assets/scss/variables/distances" as *;
+@use "../../../assets/scss/variables/breakpoints" as *;
 
 .interface-navigation {
     position: absolute;
-    bottom: $distances-xs;
-    right: 2rem;
+    bottom: $distances-s;
+    right: $distances-s;
     font-size: $fonts-size-small;
-    height: 10rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
+    height: 13.5rem;
     gap: 0;
-    width: 55%;
+    display: flex;
+    gap: $distances-s;
+    justify-content: flex-end;
+    align-items: flex-end;
+    width: 75%;
 
-    &--right {
-        justify-content: flex-end;
+    &--spaced {
+        justify-content: space-between;
+    }
+
+    @media (min-width: $breakpoints-xl) {
+        height: 9.5rem;
+        width: 55%;
     }
 }
 
@@ -217,11 +207,6 @@ watch(lives, setUpLives, { immediate: true });
             z-index: 1;
         }
     }
-}
-
-.lives {
-    display: flex;
-    gap: $distances-xs;
 }
 
 .up {

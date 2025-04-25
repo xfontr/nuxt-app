@@ -8,5 +8,12 @@ export type Translations = {
     linterRay: string;
     instructions: {
         start: string;
+        restart: string;
+    };
+    stats: {
+        bugs_fixed: string;
+        score: string;
+        points: string;
+        best_score: string;
     };
 };

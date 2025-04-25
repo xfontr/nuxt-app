@@ -1,7 +1,6 @@
 export type Game = {
     physics: {
         gravity: number;
-        baseJumpStrength: number;
         jumpStrength: number;
         boostMultiplier: number;
         slowMultiplier: number;
@@ -14,6 +13,7 @@ export type Game = {
     score: {
         bugKilled: number;
         frameToDistance: number;
+        difficultyMultiplier: number;
     };
     laser: {
         offset: number;
@@ -24,21 +24,18 @@ export type Game = {
         minReach: number;
         maxReach: number;
     };
-    layout: {
-        floorPadding: number;
-        obstacleSpacing: number;
-        obstacleStartOffset: number;
-        obstacleThresholds: number[];
-        // TODO: This might be no longer needed
-        canvas: {
-            width: number;
-            height: number;
-        };
+    obstacles: {
+        minSpacing: number;
+        spacing: number;
+        offset: number;
+        thresholds: number[];
+        difficultyBreakpoint: number;
+        difficultyIncrease: number;
     };
 };
 
 export type GameState = {
-    status: "IDLE" | "ON";
+    status: "LOADING" | "IDLE" | "ON" | "OVER";
     velocityY: number;
     jumpKeyHeld: boolean;
     isJumping: boolean;
@@ -62,5 +59,12 @@ export type GameState = {
     };
     layout: { width: number; height: number };
     bugsKilled: number;
-    framesAlive: number;
+    frameCount: number;
+    distanceCount: number;
+    stats: {
+        bugsKilled: number;
+        frameCount: number;
+        score: number;
+    }[];
+    difficulty: number;
 };

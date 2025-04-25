@@ -1,24 +1,41 @@
-import { ref, type Ref } from "vue";
+import { computed, ref, type Ref } from "vue";
 import type { Game, GameState } from "../types/Game";
 import type { CanvasDrawOptions } from "../types/Canvas";
 import { random } from "../../../utils";
 import { OBSTACLE_OPTIONS } from "../constants";
 
-const useObstacle = (state: Ref<GameState>, { layout }: Game) => {
+const WAVE_HEIGHT = 2.5;
+const WAVE_WIDTH = 0.3;
+
+const useObstacle = (state: Ref<GameState>, game: Game) => {
     const { width, height, speedMultiplier } = OBSTACLE_OPTIONS;
     const canvas = state.value.layout;
 
     const obstacles = ref<(CanvasDrawOptions & { baseY: number })[]>([]);
 
+    const maxDifficulty = computed<number>(
+        () =>
+            +(
+                (game.obstacles.spacing - game.obstacles.minSpacing) /
+                game.obstacles.difficultyIncrease
+            ).toFixed(0),
+    );
+
+    const spacing = computed<number>(() => {
+        const extra =
+            state.value.difficulty * game.obstacles.difficultyIncrease;
+        return game.obstacles.spacing - extra;
+    });
+
     const setY = () =>
         canvas.height -
-        layout.obstacleThresholds[random(0, layout.obstacleThresholds.length)];
+        game.obstacles.thresholds[random(0, game.obstacles.thresholds.length)];
 
     const generateObstacle = (): CanvasDrawOptions & { baseY: number } => {
         const baseY = setY();
 
         return {
-            x: canvas.width + random(0, 50),
+            x: canvas.width + spacing.value + random(0, 25),
             y: baseY,
             baseY,
             width,
@@ -29,14 +46,29 @@ const useObstacle = (state: Ref<GameState>, { layout }: Game) => {
         };
     };
 
+    const setDifficulty = () => {
+        if (
+            state.value.distanceCount / game.obstacles.difficultyBreakpoint -
+                1 <
+            state.value.difficulty
+        ) {
+            return;
+        }
+
+        if (state.value.difficulty === maxDifficulty.value) return;
+
+        state.value.difficulty += 1;
+    };
+
     const update = () => {
-        const frame = state.value.framesAlive;
+        const frame = state.value.frameCount;
+        setDifficulty();
 
         obstacles.value.forEach((obstacle, index) => {
             obstacle.x -= state.value.gameSpeed * speedMultiplier;
 
-            const wave = Math.sin((frame + index * 13) * 0.1);
-            obstacle.y = obstacle.baseY + wave * 1.5;
+            const wave = Math.sin((frame + index * 13) * WAVE_WIDTH);
+            obstacle.y = obstacle.baseY + wave * WAVE_HEIGHT;
         });
 
         obstacles.value = obstacles.value.filter(
@@ -45,7 +77,7 @@ const useObstacle = (state: Ref<GameState>, { layout }: Game) => {
 
         const lastX = obstacles.value.at(-1)?.x ?? -Infinity;
 
-        if (lastX >= canvas.width - layout.obstacleSpacing) return;
+        if (lastX >= canvas.width - spacing.value) return;
 
         obstacles.value.push(generateObstacle());
     };

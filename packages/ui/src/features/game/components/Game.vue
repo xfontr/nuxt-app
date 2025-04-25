@@ -30,7 +30,7 @@ const updateLayoutAndPlayerPosition = () => {
     if (x === undefined) return;
 
     if (state.value.status === "ON") state.value.player.x = x;
-    if (state.value.status === "IDLE") state.value.player.offsetX = x;
+    if (state.value.status !== "ON") state.value.player.offsetX = x;
 };
 
 thisWindow.on("resize", updateLayoutAndPlayerPosition);
@@ -84,12 +84,17 @@ onMounted(() => {
     .canvas {
         border-bottom: 1px solid $colors-primary-very-light !important;
         background: linear-gradient(
-            to bottom,
-            var(--color-stop-1),
-            var(--color-stop-2) 40vh,
-            var(--color-stop-3) calc(70vh + 1%),
-            #ffffff calc(70vh + 1%)
-        );
+                to top,
+                #ffffff 0%,
+                #ffffff 30%,
+                transparent 30%
+            ),
+            linear-gradient(
+                to bottom,
+                var(--color-stop-1),
+                var(--color-stop-2) 40%,
+                var(--color-stop-3) 100%
+            );
         z-index: 1;
         transition: --color-stop-1 1s ease, --color-stop-2 1s ease,
             --color-stop-3 1s ease;
@@ -99,9 +104,9 @@ onMounted(() => {
         --color-stop-3: #a9c3da;
 
         &--on {
-            --color-stop-1: #2b0000;
-            --color-stop-2: #8b1e1e;
-            --color-stop-3: #f94e4e;
+            --color-stop-1: black;
+            --color-stop-2: #404040;
+            --color-stop-3: #8e8e8e;
         }
     }
 }

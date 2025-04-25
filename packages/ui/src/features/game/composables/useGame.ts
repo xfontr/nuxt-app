@@ -4,11 +4,12 @@ import { useLaser } from "./useLaser";
 import useUserActions from "./useUserActions";
 import useCanvas from "./useCanvas";
 import useObstacle from "./useObstacle";
-import useClouds from "../../../composables/useClouds";
+import useBackground from "./useBackground";
 import type { Asset } from "../types";
 import type { CanvasDrawOptions } from "../types/Canvas";
 import { drawBeam } from "../utils/beam";
 import { useWindow } from "../../../composables";
+import { getInitialState, restartState } from "../utils/game";
 
 const FACE_TIMER = 2000;
 const COLLISION_COOLDOWN = 500;
@@ -20,71 +21,28 @@ const useGame = (
 ) => {
     const collisionTimeout = ref();
     const disgustedTimeout = ref();
-    const state = ref<GameState>({
-        status: "IDLE",
-        velocityY: 0,
-        jumpKeyHeld: false,
-        isJumping: false,
-        isLasering: false,
-        isColliding: false,
-        isSpawning: true,
-        laserLeft: game.laser.offset,
-        laserReach: game.laser.minReach,
-        gameSpeed: game.physics.baseSpeed,
-        player: {
-            offsetX: 0,
-            x: 0,
-            y: 0,
-            image: "player-neutral",
-            lives: game.player.lives,
-        },
-        framesAlive: 0,
-        bugsKilled: 0,
-        layout: {
-            width: 0,
-            height: 0,
-        },
-    });
+    const state = ref<GameState>(getInitialState(game));
 
     const thisWindow = useWindow();
     const lasers = useLaser(state, game);
-    const { keyDown, keyUp, click } = useUserActions(state, game);
+    const { keyDown, keyUp } = useUserActions(state, game);
     const canvas = useCanvas(state, canvasElement, assets);
     const bugs = useObstacle(state, game);
-    const clouds = useClouds(state);
+    const background = useBackground(state);
 
     thisWindow.on<KeyboardEvent>("keyup", (_, e) => keyUp(e));
     thisWindow.on<KeyboardEvent>("keydown", (_, e) => keyDown(e));
-    thisWindow.on<MouseEvent>("click", (_, e) => click(e));
 
-    const groundY = () =>
-        state.value.layout.height - game.player.size - game.layout.floorPadding;
+    const groundY = () => state.value.layout.height - game.player.size;
 
     const restartGame = () => {
-        Object.assign(state.value, {
-            player: {
-                ...state.value.player,
-                x: 0,
-                y: groundY(),
-                image: "player-neutral",
-                lives: game.player.lives,
-            },
-            velocityY: 0,
-            isJumping: false,
-            isColliding: false,
-            laserLeft: game.laser.offset,
-            gameSpeed: game.physics.baseSpeed,
-            bugsKilled: 0,
-            framesAlive: 0,
-        });
-
-        game.physics.jumpStrength = game.physics.baseJumpStrength;
+        state.value = restartState(game, state.value);
         bugs.reset();
     };
 
     const setup = () => {
-        restartGame();
-        clouds.init();
+        state.value.player.y = groundY();
+        background.init();
     };
 
     const spawnPlayer = () => {
@@ -117,12 +75,12 @@ const useGame = (
         const laser = lasers.laser.value;
         if (!laser) return;
 
-        bugs.list.value = bugs.list.value.filter(({ y, x, height }) => {
-            const laserEnd =
-                state.value.player.x + game.player.size + laser.width;
+        bugs.list.value = bugs.list.value.filter(({ y, x, height, width }) => {
+            const laserStart = state.value.player.x + game.player.size;
+            const laserEnd = laserStart + laser.width;
 
             const yHit = laser.y < y + height && laser.y + laser.height > y;
-            const xHit = x < laserEnd;
+            const xHit = x < laserEnd && x + width > laserStart;
 
             const hit = yHit && xHit;
 
@@ -170,14 +128,19 @@ const useGame = (
 
             if (state.value.player.lives > 0) return;
 
-            state.value.status = "IDLE";
+            state.value.status = "OVER";
+            restartGame();
         }
     };
 
     const updateGame = () => {
-        clouds.update();
+        background.update();
 
         if (state.value.isSpawning) return spawnPlayer();
+        if (!state.value.isSpawning && state.value.status === "LOADING") {
+            state.value.status = "IDLE";
+        }
+
         if (state.value.status !== "ON") return;
 
         bugs.update();
@@ -187,17 +150,37 @@ const useGame = (
         handleCollisions();
     };
 
+    const drawBackground = () => {
+        background.list.value.forEach((item) => {
+            if (item.isCircle) {
+                canvas.ctx.value!.beginPath();
+                canvas.ctx.value!.arc(
+                    item.x + item.width / 2,
+                    item.y + item.height / 2,
+                    item.width / 2,
+                    0,
+                    Math.PI * 2,
+                );
+                canvas.ctx.value!.fillStyle = "white";
+                canvas.ctx.value!.fill();
+            } else {
+                canvas.draw.image(item);
+            }
+        });
+    };
+
     const drawScene = () => {
         canvas.reset();
-        draw(clouds.list.value);
-        draw(bugs.list.value);
+
+        drawBackground();
+        drawBugs();
         drawPlayer();
         drawLasers();
     };
 
     const drawPlayer = () => {
-        const { player, framesAlive, isColliding } = state.value;
-        if (isColliding && framesAlive % 4 === 0) return;
+        const { player, frameCount, isColliding } = state.value;
+        if (isColliding && frameCount % 4 === 0) return;
 
         canvas.draw.image({
             image: player.image,
@@ -213,12 +196,26 @@ const useGame = (
         drawBeam(lasers.laser.value, canvas.ctx.value!);
     };
 
-    const draw = (pool: CanvasDrawOptions[]) => {
-        pool.forEach(canvas.draw.image);
+    const drawBugs = () => {
+        bugs.list.value.forEach(canvas.draw.image);
+    };
+
+    const updateFrameCount = () => {
+        if (state.value.status !== "ON") return;
+
+        state.value.frameCount += 1;
+
+        if (state.value.gameSpeed === game.physics.baseSpeed) {
+            state.value.distanceCount += 3;
+            return;
+        }
+
+        state.value.distanceCount +=
+            state.value.gameSpeed > game.physics.baseSpeed ? 4 : 2;
     };
 
     const animate = () => {
-        if (state.value.status === "ON") state.value.framesAlive++;
+        updateFrameCount();
         drawScene();
         updateGame();
         requestAnimationFrame(animate);
