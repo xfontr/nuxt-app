@@ -2,10 +2,12 @@
 import Tag from "../../../components/Tag.vue";
 import { ASSETS, AVAILABLE_KEYS } from "../constants";
 import type { Asset } from "../types";
+import type { GameState } from "../types/Game";
 import type { Translations } from "../types/Translations";
 
 defineProps<{
     t: Translations;
+    state: GameState;
 }>();
 
 const getAsset = (name: string): Asset => `${ASSETS}${name}.png`;
@@ -23,7 +25,11 @@ const getAsset = (name: string): Asset => `${ASSETS}${name}.png`;
                 alt="Keyboard space bar"
                 :height="20"
             />
-            {{ t.instructions.start }}
+            {{
+                state.status === "OVER"
+                    ? t.instructions.restart
+                    : t.instructions.start
+            }}
         </Tag>
         <Tag
             class="hints__hint"

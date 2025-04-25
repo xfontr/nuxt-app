@@ -1,14 +1,15 @@
-import { ref, type Ref } from "vue";
+import { computed, ref, type Ref } from "vue";
 import type { Game, GameState } from "../types/Game";
 import { useLaser } from "./useLaser";
 import useUserActions from "./useUserActions";
 import useCanvas from "./useCanvas";
 import useObstacle from "./useObstacle";
-import useClouds from "../../../composables/useClouds";
+import useBackground from "./useBackground";
 import type { Asset } from "../types";
 import type { CanvasDrawOptions } from "../types/Canvas";
 import { drawBeam } from "../utils/beam";
 import { useWindow } from "../../../composables";
+import { getInitialState, restartState } from "../utils/game";
 
 const FACE_TIMER = 2000;
 const COLLISION_COOLDOWN = 500;
@@ -20,70 +21,28 @@ const useGame = (
 ) => {
     const collisionTimeout = ref();
     const disgustedTimeout = ref();
-    const state = ref<GameState>({
-        status: "IDLE",
-        velocityY: 0,
-        jumpKeyHeld: false,
-        isJumping: false,
-        isLasering: false,
-        isColliding: false,
-        isSpawning: true,
-        laserLeft: game.laser.offset,
-        laserReach: game.laser.minReach,
-        gameSpeed: game.physics.baseSpeed,
-        player: {
-            offsetX: 0,
-            x: 0,
-            y: 0,
-            image: "player-neutral",
-            lives: game.player.lives,
-        },
-        framesAlive: 0,
-        bugsKilled: 0,
-        layout: {
-            width: 0,
-            height: 0,
-        },
-    });
+    const state = ref<GameState>(getInitialState(game));
 
     const thisWindow = useWindow();
     const lasers = useLaser(state, game);
-    const { keyDown, keyUp, click } = useUserActions(state, game);
+    const { keyDown, keyUp } = useUserActions(state, game);
     const canvas = useCanvas(state, canvasElement, assets);
     const bugs = useObstacle(state, game);
-    const clouds = useClouds(state);
+    const clouds = useBackground(state);
 
     thisWindow.on<KeyboardEvent>("keyup", (_, e) => keyUp(e));
     thisWindow.on<KeyboardEvent>("keydown", (_, e) => keyDown(e));
-    thisWindow.on<MouseEvent>("click", (_, e) => click(e));
 
     const groundY = () =>
         state.value.layout.height - game.player.size - game.layout.floorPadding;
 
     const restartGame = () => {
-        Object.assign(state.value, {
-            player: {
-                ...state.value.player,
-                x: 0,
-                y: groundY(),
-                image: "player-neutral",
-                lives: game.player.lives,
-            },
-            velocityY: 0,
-            isJumping: false,
-            isColliding: false,
-            laserLeft: game.laser.offset,
-            gameSpeed: game.physics.baseSpeed,
-            bugsKilled: 0,
-            framesAlive: 0,
-        });
-
-        game.physics.jumpStrength = game.physics.baseJumpStrength;
+        restartState(game, state.value);
         bugs.reset();
     };
 
     const setup = () => {
-        restartGame();
+        state.value.player.y = groundY();
         clouds.init();
     };
 
@@ -170,7 +129,8 @@ const useGame = (
 
             if (state.value.player.lives > 0) return;
 
-            state.value.status = "IDLE";
+            state.value.status = "OVER";
+            restartGame();
         }
     };
 
@@ -178,6 +138,10 @@ const useGame = (
         clouds.update();
 
         if (state.value.isSpawning) return spawnPlayer();
+        if (!state.value.isSpawning && state.value.status === "LOADING") {
+            state.value.status = "IDLE";
+        }
+
         if (state.value.status !== "ON") return;
 
         bugs.update();
@@ -189,7 +153,24 @@ const useGame = (
 
     const drawScene = () => {
         canvas.reset();
-        draw(clouds.list.value);
+
+        clouds.list.value.forEach((item) => {
+            if (item.isCircle) {
+                canvas.ctx.value!.beginPath();
+                canvas.ctx.value!.arc(
+                    item.x + item.width / 2,
+                    item.y + item.height / 2,
+                    item.width / 2,
+                    0,
+                    Math.PI * 2,
+                );
+                canvas.ctx.value!.fillStyle = "white";
+                canvas.ctx.value!.fill();
+            } else {
+                canvas.draw.image(item);
+            }
+        });
+
         draw(bugs.list.value);
         drawPlayer();
         drawLasers();

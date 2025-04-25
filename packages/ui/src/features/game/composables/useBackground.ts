@@ -1,29 +1,31 @@
 import { computed, ref, watch, type Ref } from "vue";
-import type { GameState } from "../features/game/types/Game";
-import type { CanvasDrawOptions } from "../features/game/types/Canvas";
-import { random } from "../utils";
-import type { CloudOptions } from "../features/game/types/Cloud";
-import useWindow from "./useWindow";
+import type { GameState } from "../types/Game";
+import type { CanvasDrawOptions } from "../types/Canvas";
+import { random } from "../../../utils";
+import useWindow from "../../../composables/useWindow";
+import type { BackgroundOptions } from "../types/Background";
 
 const TILT_X = 0.01;
 const TILT_Y = 0.004;
 const BASE_WIDTH = 60;
 const BASE_HEIGHT = 40;
+const STAR_DENSITY = 100;
 
-type Cloud = CanvasDrawOptions & CloudOptions;
+type Background = CanvasDrawOptions & BackgroundOptions;
 
-const useClouds = (state: Ref<GameState>) => {
+const useBackground = (state: Ref<GameState>) => {
     const thisWindow = useWindow();
     const canvas = state.value.layout;
 
-    const clouds = ref<Cloud[]>([]);
+    const day = ref<Background[]>([]);
+    const night = ref<Background[]>([]);
 
     const mouse = ref({ x: canvas.width / 2, y: canvas.height / 2 });
     const lastMouse = ref({ x: mouse.value.x, y: mouse.value.y });
     const lastScrollY = ref<number>(0);
 
-    const mode = computed<"cloud" | "asteroid">(() =>
-        state.value.status === "ON" ? "asteroid" : "cloud",
+    const mode = computed<"day" | "night">(() =>
+        state.value.status === "ON" ? "night" : "day",
     );
 
     const handleScroll = ({ scrollY }: Window) => {
@@ -31,7 +33,7 @@ const useClouds = (state: Ref<GameState>) => {
         const dy = scrollY - lastScrollY.value || 1;
         lastScrollY.value = scrollY;
 
-        clouds.value.forEach((cloud) => {
+        day.value.forEach((cloud) => {
             cloud.offsetY += dy * 0.02 * cloud.scale;
         });
     };
@@ -47,7 +49,7 @@ const useClouds = (state: Ref<GameState>) => {
         const dx = mouse.value.x - lastMouse.value.x;
         const dy = mouse.value.y - lastMouse.value.y;
 
-        clouds.value.forEach((cloud) => {
+        day.value.forEach((cloud) => {
             cloud.offsetX += dx * TILT_X * cloud.scale;
             cloud.offsetY += dy * TILT_Y * cloud.scale;
         });
@@ -55,25 +57,11 @@ const useClouds = (state: Ref<GameState>) => {
 
     watch(
         () => state.value.status,
-        (status) => {
-            if (status === "ON") {
-                clouds.value = clouds.value.map((cloud) => {
-                    const scale = 1 + Math.random() * 1;
+        (status, prevStatus) => {
+            if (prevStatus === "LOADING") return;
 
-                    return {
-                        ...cloud,
-                        y: 0 + random(0, 100),
-                        width: 110 * scale,
-                        height: 110 * scale,
-                        scale,
-                        image: `meteor-${random(0, 0)}`,
-                        icon: `framework-${random(0, 5)}`,
-                    };
-                });
-            }
-
-            if (status === "IDLE") {
-                clouds.value = clouds.value.map((cloud) => {
+            if (status === "IDLE" || status === "OVER") {
+                day.value = day.value.map((cloud) => {
                     const scale = 1 + Math.random() * 4;
 
                     return {
@@ -86,12 +74,15 @@ const useClouds = (state: Ref<GameState>) => {
                     };
                 });
             }
+
+            if (status === "ON") initNight(STAR_DENSITY);
         },
     );
 
     const init = (amount = 10) => {
-        clouds.value = Array.from({ length: amount }, () => {
+        day.value = Array.from({ length: amount }, () => {
             const scale = 1 + Math.random() * 4;
+
             return {
                 x: Math.random() * canvas.width,
                 y: Math.random() * (canvas.height / 2),
@@ -106,8 +97,24 @@ const useClouds = (state: Ref<GameState>) => {
         });
     };
 
-    const updateClouds = () => {
-        clouds.value.forEach((cloud) => {
+    const initNight = (density: number) => {
+        night.value = Array.from({ length: density }, () => {
+            const size = random(2, 5);
+            return {
+                x: random(0, canvas.width),
+                y: random(0, canvas.height),
+                width: size,
+                height: size,
+                speedMultiplier: 0.5 + Math.random() * 3.5,
+                offsetX: 0,
+                offsetY: 0,
+                isCircle: true,
+            };
+        });
+    };
+
+    const updateDay = () => {
+        day.value.forEach((cloud) => {
             cloud.x -= state.value.gameSpeed * cloud.speedMultiplier;
 
             cloud.x += cloud.offsetX;
@@ -116,54 +123,47 @@ const useClouds = (state: Ref<GameState>) => {
             cloud.offsetX *= 0.9;
             cloud.offsetY *= 0.9;
 
-            if (cloud.x + cloud.width < 0) {
-                cloud.x = canvas.width + random(0, 50);
-                cloud.y = Math.random() * (canvas.height / 2);
-                cloud.offsetX = 0;
-                cloud.offsetY = 0;
-            }
+            if (cloud.x + cloud.width >= 0) return;
+
+            cloud.x = canvas.width + random(0, 50);
+            cloud.y = Math.random() * (canvas.height / 2);
+            cloud.offsetX = 0;
+            cloud.offsetY = 0;
         });
     };
 
-    const updateAsteroids = () => {
-        clouds.value.forEach((asteroid) => {
-            asteroid.x +=
-                state.value.gameSpeed * 0.5 * asteroid.speedMultiplier;
-            asteroid.y += state.value.gameSpeed * asteroid.speedMultiplier;
+    const updateNight = () => {
+        night.value.forEach((star) => {
+            const speed = state.value.gameSpeed * star.speedMultiplier;
 
-            asteroid.x += asteroid.offsetX;
-            asteroid.y += asteroid.offsetY;
+            star.y += speed;
+            star.x += speed * 0.5;
 
-            asteroid.offsetX *= 0.9;
-            asteroid.offsetY *= 0.9;
+            if (star.y <= canvas.height) return;
 
-            if (asteroid.y > canvas.height || asteroid.x > canvas.width) {
-                asteroid.x = Math.random() * canvas.width;
-                asteroid.y = -BASE_HEIGHT * asteroid.scale - Math.random() * 50;
-                asteroid.offsetX = 0;
-                asteroid.offsetY = 0;
-            }
+            star.x = random(0, canvas.width);
+            star.y = -star.height;
         });
     };
 
-    const update = () => {
-        if (mode.value === "cloud") {
-            updateClouds();
+    const update = (): void => {
+        if (mode.value === "day") {
+            updateDay();
             return;
         }
 
-        updateAsteroids();
+        updateNight();
     };
 
     thisWindow.on("scroll", handleScroll, { passive: true });
     thisWindow.on<MouseEvent>("mousemove", handleMouseMove, { passive: true });
 
     return {
-        list: clouds,
+        list: computed(() => (mode.value === "day" ? day.value : night.value)),
         init,
         update,
         mode,
     };
 };
 
-export default useClouds;
+export default useBackground;

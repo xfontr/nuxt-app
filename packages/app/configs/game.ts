@@ -3,7 +3,6 @@ import type { Asset, GameOptions } from "@portfolio/ui";
 export const GAME_DATA: GameOptions = {
     physics: {
         gravity: 0.6,
-        baseJumpStrength: -10,
         jumpStrength: -10,
         boostMultiplier: 2.5,
         slowMultiplier: 0.2,
@@ -53,6 +52,10 @@ export const ASSETS: Asset[] = [
     "framework-4.png",
     "framework-5.png",
     "framework-6.png",
+    "framework-7.png",
+    "framework-8.png",
+    "framework-9.png",
+    "framework-10.png",
     "heart-full.png",
     "heart-empty.png",
 ];

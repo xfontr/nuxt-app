@@ -3,23 +3,30 @@ import type { Game, GameState } from "../types/Game";
 import { isLeftKey, isRightKey, isSpaceKey, isUpKey } from "../utils/keyboard";
 
 const useUserActions = (state: Ref<GameState>, game: Game) => {
-    const enabled = computed(() => state.value.status === "ON");
+    const enabled = computed(() => state.value.status !== "LOADING");
+    const isOn = computed(() => state.value.status === "ON");
+    const isIdle = computed(() => state.value.status === "IDLE");
+    const isOver = computed(() => state.value.status === "OVER");
 
     const keyDown = (e: KeyboardEvent) => {
         e.preventDefault();
 
-        if (isSpaceKey(e.code) && !enabled.value) {
+        if (!enabled.value) return;
+
+        if (
+            !state.value.isLasering &&
+            isSpaceKey(e.code) &&
+            (isIdle.value || isOver.value)
+        ) {
             state.value.status = "ON";
             return;
         }
 
-        if (!enabled.value) return;
+        if (!isOn.value) return;
 
         if (isSpaceKey(e.code)) {
             state.value.isLasering = true;
         }
-
-        if (!enabled.value) return;
 
         if (isUpKey(e.key)) {
             if (state.value.isJumping) return;
@@ -44,9 +51,13 @@ const useUserActions = (state: Ref<GameState>, game: Game) => {
     };
 
     const keyUp = (e: KeyboardEvent) => {
-        if (!enabled.value) return;
-
         e.preventDefault();
+
+        if (isSpaceKey(e.code)) {
+            state.value.isLasering = false;
+        }
+
+        if (!isOn.value || !enabled.value) return;
 
         if (isUpKey(e.key)) state.value.jumpKeyHeld = false;
 
@@ -60,18 +71,9 @@ const useUserActions = (state: Ref<GameState>, game: Game) => {
         if (isLeftKey(e.key)) {
             state.value.gameSpeed = game.physics.baseSpeed;
         }
-
-        if (isSpaceKey(e.code)) {
-            state.value.isLasering = false;
-        }
     };
 
-    const click = (e: MouseEvent) => {
-        e.preventDefault();
-        state.value.status = "IDLE";
-    };
-
-    return { keyDown, keyUp, click };
+    return { keyDown, keyUp };
 };
 
 export default useUserActions;

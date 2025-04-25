@@ -19,7 +19,16 @@ const translations = ref<Translations>({
         space: ts("game.keyboard.space"),
         up: ts("game.keyboard.up"),
     },
-    instructions: { start: ts("game.instructions.start") },
+    instructions: {
+        start: ts("game.instructions.start"),
+        restart: ts("game.instructions.restart"),
+    },
+    stats: {
+        bugs_fixed: ts("game.stats.bugs_fixed"),
+        points: ts("game.stats.points"),
+        score: ts("game.stats.score"),
+        best_score: ts("game.stats.best_score"),
+    },
 });
 
 onMounted(() => {

@@ -1,4 +1,4 @@
-export type CloudOptions = {
+export type BackgroundOptions = {
     speedMultiplier: number;
     offsetX: number;
     offsetY: number;

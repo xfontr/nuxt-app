@@ -1,13 +1,14 @@
 <script lang="ts" setup>
-import { computed, ref, useTemplateRef, watch } from "vue";
-import type { Asset, Game } from "../types";
+import { computed, ref, watch } from "vue";
+import type { Game } from "../types";
 import type { GameState } from "../types/Game";
 import { colors } from "../../../configs";
-import { ASSETS } from "../constants";
 import type { Unit } from "../../../types/Unit";
 import type { Translations } from "../types/Translations";
 import Hints from "./Hints.vue";
 import Tag from "../../../components/Tag.vue";
+import Lives from "./Lives.vue";
+import Stats from "./Stats.vue";
 
 const PROGRESS_BAR_WIDTH = 100;
 
@@ -17,21 +18,11 @@ const props = defineProps<{
     t: Translations;
 }>();
 
-const heartImages = useTemplateRef<HTMLImageElement[]>("heart");
 const linterLaser = ref<HTMLDivElement>();
-
-const getAsset = (name: string): Asset => `${ASSETS}${name}.png`;
 
 const ratio = computed<number>(() => props.game.laser.max / PROGRESS_BAR_WIDTH);
 const minBarWidth = computed<`${string}${Unit}`>(
     () => `${props.game.laser.min / ratio.value}px`,
-);
-
-const lives = computed<boolean[]>(() =>
-    Array.from(
-        { length: props.game.player.lives },
-        (_, i) => props.state.player.lives > i,
-    ),
 );
 
 const distance = computed<number>(
@@ -58,15 +49,7 @@ const applyLaserBarStyles = () => {
     linterLaser.value.style.setProperty("--min-bar-color", color);
 };
 
-const setUpLives = () => {
-    lives.value.forEach((alive, i) => {
-        const img = heartImages.value?.[i];
-        if (img) img.src = getAsset(alive ? "heart-full" : "heart-empty");
-    });
-};
-
 watch(() => props.state.laserLeft, applyLaserBarStyles, { immediate: true });
-watch(lives, setUpLives, { immediate: true });
 </script>
 
 <template>
@@ -78,11 +61,19 @@ watch(lives, setUpLives, { immediate: true });
                 { 'interface-navigation--right': state.status === 'ON' },
             ]"
         >
+            <div v-show="state.status === 'OVER'">
+                <Stats
+                    :t
+                    :state
+                />
+            </div>
+
             <Transition>
                 <Hints
                     class="interface-navigation__hints"
-                    v-if="state.status === 'IDLE'"
+                    v-if="state.status === 'IDLE' || state.status === 'OVER'"
                     :t
+                    :state
             /></Transition>
 
             <div
@@ -90,24 +81,17 @@ watch(lives, setUpLives, { immediate: true });
                 v-show="state.status === 'ON'"
             >
                 <div class="up">
-                    <Tag> {{ state.bugsKilled }} bugs fixed</Tag>
-                    <span class="up__score">{{ score }} pts.</span>
+                    <Tag> {{ state.bugsKilled }} {{ t.stats.bugs_fixed }}</Tag>
+                    <span class="up__score"
+                        >{{ score }} {{ t.stats.points }}</span
+                    >
                 </div>
 
                 <div class="bottom">
-                    <ul class="lives">
-                        <li
-                            v-for="(_, i) in lives"
-                            :key="i"
-                        >
-                            <img
-                                ref="heart"
-                                alt="Heart"
-                                width="16"
-                                height="16"
-                            />
-                        </li>
-                    </ul>
+                    <Lives
+                        :lives="game.player.lives"
+                        :state
+                    />
                     <div class="bottom__laser">
                         <progress
                             ref="linterLaser"
@@ -139,11 +123,12 @@ watch(lives, setUpLives, { immediate: true });
     right: 2rem;
     font-size: $fonts-size-small;
     height: 10rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
     gap: 0;
     width: 55%;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    gap: $distances-s;
 
     &--right {
         justify-content: flex-end;
@@ -217,11 +202,6 @@ watch(lives, setUpLives, { immediate: true });
             z-index: 1;
         }
     }
-}
-
-.lives {
-    display: flex;
-    gap: $distances-xs;
 }
 
 .up {

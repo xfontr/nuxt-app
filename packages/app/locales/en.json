@@ -12,7 +12,14 @@
             "space": "Linter ray"
         },
         "instructions": {
-            "start": "Start"
+            "start": "Start",
+            "restart": "Restart"
+        },
+        "stats": {
+            "bugs_fixed": "bugs fixed",
+            "score": "Score",
+            "points": "pts.",
+            "best_score": "Best: "
         }
     }
 }

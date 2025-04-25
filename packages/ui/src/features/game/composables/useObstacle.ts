@@ -35,8 +35,8 @@ const useObstacle = (state: Ref<GameState>, { layout }: Game) => {
         obstacles.value.forEach((obstacle, index) => {
             obstacle.x -= state.value.gameSpeed * speedMultiplier;
 
-            const wave = Math.sin((frame + index * 13) * 0.1);
-            obstacle.y = obstacle.baseY + wave * 1.5;
+            const wave = Math.sin((frame + index * 13) * 0.3);
+            obstacle.y = obstacle.baseY + wave * 2.5;
         });
 
         obstacles.value = obstacles.value.filter(

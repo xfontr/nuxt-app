@@ -9,4 +9,5 @@ export type CanvasDrawOptions = {
     icon?: string;
     scale?: number;
     ttl?: number;
+    isCircle?: boolean;
 };

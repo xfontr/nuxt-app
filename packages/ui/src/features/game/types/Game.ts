@@ -1,7 +1,6 @@
 export type Game = {
     physics: {
         gravity: number;
-        baseJumpStrength: number;
         jumpStrength: number;
         boostMultiplier: number;
         slowMultiplier: number;
@@ -38,7 +37,7 @@ export type Game = {
 };
 
 export type GameState = {
-    status: "IDLE" | "ON";
+    status: "LOADING" | "IDLE" | "ON" | "OVER";
     velocityY: number;
     jumpKeyHeld: boolean;
     isJumping: boolean;
@@ -63,4 +62,9 @@ export type GameState = {
     layout: { width: number; height: number };
     bugsKilled: number;
     framesAlive: number;
+    stats: {
+        bugsKilled: number;
+        framesAlive: number;
+        score: number;
+    }[];
 };
