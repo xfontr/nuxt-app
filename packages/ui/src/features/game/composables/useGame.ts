@@ -25,13 +25,15 @@ const useGame = (
 
     const thisWindow = useWindow();
     const lasers = useLaser(state, game);
-    const { keyDown, keyUp } = useUserActions(state, game);
+    const { keyDown, keyUp, touchDown, touchUp } = useUserActions(state, game);
     const canvas = useCanvas(state, canvasElement, assets);
     const bugs = useObstacle(state, game);
     const background = useBackground(state);
 
     thisWindow.on<KeyboardEvent>("keyup", (_, e) => keyUp(e));
     thisWindow.on<KeyboardEvent>("keydown", (_, e) => keyDown(e));
+    thisWindow.on("touchstart", touchDown);
+    thisWindow.on("touchend", touchUp);
 
     const groundY = () => state.value.layout.height - game.player.size;
 
