@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed } from "vue";
 import Tag from "../../../components/Tag.vue";
 import type { i18n } from "../types";
 import type { Game, GameState } from "../types/Game";
