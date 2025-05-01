@@ -9,6 +9,10 @@ import type { CanvasDrawOptions } from "../types/Canvas";
 import { drawBeam } from "../utils/beam";
 import { useWindow } from "../../../composables";
 import { getInitialState, restartState } from "../utils/game";
+import useTiltAndScroll from "./useTiltAndScroll";
+import Cloud from "../helpers/Cloud";
+import Star from "../helpers/Star";
+import { CLOUD_SHAPE, STAR_SHAPE } from "../constants";
 
 const FACE_TIMER = 2000;
 const COLLISION_COOLDOWN = 500;
@@ -26,12 +30,21 @@ const useGame = (
     const { keyDown, keyUp, touchDown, touchUp } = useUserActions(state, game);
     const canvas = useCanvas(state, game, canvasElement);
     const bugs = useObstacle(state, game);
-    const background = useBackground(state);
+
+    const background = useBackground(
+        state,
+        Cloud(CLOUD_SHAPE, state.value.layout),
+        Star(STAR_SHAPE, state.value.layout),
+    );
+
+    const handler = useTiltAndScroll(state, background.list, canvasElement);
 
     thisWindow.on<KeyboardEvent>("keyup", (_, e) => keyUp(e));
     thisWindow.on<KeyboardEvent>("keydown", (_, e) => keyDown(e));
     thisWindow.on("touchstart", touchDown);
     thisWindow.on("touchend", touchUp);
+    thisWindow.on("scroll", handler.scroll, { passive: true });
+    thisWindow.on<MouseEvent>("mousemove", handler.tilt, { passive: true });
 
     const groundY = () => state.value.layout.height - game.player.size;
 
@@ -151,7 +164,7 @@ const useGame = (
     };
 
     const drawBackground = () => {
-        background.list.value.forEach((item) => {
+        background.drawList.value.forEach((item) => {
             if (item.isCircle) {
                 canvas.ctx.value!.beginPath();
                 canvas.ctx.value!.arc(

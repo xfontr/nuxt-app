@@ -87,15 +87,19 @@ onMounted(() => {
         -webkit-text-fill-color: $colors-secondary;
         font-weight: $fonts-extra-bold;
         letter-spacing: -0.5rem;
-        margin-bottom: 33vh;
+        margin-bottom: 16rem;
 
         @media (min-width: $breakpoints-m) {
             padding-left: 2rem;
-            margin-bottom: 30vh;
+            margin-bottom: 13rem;
+        }
+
+        @media (min-width: $breakpoints-l) {
+            margin-bottom: 11rem;
         }
 
         @media (min-width: $breakpoints-xl) {
-            margin-bottom: 12%;
+            margin-bottom: 9rem;
         }
     }
 }
