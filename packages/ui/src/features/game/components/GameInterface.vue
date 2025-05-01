@@ -139,7 +139,7 @@ watch(() => props.state.laserLeft, applyLaserBarStyles, { immediate: true });
         justify-content: space-between;
     }
 
-    @media (min-width: $breakpoints-xl) {
+    @media (min-width: $breakpoints-m) {
         height: 9.5rem;
         width: 55%;
     }

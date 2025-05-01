@@ -6,10 +6,7 @@ import type { Game, GameState } from "../types/Game";
 import { getUiAsset } from "../utils/assets";
 import { DESKTOP_INSTRUCTIONS, MOBILE_INSTRUCTIONS } from "../constants";
 import { getInstruction } from "../utils/instructions";
-import type { Instruction } from "../types/Instruction";
-import type { UiAsset } from "../types/UiAsset";
-
-const isMobile = false;
+import type { Instruction, InstructionName } from "../types/Instruction";
 
 const props = defineProps<{
     t: i18n;
@@ -17,14 +14,11 @@ const props = defineProps<{
     game: Game;
 }>();
 
-const space = getUiAsset(props.t, "space", props.game.assetsSrc);
+const desktopStart = getUiAsset(props.t, "space", props.game.assetsSrc);
+const mobileStart = getUiAsset(props.t, "tap", props.game.assetsSrc);
 
-const instructionNames = computed(() =>
-    isMobile ? MOBILE_INSTRUCTIONS : DESKTOP_INSTRUCTIONS,
-);
-
-const instructions = computed<(Instruction & UiAsset)[]>(() =>
-    instructionNames.value.map((instruction) => {
+const getInstructions = (instructions: InstructionName[]) =>
+    instructions.map((instruction) => {
         const fullInstruction: Instruction = getInstruction(
             props.t,
             instruction,
@@ -34,17 +28,13 @@ const instructions = computed<(Instruction & UiAsset)[]>(() =>
             ...fullInstruction,
             ...getUiAsset(props.t, fullInstruction.asset, props.game.assetsSrc),
         };
-    }),
-);
+    });
 
-const restartInstruction = computed<string>(() => {
-    const device = isMobile ? "mobile" : "desktop";
-
-    return getInstruction(
+const getStartInstruction = (device: "mobile" | "desktop"): string =>
+    getInstruction(
         props.t,
         props.state.status === "OVER" ? `restart_${device}` : `start_${device}`,
     ).instruction;
-});
 </script>
 
 <template>
@@ -55,20 +45,52 @@ const restartInstruction = computed<string>(() => {
         ]"
     >
         <Tag
-            class="instructions__hint"
+            class="instructions__hint--desktop"
             :contrast="true"
         >
             <img
                 class="hint-img"
                 :height="20"
-                :src="space.src"
-                :alt="space.alt"
+                :src="desktopStart.src"
+                :alt="desktopStart.alt"
             />
-            {{ restartInstruction }}
+            {{ getStartInstruction("desktop") }}
         </Tag>
+
         <Tag
-            class="instructions__hint"
-            v-for="{ alt, src, instruction } in instructions"
+            class="instructions__hint--mobile"
+            :contrast="true"
+        >
+            <img
+                class="hint-img"
+                :height="20"
+                :src="mobileStart.src"
+                :alt="mobileStart.alt"
+            />
+            {{ getStartInstruction("mobile") }}
+        </Tag>
+
+        <Tag
+            class="instructions__hint instructions__hint--desktop"
+            v-for="{ alt, src, instruction } in getInstructions(
+                DESKTOP_INSTRUCTIONS,
+            )"
+            :key="instruction"
+        >
+            <img
+                class="hint-img"
+                :src
+                :alt
+                :height="20"
+            />
+            {{ instruction }}
+        </Tag>
+
+        <Tag
+            class="instructions__hint instructions__hint--mobile"
+            v-for="{ alt, src, instruction } in getInstructions(
+                MOBILE_INSTRUCTIONS,
+            )"
             :key="instruction"
         >
             <img
@@ -111,6 +133,10 @@ const restartInstruction = computed<string>(() => {
         }
     }
 
+    &--desktop {
+        display: none;
+    }
+
     @media (min-width: $breakpoints-xl) {
         flex-direction: row;
     }
@@ -119,6 +145,30 @@ const restartInstruction = computed<string>(() => {
         @media (min-width: $breakpoints-xl) {
             flex-direction: column;
         }
+    }
+}
+
+@media (pointer: fine) {
+    .hint-img--mobile,
+    .instructions__hint--mobile {
+        display: none !important;
+    }
+
+    .hint-img--desktop,
+    .instructions__hint--desktop {
+        display: flex !important;
+    }
+}
+
+@media (pointer: coarse) {
+    .hint-img--mobile,
+    .instructions__hint--mobile {
+        display: flex !important;
+    }
+
+    .hint-img--desktop,
+    .instructions__hint--desktop {
+        display: none !important;
     }
 }
 </style>
