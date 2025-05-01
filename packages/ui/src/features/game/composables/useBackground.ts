@@ -153,7 +153,15 @@ const useBackground = (state: Ref<GameState>) => {
             star.y += speed;
             star.x += speed * 0.5;
 
-            if (star.y <= canvas.height) return;
+            if (star.y <= canvas.height || star.x <= canvas.width) return;
+
+            const fromLeft = Math.random() < 0.2;
+
+            if (fromLeft) {
+                star.x = -star.width;
+                star.y = random(0, canvas.height / 2);
+                return;
+            }
 
             star.x = random(0, canvas.width);
             star.y = -star.height;
