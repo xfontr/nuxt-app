@@ -59,6 +59,7 @@ onMounted(() => {
 
 <style lang="scss">
 @use "../../../assets/scss/variables/colors" as *;
+@use "../../../assets/scss/variables/breakpoints" as *;
 
 @layer base {
     @property --color-stop-1 {
@@ -80,12 +81,13 @@ onMounted(() => {
     }
 
     .canvas {
+        user-select: none;
         border-bottom: 1px solid $colors-primary-very-light !important;
         background: linear-gradient(
                 to top,
                 #ffffff 0%,
-                #ffffff 30%,
-                transparent 30%
+                #ffffff 17rem,
+                transparent 17rem
             ),
             linear-gradient(
                 to bottom,
@@ -93,6 +95,22 @@ onMounted(() => {
                 var(--color-stop-2) 40%,
                 var(--color-stop-3) 100%
             );
+
+        @media (min-width: $breakpoints-m) {
+            background: linear-gradient(
+                    to top,
+                    #ffffff 0%,
+                    #ffffff 13.5rem,
+                    transparent 13.5rem
+                ),
+                linear-gradient(
+                    to bottom,
+                    var(--color-stop-1),
+                    var(--color-stop-2) 40%,
+                    var(--color-stop-3) 100%
+                );
+        }
+
         z-index: 1;
         transition: --color-stop-1 1s ease, --color-stop-2 1s ease,
             --color-stop-3 1s ease;

@@ -57,6 +57,7 @@ onMounted(() => {
 }
 
 .atf {
+    user-select: none;
     min-height: 100vh;
     display: flex;
     align-items: flex-end;
@@ -68,11 +69,11 @@ onMounted(() => {
         object-fit: cover;
         object-position: left;
 
-        bottom: 33vh;
+        bottom: 17rem;
 
-        @media (min-width: $breakpoints-xl) {
+        @media (min-width: $breakpoints-m) {
             width: 100vw;
-            bottom: 13rem;
+            bottom: 13.5rem;
         }
     }
 
