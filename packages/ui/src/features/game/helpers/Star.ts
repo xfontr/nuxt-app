@@ -6,7 +6,7 @@ import type {
 } from "../types/Background";
 import createBackgroundItem from "../utils/background";
 
-const Star: BackgroundFactory = (options, container, list) => {
+export const Star: BackgroundFactory = (options, container, list) => {
     const init = () => {
         list.value = Array.from({ length: options.density }, () => {
             const size = random(2, 5);

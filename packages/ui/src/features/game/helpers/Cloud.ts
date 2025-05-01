@@ -7,7 +7,7 @@ import type {
 import { random } from "../../../utils";
 import createBackgroundItem from "../utils/background";
 
-const Cloud: BackgroundFactory = (options, container, list) => {
+export const Cloud: BackgroundFactory = (options, container, list) => {
     const sizeMultiplier = ref<number>(options.sizeMultiplier);
 
     const updateSizeMultiplier = () => {
