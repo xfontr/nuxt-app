@@ -1,16 +1,50 @@
 <script lang="ts" setup>
+import { computed } from "vue";
 import Tag from "../../../components/Tag.vue";
-import { ASSETS, AVAILABLE_KEYS } from "../constants";
-import type { Asset } from "../types";
-import type { GameState } from "../types/Game";
-import type { Translations } from "../types/Translations";
+import type { i18n } from "../types";
+import type { Game, GameState } from "../types/Game";
+import { getUiAsset } from "../utils/assets";
+import { DESKTOP_INSTRUCTIONS, MOBILE_INSTRUCTIONS } from "../constants";
+import { getInstruction } from "../utils/instructions";
+import type { Instruction } from "../types/Instruction";
+import type { UiAsset } from "../types/UiAsset";
 
-defineProps<{
-    t: Translations;
+const isMobile = false;
+
+const props = defineProps<{
+    t: i18n;
     state: GameState;
+    game: Game;
 }>();
 
-const getAsset = (name: string): Asset => `${ASSETS}${name}.png`;
+const space = getUiAsset(props.t, "space", props.game.assetsSrc);
+
+const instructionNames = computed(() =>
+    isMobile ? MOBILE_INSTRUCTIONS : DESKTOP_INSTRUCTIONS,
+);
+
+const instructions = computed<(Instruction & UiAsset)[]>(() =>
+    instructionNames.value.map((instruction) => {
+        const fullInstruction: Instruction = getInstruction(
+            props.t,
+            instruction,
+        );
+
+        return {
+            ...fullInstruction,
+            ...getUiAsset(props.t, fullInstruction.asset, props.game.assetsSrc),
+        };
+    }),
+);
+
+const restartInstruction = computed<string>(() => {
+    const device = isMobile ? "mobile" : "desktop";
+
+    return getInstruction(
+        props.t,
+        props.state.status === "OVER" ? `restart_${device}` : `start_${device}`,
+    ).instruction;
+});
 </script>
 
 <template>
@@ -26,28 +60,24 @@ const getAsset = (name: string): Asset => `${ASSETS}${name}.png`;
         >
             <img
                 class="hint-img"
-                :src="getAsset('keyboard-space')"
-                alt="Keyboard space bar"
                 :height="20"
+                :src="space.src"
+                :alt="space.alt"
             />
-            {{
-                state.status === "OVER"
-                    ? t.instructions.restart
-                    : t.instructions.start
-            }}
+            {{ restartInstruction }}
         </Tag>
         <Tag
             class="instructions__hint"
-            v-for="{ alt, name, src } in AVAILABLE_KEYS"
-            :key="name"
+            v-for="{ alt, src, instruction } in instructions"
+            :key="instruction"
         >
             <img
                 class="hint-img"
-                :src="getAsset(src)"
+                :src
                 :alt
                 :height="20"
             />
-            {{ t.keyboard[name] }}
+            {{ instruction }}
         </Tag>
     </article>
 </template>

@@ -1,36 +1,11 @@
 <script lang="ts" setup>
-import {
-    Game,
-    GamePlayerLoc,
-    GradientScroll,
-    gradients,
-    type Translations,
-} from "@portfolio/ui";
-import { ASSETS, GAME_DATA } from "~/configs/game";
+import { Game, GamePlayerLoc, GradientScroll, gradients } from "@portfolio/ui";
+import { GAME_DATA } from "~/configs/game";
 
-const { ts } = useI18n();
+const { t } = useI18n();
 
 const title = ref<HTMLHeadingElement>();
 const target = ref<HTMLElement>();
-const translations = ref<Translations>({
-    linterRay: ts("game.linter_ray"),
-    keyboard: {
-        left: ts("game.keyboard.left"),
-        right: ts("game.keyboard.right"),
-        space: ts("game.keyboard.space"),
-        up: ts("game.keyboard.up"),
-    },
-    instructions: {
-        start: ts("game.instructions.start"),
-        restart: ts("game.instructions.restart"),
-    },
-    stats: {
-        bugs_fixed: ts("game.stats.bugs_fixed"),
-        points: ts("game.stats.points"),
-        score: ts("game.stats.score"),
-        best_score: ts("game.stats.best_score"),
-    },
-});
 
 onMounted(() => {
     target.value = document.body;
@@ -62,8 +37,7 @@ onMounted(() => {
                 <Game
                     class="game"
                     :game="GAME_DATA"
-                    :assets="ASSETS"
-                    :t="translations"
+                    :t
                 />
             </section>
         </template>

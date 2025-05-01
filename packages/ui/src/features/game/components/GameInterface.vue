@@ -4,18 +4,18 @@ import type { Game } from "../types";
 import type { GameState } from "../types/Game";
 import { colors } from "../../../configs";
 import type { Unit } from "../../../types/Unit";
-import type { Translations } from "../types/Translations";
 import Instructions from "./Instructions.vue";
 import Tag from "../../../components/Tag.vue";
 import Lives from "./Lives.vue";
 import Stats from "./Stats.vue";
+import type { i18n } from "../types/Translations";
 
 const PROGRESS_BAR_WIDTH = 100;
 
 const props = defineProps<{
     game: Game;
     state: GameState;
-    t: Translations;
+    t: i18n;
 }>();
 
 const linterLaser = ref<HTMLDivElement>();
@@ -73,6 +73,7 @@ watch(() => props.state.laserLeft, applyLaserBarStyles, { immediate: true });
                 v-if="state.status === 'IDLE' || state.status === 'OVER'"
                 :t
                 :state
+                :game
             />
 
             <div
@@ -80,16 +81,20 @@ watch(() => props.state.laserLeft, applyLaserBarStyles, { immediate: true });
                 v-show="state.status === 'ON'"
             >
                 <div class="up">
-                    <Tag>{{ state.bugsKilled }} {{ t.stats.bugs_fixed }}</Tag>
+                    <Tag
+                        >{{ state.bugsKilled }}
+                        {{ t("game.stats.bugs_fixed") }}</Tag
+                    >
                     <span class="up__score"
-                        >{{ score }} {{ t.stats.points }}</span
+                        >{{ score }} {{ t("game.stats.points") }}</span
                     >
                 </div>
 
                 <div class="bottom">
                     <Lives
-                        :lives="game.player.lives"
                         :state
+                        :game
+                        :t
                     />
                     <div class="bottom__laser">
                         <progress
@@ -102,7 +107,7 @@ watch(() => props.state.laserLeft, applyLaserBarStyles, { immediate: true });
                         <label
                             class="laser__label"
                             for="linter-laser"
-                            >{{ t.linterRay }}</label
+                            >{{ t("game.linter_ray") }}</label
                         >
                     </div>
                 </div>
