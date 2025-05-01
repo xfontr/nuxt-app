@@ -1,23 +1,33 @@
 <script lang="ts" setup>
 import { computed, onMounted, useTemplateRef, watch } from "vue";
-import type { GameState } from "../types/Game";
-import type { Asset } from "../types";
-import { ASSETS } from "../constants";
+import type { Game, GameState } from "../types/Game";
+import { getUiAsset } from "../utils/assets";
+import type { i18n } from "../types";
 
-const props = defineProps<{ lives: number; state: GameState }>();
+const props = defineProps<{
+    state: GameState;
+    game: Game;
+    t: i18n;
+}>();
 
 const heartImages = useTemplateRef<HTMLImageElement[]>("heart");
 
-const getAsset = (name: string): Asset => `${ASSETS}${name}.png`;
-
 const lives = computed<boolean[]>(() =>
-    Array.from({ length: props.lives }, (_, i) => props.state.player.lives > i),
+    Array.from(
+        { length: props.game.player.lives },
+        (_, i) => props.state.player.lives > i,
+    ),
 );
 
 const setUpLives = () => {
     lives.value.forEach((alive, i) => {
         const img = heartImages.value?.[i];
-        if (img) img.src = getAsset(alive ? "heart-full" : "heart-empty");
+        if (!img) return;
+        img.src = getUiAsset(
+            props.t,
+            alive ? "heart_full" : "heart_empty",
+            props.game.assetsSrc,
+        ).src;
     });
 };
 

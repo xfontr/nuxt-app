@@ -5,7 +5,6 @@ import useUserActions from "./useUserActions";
 import useCanvas from "./useCanvas";
 import useObstacle from "./useObstacle";
 import useBackground from "./useBackground";
-import type { Asset } from "../types";
 import type { CanvasDrawOptions } from "../types/Canvas";
 import { drawBeam } from "../utils/beam";
 import { useWindow } from "../../../composables";
@@ -16,7 +15,6 @@ const COLLISION_COOLDOWN = 500;
 
 const useGame = (
     game: Game,
-    assets: Asset[],
     canvasElement: Ref<HTMLCanvasElement | undefined>,
 ) => {
     const collisionTimeout = ref();
@@ -25,13 +23,15 @@ const useGame = (
 
     const thisWindow = useWindow();
     const lasers = useLaser(state, game);
-    const { keyDown, keyUp } = useUserActions(state, game);
-    const canvas = useCanvas(state, canvasElement, assets);
+    const { keyDown, keyUp, touchDown, touchUp } = useUserActions(state, game);
+    const canvas = useCanvas(state, game, canvasElement);
     const bugs = useObstacle(state, game);
     const background = useBackground(state);
 
     thisWindow.on<KeyboardEvent>("keyup", (_, e) => keyUp(e));
     thisWindow.on<KeyboardEvent>("keydown", (_, e) => keyDown(e));
+    thisWindow.on("touchstart", touchDown);
+    thisWindow.on("touchend", touchUp);
 
     const groundY = () => state.value.layout.height - game.player.size;
 

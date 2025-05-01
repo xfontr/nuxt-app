@@ -32,6 +32,7 @@ export type Game = {
         difficultyBreakpoint: number;
         difficultyIncrease: number;
     };
+    assetsSrc: string;
 };
 
 export type GameState = {

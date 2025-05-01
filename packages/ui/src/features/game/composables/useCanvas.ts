@@ -1,13 +1,12 @@
 import { onMounted, ref, type Ref } from "vue";
 import type { CanvasDrawOptions } from "../types/Canvas";
-import type { Asset } from "..";
+import type { Game, GameState } from "../types/Game";
 import { ASSETS } from "../constants";
-import type { GameState } from "../types/Game";
 
 const useCanvas = (
     state: Ref<GameState>,
+    { assetsSrc }: Game,
     canvas: Ref<HTMLCanvasElement | undefined>,
-    assetsSrc: Asset[],
 ) => {
     const ctx = ref<CanvasRenderingContext2D>();
     const assets = ref<Record<string, HTMLImageElement>>({});
@@ -53,9 +52,9 @@ const useCanvas = (
         if (!canvas.value) return;
         ctx.value = canvas.value.getContext("2d")!;
 
-        assetsSrc.forEach((asset) => {
+        ASSETS.forEach((asset) => {
             const image = new Image();
-            image.src = `${ASSETS}${asset}`;
+            image.src = `${assetsSrc}/${asset}.png`; // TODO: Properly join url
             assets.value[asset.split(".")[0]] = image;
         });
     });

@@ -1,4 +1,4 @@
-import type { Asset, GameOptions } from "@portfolio/ui";
+import type { GameOptions } from "@portfolio/ui";
 
 export const GAME_DATA: GameOptions = {
     physics: {
@@ -34,18 +34,5 @@ export const GAME_DATA: GameOptions = {
         offset: 200,
         thresholds: [20, 40, 80, 100],
     },
+    assetsSrc: "./img/game",
 };
-
-export const ASSETS: Asset[] = [
-    "player-neutral.png",
-    "player-laser.png",
-    "player-disgusted.png",
-    "player-fast.png",
-    "cloud.png",
-    "bug-0.png",
-    "bug-1.png",
-    "bug-2.png",
-    "bug-3.png",
-    "heart-full.png",
-    "heart-empty.png",
-];

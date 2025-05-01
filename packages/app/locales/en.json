@@ -5,15 +5,78 @@
     },
     "game": {
         "linter_ray": "Linter ray",
-        "keyboard": {
-            "up": "Jump",
-            "left": "Slow down",
-            "right": "Speed up",
-            "space": "Linter ray"
-        },
         "instructions": {
-            "start": "Start",
-            "restart": "Restart"
+            "up": {
+                "instruction": "Jump",
+                "asset": "up"
+            },
+            "left": {
+                "instruction": "Slow down",
+                "asset": "left"
+            },
+            "right": {
+                "instruction": "Speed up",
+                "asset": "right"
+            },
+            "space": {
+                "instruction": "Linter ray",
+                "asset": "space"
+            },
+            "tap": {
+                "instruction": "Tap to jump",
+                "asset": "tap"
+            },
+            "tap_hold": {
+                "instruction": "Hold to linter ray",
+                "asset": "tap_hold"
+            },
+            "start_desktop": {
+                "instruction": "Start",
+                "asset": "space"
+            },
+            "restart_desktop": {
+                "instruction": "Restart",
+                "asset": "space"
+            },
+            "start_mobile": {
+                "instruction": "Tap to start",
+                "asset": "tap"
+            },
+            "restart_mobile": {
+                "instruction": "Tap to restart",
+                "asset": "tap"
+            }
+        },
+        "assets": {
+            "tap": { "src": "tap", "alt": "Finger touching" },
+            "space": {
+                "src": "keyboard-space",
+                "alt": "Keyboard space"
+            },
+            "tap_hold": {
+                "src": "tap-hold",
+                "alt": "Finger touching and holding"
+            },
+            "right": {
+                "src": "keyboard-right",
+                "alt": "Keyboard right arrow"
+            },
+            "left": {
+                "src": "keyboard-left",
+                "alt": "Keyboard left arrow"
+            },
+            "up": {
+                "src": "keyboard-up",
+                "alt": "Keyboard up arrow"
+            },
+            "heart_full": {
+                "src": "heart-full",
+                "alt": "Filled heart"
+            },
+            "heart_empty": {
+                "src": "heart-empty",
+                "alt": "Empty heart"
+            }
         },
         "stats": {
             "bugs_fixed": "bugs fixed",

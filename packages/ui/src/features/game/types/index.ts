@@ -1,5 +1,4 @@
-import type { Asset } from "./Asset";
 import type { Game } from "./Game";
-import type { Translations } from "./Translations";
+import type { i18n } from "./Translations";
 
-export type { Asset, Game, Translations };
+export type { Game, i18n };

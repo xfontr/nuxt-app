@@ -1,23 +1,21 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import type { Game } from "../types/Game";
-import type { Asset } from "../types/Asset";
 import GameInterface from "./GameInterface.vue";
 import useGame from "../composables/useGame";
 import { useWindow } from "../../../composables";
 import { PLAYER_LOCATION_CLASS } from "../constants";
-import type { Translations } from "../types/Translations";
+import type { i18n } from "../types/Translations";
 
 const thisWindow = useWindow();
 const canvas = ref<HTMLCanvasElement>();
 
 const props = defineProps<{
     game: Game;
-    assets: Asset[];
-    t: Translations;
+    t: i18n;
 }>();
 
-const { animate, setup, state } = useGame(props.game, props.assets, canvas);
+const { animate, setup, state } = useGame(props.game, canvas);
 
 const updateLayoutAndPlayerPosition = () => {
     state.value.layout.width = window.innerWidth;

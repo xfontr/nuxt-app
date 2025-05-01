@@ -1,5 +1,11 @@
 # @portfolio/ui
 
+## 0.1.1
+
+### Patch Changes
+
+- Refine UI, adapt to mobile and improve game mechanics (faster speed, difficulty levels)
+
 ## 0.1.0
 
 ### Minor Changes

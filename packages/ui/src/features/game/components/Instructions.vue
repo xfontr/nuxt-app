@@ -1,16 +1,39 @@
 <script lang="ts" setup>
 import Tag from "../../../components/Tag.vue";
-import { ASSETS, AVAILABLE_KEYS } from "../constants";
-import type { Asset } from "../types";
-import type { GameState } from "../types/Game";
-import type { Translations } from "../types/Translations";
+import type { i18n } from "../types";
+import type { Game, GameState } from "../types/Game";
+import { getUiAsset } from "../utils/assets";
+import { DESKTOP_INSTRUCTIONS, MOBILE_INSTRUCTIONS } from "../constants";
+import { getInstruction } from "../utils/instructions";
+import type { Instruction, InstructionName } from "../types/Instruction";
 
-defineProps<{
-    t: Translations;
+const props = defineProps<{
+    t: i18n;
     state: GameState;
+    game: Game;
 }>();
 
-const getAsset = (name: string): Asset => `${ASSETS}${name}.png`;
+const desktopStart = getUiAsset(props.t, "space", props.game.assetsSrc);
+const mobileStart = getUiAsset(props.t, "tap", props.game.assetsSrc);
+
+const getInstructions = (instructions: InstructionName[]) =>
+    instructions.map((instruction) => {
+        const fullInstruction: Instruction = getInstruction(
+            props.t,
+            instruction,
+        );
+
+        return {
+            ...fullInstruction,
+            ...getUiAsset(props.t, fullInstruction.asset, props.game.assetsSrc),
+        };
+    });
+
+const getStartInstruction = (device: "mobile" | "desktop"): string =>
+    getInstruction(
+        props.t,
+        props.state.status === "OVER" ? `restart_${device}` : `start_${device}`,
+    ).instruction;
 </script>
 
 <template>
@@ -21,33 +44,61 @@ const getAsset = (name: string): Asset => `${ASSETS}${name}.png`;
         ]"
     >
         <Tag
-            class="instructions__hint"
+            class="instructions__hint--desktop"
             :contrast="true"
         >
             <img
                 class="hint-img"
-                :src="getAsset('keyboard-space')"
-                alt="Keyboard space bar"
                 :height="20"
+                :src="desktopStart.src"
+                :alt="desktopStart.alt"
             />
-            {{
-                state.status === "OVER"
-                    ? t.instructions.restart
-                    : t.instructions.start
-            }}
+            {{ getStartInstruction("desktop") }}
         </Tag>
+
         <Tag
-            class="instructions__hint"
-            v-for="{ alt, name, src } in AVAILABLE_KEYS"
-            :key="name"
+            class="instructions__hint--mobile"
+            :contrast="true"
         >
             <img
                 class="hint-img"
-                :src="getAsset(src)"
+                :height="20"
+                :src="mobileStart.src"
+                :alt="mobileStart.alt"
+            />
+            {{ getStartInstruction("mobile") }}
+        </Tag>
+
+        <Tag
+            class="instructions__hint instructions__hint--desktop"
+            v-for="{ alt, src, instruction } in getInstructions(
+                DESKTOP_INSTRUCTIONS,
+            )"
+            :key="instruction"
+        >
+            <img
+                class="hint-img"
+                :src
                 :alt
                 :height="20"
             />
-            {{ t.keyboard[name] }}
+            {{ instruction }}
+        </Tag>
+
+        <Tag
+            class="instructions__hint instructions__hint--mobile"
+            v-for="{ alt, src, instruction } in getInstructions(
+                MOBILE_INSTRUCTIONS,
+            )"
+            :key="instruction"
+        >
+            <img
+                class="hint-img"
+                :src
+                :alt
+                :height="20"
+            />
+            {{ instruction }}
         </Tag>
     </article>
 </template>
@@ -81,6 +132,10 @@ const getAsset = (name: string): Asset => `${ASSETS}${name}.png`;
         }
     }
 
+    &--desktop {
+        display: none;
+    }
+
     @media (min-width: $breakpoints-xl) {
         flex-direction: row;
     }
@@ -89,6 +144,30 @@ const getAsset = (name: string): Asset => `${ASSETS}${name}.png`;
         @media (min-width: $breakpoints-xl) {
             flex-direction: column;
         }
+    }
+}
+
+@media (pointer: fine) {
+    .hint-img--mobile,
+    .instructions__hint--mobile {
+        display: none !important;
+    }
+
+    .hint-img--desktop,
+    .instructions__hint--desktop {
+        display: flex !important;
+    }
+}
+
+@media (pointer: coarse) {
+    .hint-img--mobile,
+    .instructions__hint--mobile {
+        display: flex !important;
+    }
+
+    .hint-img--desktop,
+    .instructions__hint--desktop {
+        display: none !important;
     }
 }
 </style>

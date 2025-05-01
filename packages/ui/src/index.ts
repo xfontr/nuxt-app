@@ -1,11 +1,10 @@
 export { GradientScroll } from "./features/gradientScroll";
 export { Pointer } from "./features/pointer";
 export {
-    type Asset,
     Game,
     GamePlayerLoc,
     type GameOptions,
-    type Translations,
+    type i18n,
 } from "./features/game";
 
 export * from "./configs";
