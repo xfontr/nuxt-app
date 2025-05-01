@@ -7,6 +7,5 @@ export type CanvasDrawOptions = {
     imageSecond?: string;
     imageRate?: 2 | 4 | 8;
     scale?: number;
-    ttl?: number;
     isCircle?: boolean;
 };

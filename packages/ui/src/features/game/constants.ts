@@ -1,3 +1,4 @@
+import type { BackgroundItemOptions } from "./types/Background";
 import type { InstructionName } from "./types/Instruction";
 import type { ObstacleOptions } from "./types/Obstacle";
 
@@ -32,3 +33,17 @@ export const DESKTOP_INSTRUCTIONS: InstructionName[] = [
     "right",
 ];
 export const MOBILE_INSTRUCTIONS: InstructionName[] = ["tap_hold", "tap"];
+
+export const CLOUD_SHAPE: BackgroundItemOptions = {
+    baseHeight: 40,
+    baseWidth: 60,
+    density: 10,
+    sizeMultiplier: 4,
+};
+
+export const STAR_SHAPE: BackgroundItemOptions = {
+    density: 100,
+    baseHeight: 2,
+    baseWidth: 2,
+    sizeMultiplier: 3,
+};
