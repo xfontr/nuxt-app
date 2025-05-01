@@ -77,7 +77,7 @@ onMounted(() => {
     }
 
     &__title {
-        padding-left: 2rem;
+        padding-left: 1rem;
         filter: drop-shadow(10px 10px 4px rgba(0, 0, 0, 0.05));
         max-width: 80%;
         line-height: 45%;
@@ -89,6 +89,7 @@ onMounted(() => {
         margin-bottom: 33vh;
 
         @media (min-width: $breakpoints-m) {
+            padding-left: 2rem;
             margin-bottom: 30vh;
         }
 

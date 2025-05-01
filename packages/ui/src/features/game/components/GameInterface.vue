@@ -132,16 +132,19 @@ watch(() => props.state.laserLeft, applyLaserBarStyles, { immediate: true });
     display: flex;
     gap: $distances-s;
     justify-content: flex-end;
-    align-items: flex-end;
-    width: 75%;
+    align-items: center;
+    width: 100%;
+    padding-left: 2.5rem;
 
     &--spaced {
         justify-content: space-between;
     }
 
     @media (min-width: $breakpoints-m) {
+        padding-left: 0;
         height: 9.5rem;
         width: 55%;
+        align-items: flex-end;
     }
 }
 
