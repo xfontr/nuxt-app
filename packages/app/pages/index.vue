@@ -1,26 +1,49 @@
 <script lang="ts" setup>
-import { Game, GamePlayerLoc, GradientScroll, gradients } from "@portfolio/ui";
+import {
+    Game,
+    GamePlayerLoc,
+    GradientScroll,
+    Pointer,
+    gradients,
+} from "@portfolio/ui";
 import { GAME_DATA } from "~/configs/game";
 
 const { t } = useI18n();
 
 const title = ref<HTMLHeadingElement>();
 const target = ref<HTMLElement>();
+const gradientThreshold = ref<number>(0);
 
 onMounted(() => {
     target.value = document.body;
     if (!title.value) return;
 });
+
+const updateGradientThreshold = (threshold: number) => {
+    gradientThreshold.value = threshold;
+};
+
+const isReversed = computed<boolean>(() => gradientThreshold.value < 0.2);
+
+const handleCta = () => {
+    if (isReversed.value) {
+        window.scrollBy({ top: 750, behavior: "smooth" });
+        return;
+    }
+
+    console.log("pinis");
+};
 </script>
 
 <template>
-    <GradientScroll
-        :target="target"
-        :gradients="gradients.GRADIENTS_MAIN.toReversed()"
-        :transition="1"
-    >
-        <template #reference>
-            <section class="atf">
+    <div>
+        <GradientScroll
+            :target="target"
+            :gradients="gradients.GRADIENTS_MAIN.toReversed()"
+            :transition="1"
+            @update:threshold="updateGradientThreshold"
+        >
+            <template #reference>
                 <img
                     class="atf__img"
                     src="/img/game/background-mountain.svg"
@@ -39,10 +62,47 @@ onMounted(() => {
                     :game="GAME_DATA"
                     :t
                 />
-            </section>
-        </template>
-        <div class="atf">wharevs</div>
-    </GradientScroll>
+            </template>
+
+            <Pointer
+                class="btf__pointer"
+                :can-overflow="false"
+                :size="1"
+                :animate="false"
+            >
+                <p class="btf__text">
+                    Full stack web developer and ex-Lawyer based in Barcelona.
+                    Clean code nerd with a strong focus in architecture,
+                    performance, CRO and design. 3 years long journey in e-com
+                    stores.
+                </p>
+
+                <button
+                    type="button"
+                    :class="['btf__cta', { 'btf__cta--reversed': isReversed }]"
+                    @click="handleCta"
+                >
+                    <span v-if="isReversed">Scroll</span>
+                    <span
+                        v-else
+                        class="cta-text"
+                        >Say hi</span
+                    >
+                </button>
+
+                <template #pointer>
+                    <div
+                        :class="[
+                            'custom-pointer',
+                            { 'custom-pointer--reversed': isReversed },
+                        ]"
+                    ></div>
+                </template>
+            </Pointer>
+        </GradientScroll>
+
+        <section class="skills">Yo</section>
+    </div>
 </template>
 
 <style lang="scss">
@@ -56,9 +116,14 @@ onMounted(() => {
     z-index: 1;
 }
 
+.skills {
+    height: 100vh;
+    background-color: $colors-primary;
+}
+
 .atf {
     user-select: none;
-    min-height: 100vh;
+    height: 96vh;
     display: flex;
     align-items: flex-end;
 
@@ -108,6 +173,88 @@ onMounted(() => {
     position: absolute;
     bottom: 1.55rem;
     z-index: -2;
+}
+
+.custom-pointer {
+    mix-blend-mode: difference;
+    color: $colors-primary;
+    background-color: $colors-secondary;
+    border-radius: 50%;
+    transition: 1s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+
+    &--reversed {
+        color: $colors-secondary;
+        background-color: $colors-primary;
+    }
+}
+
+.btf {
+    height: 100vh;
+    position: relative;
+
+    &__pointer {
+        width: 100% !important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &__text {
+        text-align: center;
+        max-width: 30rem;
+    }
+
+    &__cta {
+        position: fixed;
+        left: 3rem;
+        bottom: 3rem;
+
+        border-radius: 50%;
+        height: 6rem;
+        width: 6rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transform: rotate(-12deg);
+        transition: 0.8s;
+        color: $colors-primary;
+        background-color: $colors-secondary;
+        cursor: none;
+
+        &--reversed {
+            position: absolute;
+            bottom: 85vh;
+
+            color: $colors-secondary;
+            background-color: $colors-primary;
+        }
+
+        &:hover {
+            transform: rotate(-372deg) scale(1.1);
+        }
+
+        &:active {
+            transition: 0.2s;
+            transform: scale(0.9);
+        }
+    }
+}
+
+@keyframes rotation-in {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(721deg);
+    }
+}
+
+.cta-text {
+    animation: rotation-in 1.5s ease;
 }
 </style>
 

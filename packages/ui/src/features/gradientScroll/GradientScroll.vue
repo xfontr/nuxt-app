@@ -31,6 +31,8 @@ const props = withDefaults(
     },
 );
 
+const emit = defineEmits<{ "update:threshold": [number] }>();
+
 const { on } = useWindow();
 
 const currentThreshold = ref<number>(0);
@@ -43,11 +45,7 @@ const threshold = computed<number[]>(() =>
 
 const gradientStyles = computed<GradientStyle[]>(() =>
     props.gradients.map((gradient) =>
-        typeof gradient === "string"
-            ? {
-                  backgroundColor: gradient,
-              }
-            : gradient,
+        typeof gradient === "string" ? { backgroundColor: gradient } : gradient,
     ),
 );
 
@@ -67,6 +65,15 @@ const updateColors = (): void => {
     const closestThreshold = findClosestValue(
         threshold.value,
         currentThreshold.value,
+    );
+
+    console.log(
+        closestThreshold,
+        threshold.value,
+        currentThreshold.value,
+        gradientsByThreshold.value,
+        getGradient(threshold.value, closestThreshold, !!isDown.value)!,
+        !!isDown.value,
     );
 
     const { backgroundColor, color } =
@@ -106,7 +113,11 @@ on("scroll", ({ scrollY }) => {
     lastScrollY.value = scrollY;
 });
 
-watch(currentThreshold, updateColors);
+watch(currentThreshold, () => {
+    updateColors();
+    console.log(currentThreshold.value);
+    emit("update:threshold", currentThreshold.value);
+});
 
 watch(
     () => props.target,
@@ -118,21 +129,23 @@ watch(
 </script>
 
 <template>
-    <div
+    <section
+        class="atf"
         v-intersect="{
             handler: handleOut,
             options: { threshold },
         }"
     >
         <slot name="reference" />
-    </div>
+    </section>
 
-    <div
+    <section
+        class="btf"
         v-intersect="{
             handler: handleIn,
             options: { threshold },
         }"
     >
         <slot />
-    </div>
+    </section>
 </template>
