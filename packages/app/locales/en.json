@@ -1,7 +1,14 @@
 {
+    "global": {
+        "scroll": "Scroll"
+    },
     "landing": {
         "title": "Just another dev",
-        "description": "Seriously, you must be tired of all the pretentious web developer portfolios. Aaaaand here comes another one. Sorry mate, that's just the way it is. I was looking for some standard matrix gif and this Neo gif popped up. But hey, this Neo gif is as clean as it gets, so you can just stare at it or something."
+        "description": "Seriously, you must be tired of all the pretentious web developer portfolios. Aaaaand here comes another one. Sorry mate, that's just the way it is. I was looking for some standard matrix gif and this Neo gif popped up. But hey, this Neo gif is as clean as it gets, so you can just stare at it or something.",
+        "summary": {
+            "cta": "Say hi",
+            "description": "Full stack web developer and ex-Lawyer based in Barcelona. Clean code nerd with a strong focus in architecture, performance, CRO and design. 3 years long journey in e-com stores."
+        }
     },
     "game": {
         "linter_ray": "Linter ray",
