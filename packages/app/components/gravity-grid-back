@@ -1,0 +1,207 @@
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from "vue";
+import Matter from "matter-js";
+
+const matter = ref(null);
+
+const ASSETS = {
+    nuxt: "https://img.icons8.com/?size=100&id=24eF8YVaoAR5&format=png&color=ffffff",
+    vue: "https://img.icons8.com/?size=100&id=rSpdgU9ntuoU&format=png&color=ffffff",
+    react: "https://img.icons8.com/?size=100&id=0Da6k7SMq0hs&format=png&color=ffffff",
+    ts: "https://img.icons8.com/?size=100&id=vMqgHSToxrJR&format=png&color=ffffff",
+    js: "https://img.icons8.com/?size=100&id=106036&format=png&color=ffffff",
+    css: "https://img.icons8.com/?size=100&id=38272&format=png&color=ffffff",
+    html: "https://img.icons8.com/?size=100&id=23028&format=png&color=ffffff",
+    node: "https://img.icons8.com/?size=100&id=FQlr_bFSqEdG&format=png&color=ffffff",
+    c: "https://img.icons8.com/?size=100&id=40669&format=png&color=ffffff",
+};
+
+const grid = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, "nuxt", 0],
+    ["css", 0, 0, 0, "ts", 0, 0, 0, 0, "vue", "react"],
+    ["html", "js", 0, 0, 0, 0, 0, "c", 0, 0, "node"],
+];
+
+onMounted(() => {
+    const {
+        Engine,
+        Render,
+        Runner,
+        MouseConstraint,
+        Mouse,
+        Composite,
+        Bodies,
+        Events,
+    } = Matter;
+
+    const engine = Engine.create();
+    const world = engine.world;
+
+    const canvasWidth = window.innerWidth;
+    const squareSize = canvasWidth / 13;
+    const margin = squareSize * 0.15;
+    const canvasHeight = window.innerHeight;
+
+    const render = Render.create({
+        element: matter.value,
+        engine,
+        options: {
+            width: canvasWidth,
+            height: canvasHeight,
+            background: "transparent",
+            wireframes: false,
+        },
+    });
+
+    Render.run(render);
+    const runner = Runner.create();
+    Runner.run(runner, engine);
+
+    const labels = [];
+
+    grid.forEach((row, rowIndex) => {
+        row.forEach((cell, colIndex) => {
+            if (cell === 0) return;
+
+            const x =
+                colIndex * (squareSize + margin) + squareSize / 2 + margin / 2;
+            const y =
+                rowIndex * (squareSize + margin) + squareSize / 2 + margin / 2;
+
+            const body = Bodies.rectangle(x, y, squareSize, squareSize, {
+                restitution: 0.2,
+                frictionAir: 0.03,
+                render: {
+                    fillStyle: "#000000",
+                    strokeStyle: "#ffffff",
+                    lineWidth: 2,
+                },
+            });
+
+            body.iconKey = cell;
+            labels.push(body);
+            Composite.add(world, body);
+        });
+    });
+
+    const wallThickness = 8;
+    const wallOptions = {
+        isStatic: true,
+        render: {
+            strokeStyle: "transparent",
+            opacity: 0,
+        },
+    };
+
+    Composite.add(world, [
+        Bodies.rectangle(
+            canvasWidth / 2,
+            0,
+            canvasWidth,
+            wallThickness,
+            wallOptions,
+        ),
+        Bodies.rectangle(
+            canvasWidth / 2,
+            canvasHeight + 2,
+            canvasWidth,
+            wallThickness,
+            wallOptions,
+        ),
+        Bodies.rectangle(
+            0,
+            canvasHeight / 2,
+            wallThickness,
+            canvasHeight,
+            wallOptions,
+        ),
+        Bodies.rectangle(
+            canvasWidth,
+            canvasHeight / 2,
+            wallThickness,
+            canvasHeight,
+            wallOptions,
+        ),
+    ]);
+
+    const mouse = Mouse.create(render.canvas);
+    const mouseConstraint = MouseConstraint.create(engine, {
+        mouse,
+        constraint: {
+            stiffness: 0.2,
+            render: { visible: false },
+        },
+    });
+
+    mouseConstraint.mouse.element.removeEventListener(
+        "wheel",
+        mouseConstraint.mouse.mousewheel,
+    );
+
+    mouseConstraint.mouse.element.removeEventListener(
+        "DOMMouseScroll",
+        mouseConstraint.mouse.mousewheel,
+    );
+
+    Composite.add(world, mouseConstraint);
+    render.mouse = mouse;
+
+    const iconCache = {};
+
+    Events.on(render, "afterRender", () => {
+        const ctx = render.context;
+
+        for (const body of labels) {
+            const { x, y } = body.position;
+            const iconKey = body.iconKey;
+            const imgSrc = ASSETS[iconKey];
+
+            if (!imgSrc) continue;
+
+            if (iconCache[iconKey]) {
+                const size = squareSize * 0.3;
+                ctx.drawImage(
+                    iconCache[iconKey],
+                    x - size / 2,
+                    y - size / 2,
+                    size,
+                    size,
+                );
+            } else {
+                const img = new Image();
+                img.src = imgSrc;
+                img.onload = () => {
+                    iconCache[iconKey] = img;
+                };
+            }
+        }
+    });
+
+    Render.lookAt(render, {
+        min: { x: 0, y: 0 },
+        max: { x: canvasWidth, y: canvasHeight },
+    });
+
+    onBeforeUnmount(() => {
+        Render.stop(render);
+        Runner.stop(runner);
+    });
+});
+</script>
+
+<template>
+    <div
+        ref="matter"
+        class="matter"
+    ></div>
+</template>
+
+<style lang="scss" scoped>
+.matter {
+    position: absolute;
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+}
+</style>

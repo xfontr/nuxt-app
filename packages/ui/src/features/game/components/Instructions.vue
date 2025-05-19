@@ -106,6 +106,7 @@ const getStartInstruction = (device: "mobile" | "desktop"): string =>
 <style lang="scss">
 @use "../../../assets/scss/variables/colors" as *;
 @use "../../../assets/scss/variables/distances" as *;
+@use "../../../assets/scss/variables/fonts" as *;
 @use "../../../assets/scss/variables/breakpoints" as *;
 
 .instructions {
@@ -118,7 +119,7 @@ const getStartInstruction = (device: "mobile" | "desktop"): string =>
 
     &__hint {
         opacity: 0.6;
-        font-size: 1rem;
+        font-size: $fonts-size-base;
         display: flex;
         align-items: center;
         gap: $distances-xs;

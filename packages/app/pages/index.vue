@@ -29,8 +29,6 @@ const isReversed = computed<boolean>(() => gradientThreshold.value < 0.5);
 
             <SummarySection :is-reversed />
         </GradientScroll>
-
-        <SkillsSection />
     </div>
 </template>
 

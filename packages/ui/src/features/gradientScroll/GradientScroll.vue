@@ -29,6 +29,8 @@ const updateColors = (): void => {
     props.target.style.background = backgroundColor;
     // eslint-disable-next-line vue/no-mutating-props
     if (color) props.target.style.color = color;
+    // eslint-disable-next-line vue/no-mutating-props
+    if (color) props.target.style.stroke = color;
 };
 
 const update =
@@ -61,7 +63,7 @@ watch(
         class="atf"
         v-intersect="{
             handler: handleOut,
-            options: { threshold: [0, 0.9] },
+            options: { threshold: [0, 0.5] },
         }"
     >
         <slot name="reference" />
