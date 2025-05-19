@@ -5,9 +5,15 @@ const props = defineProps<{ isReversed: boolean }>();
 
 const { t } = useI18n();
 
-const gravity = ref();
-const subtitleKey = ref<string>();
-const tech = ref<boolean>(false);
+const gravity = ref<{ next: () => -1 | (NonNullable<unknown> & number) }>();
+const skills = ref<string[]>(["select", "frontend", "backend", "soft"]);
+const step = ref<-1 | (NonNullable<unknown> & number)>(0);
+const highlight = ref(false);
+
+const currentSkill = computed(() => ({
+    cta: `landing.skills.${skills.value.at(step.value)}.next`,
+    stack: `landing.skills.${skills.value.at(step.value)}.stack`,
+}));
 
 const handleCta = () => {
     if (props.isReversed) {
@@ -15,13 +21,18 @@ const handleCta = () => {
         return;
     }
 
-    gravity.value.show();
-    subtitleKey.value = "landing.summary.frontend_tech";
+    if (!gravity.value) return;
+
+    step.value = gravity.value.next();
 };
 
-const showTech = () => {
-    tech.value = true;
-};
+watch(step, () => {
+    highlight.value = true;
+
+    setTimeout(() => {
+        highlight.value = false;
+    }, 1500);
+});
 </script>
 
 <template>
@@ -31,22 +42,19 @@ const showTech = () => {
         :size="1"
         :animate="false"
     >
-        <p
-            v-intersect="{ handler: showTech }"
-            class="summary__text"
-        >
+        <p class="summary__text">
             {{ t("landing.summary.description") }}
             <span
-                v-if="subtitleKey"
-                class="summary__subtitle"
-                >{{ t(subtitleKey) }}</span
+                v-if="step"
+                :class="[
+                    'summary__subtitle',
+                    { 'summary__subtitle--highlight': highlight },
+                ]"
+                >{{ t(currentSkill.stack) }}</span
             >
         </p>
 
-        <Gravity
-            v-if="tech"
-            ref="gravity"
-        />
+        <Gravity ref="gravity" />
 
         <button
             type="button"
@@ -57,11 +65,9 @@ const showTech = () => {
             <span
                 v-else
                 class="cta-text"
-                >{{ t("landing.summary.cta") }}</span
+                >{{ t(currentSkill.cta) }}</span
             >
         </button>
-
-        <TechGrid />
 
         <template #pointer>
             <div :class="['summary__pointer', { reversed: isReversed }]"></div>
@@ -106,6 +112,11 @@ const showTech = () => {
         color: $colors-black-primary-light;
         text-transform: uppercase;
         letter-spacing: 0.8px;
+        transition: 0.3s;
+
+        &--highlight {
+            color: $colors-black-secondary;
+        }
     }
 
     &__cta {
@@ -119,8 +130,9 @@ const showTech = () => {
         display: flex;
         justify-content: center;
         align-items: center;
+        text-align: center;
         transform: rotate(-12deg);
-        transition: 0.8s;
+        transition: 0.4s;
         color: $colors-primary;
         background-color: $colors-secondary;
         cursor: none;

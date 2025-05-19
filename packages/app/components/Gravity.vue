@@ -1,19 +1,12 @@
 <script lang="ts" setup>
 import Matter from "matter-js";
-import { ICON_KEYS } from "./constants";
 import Tech from "./helpers/Tech";
 import Borders from "./helpers/Borders";
+import { ASSETS } from "./constants";
+import TechBody from "./helpers/TechBody";
 
-const {
-    Engine,
-    Render,
-    Runner,
-    MouseConstraint,
-    Mouse,
-    Composite,
-    Events,
-    Body,
-} = Matter;
+const { Engine, Render, Runner, MouseConstraint, Mouse, Composite, Events } =
+    Matter;
 
 const matter = ref<HTMLDivElement>();
 
@@ -22,35 +15,33 @@ const canvas = ref<{
     height: number;
 }>({ width: 0, height: 0 });
 
+const step = ref<number>(0);
 const techList = ref<ReturnType<typeof Tech>[]>([]);
-const currentTechList = ref<ReturnType<typeof Tech>[]>([]);
-const world = ref<Matter.World>();
+const engine = ref<Matter.Engine>();
 
-const show = () => {
-    if (currentTechList.value.length) {
-        techList.value = [...techList.value, ...currentTechList.value];
-        currentTechList.value = [];
-    }
+const objectKeys = <T extends object>(object: T): (keyof T)[] =>
+    Object.keys(object) as (keyof T)[];
 
-    ICON_KEYS.forEach((key) => {
-        const tech = Tech(render.value!, key);
-        currentTechList.value.push(tech);
+const next = (): -1 | (NonNullable<unknown> & number) => {
+    const currentAssets = ASSETS[step.value];
 
-        Composite.add(world.value, tech.body);
+    if (!currentAssets) return -1;
 
-        const angle = ((Math.random() - 0.5) * Math.PI) / 2; // ~[-45°, 45°]
-        const speed = 15 + Math.random() * 5;
+    objectKeys(currentAssets).forEach((key) => {
+        const tech = Tech(TechBody(Matter), currentAssets[key]!, render.value!);
 
-        Body.setVelocity(tech.body, {
-            x: Math.cos(angle) * speed,
-            y: -Math.abs(Math.sin(angle) * speed),
-        });
-        Body.setAngularVelocity(tech.body, (Math.random() - 0.5) * 0.2);
+        tech.mount(engine.value!.world, step.value);
+
+        techList.value.push(tech);
     });
+
+    step.value += 1;
+
+    return ASSETS[step.value] ? step.value : -1;
 };
 
 defineExpose({
-    show,
+    next,
 });
 
 const getMouse = (canvas: HTMLCanvasElement, engine: Matter.Engine) => {
@@ -79,8 +70,8 @@ const getMouse = (canvas: HTMLCanvasElement, engine: Matter.Engine) => {
 };
 
 const loadAssets = () => {
-    for (const tech of currentTechList.value) {
-        tech.render();
+    for (const tech of techList.value) {
+        tech.render(render.value);
     }
 };
 
@@ -92,12 +83,11 @@ onMounted(() => {
         height: window.innerHeight,
     };
 
-    const engine = Engine.create();
-    world.value = engine.world;
+    engine.value = Engine.create();
 
     render.value = Render.create({
         element: matter.value,
-        engine,
+        engine: engine.value,
         options: {
             width: canvas.value.width,
             height: canvas.value.height,
@@ -108,13 +98,16 @@ onMounted(() => {
 
     Render.run(render.value);
     const runner = Runner.create();
-    Runner.run(runner, engine);
+    Runner.run(runner, engine.value);
 
-    Composite.add(world.value, Borders(canvas.value).body);
+    Composite.add(engine.value.world, Borders(canvas.value).body);
 
-    const { mouse, mouseConstraint } = getMouse(render.value.canvas, engine);
+    const { mouse, mouseConstraint } = getMouse(
+        render.value.canvas,
+        engine.value,
+    );
 
-    Composite.add(world.value, mouseConstraint);
+    Composite.add(engine.value.world, mouseConstraint);
     render.value.mouse = mouse;
 
     Events.on(render.value, "afterRender", loadAssets);
@@ -128,7 +121,7 @@ onMounted(() => {
         Render.stop(render.value!);
         Runner.stop(runner);
 
-        for (const tech of currentTechList.value) {
+        for (const tech of techList.value) {
             tech.unmount();
         }
     });
@@ -139,7 +132,9 @@ onMounted(() => {
     <div
         ref="matter"
         class="matter"
-    ></div>
+    >
+        <div class="corner-fade-overlay"></div>
+    </div>
 </template>
 
 <style lang="scss" scoped>

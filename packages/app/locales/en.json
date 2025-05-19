@@ -6,10 +6,25 @@
         "title": "Just another dev",
         "summary": {
             "cta": "Skills",
-            "description": "Full stack web developer and ex-Lawyer based in Barcelona. Clean code nerd with a strong focus in architecture, performance, CRO and design. 3 years long journey in e-com stores.",
-            "skills": "Testing | SOLID | UI/UX | CRO | SEO | Performance",
-            "frontend_tech": "CSS | HTML | JS & TS | React | Vue | Nuxt",
-            "backend_tech": "C | Node | Express | Mongo | SQL"
+            "description": "Full stack web developer and ex-Lawyer based in Barcelona. Clean code nerd with a strong focus in architecture, performance, CRO and design. 3 years long journey in e-com stores."
+        },
+        "skills": {
+            "select": {
+                "next": "Tech stack",
+                "stack": ""
+            },
+            "frontend": {
+                "next": "Backend stack",
+                "stack": "CSS | HTML | JS & TS | React | Vue | Nuxt"
+            },
+            "backend": {
+                "next": "Tech skills",
+                "stack": "C | Node | Express | Mongo | SQL"
+            },
+            "soft": {
+                "next": "Scroll",
+                "stack": "Testing | SOLID | UI/UX | CRO | SEO | Performance"
+            }
         }
     },
     "game": {
@@ -90,7 +105,7 @@
         "stats": {
             "bugs_fixed": "bugs fixed",
             "score": "Score",
-            "points": "pts.",
+            "points": "features",
             "best_score": "Best: "
         }
     }
