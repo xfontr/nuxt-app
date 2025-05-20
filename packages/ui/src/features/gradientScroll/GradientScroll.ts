@@ -3,4 +3,4 @@ export type GradientStyle = {
     color?: string;
 };
 
-export type IntersectionCallback = (entry: IntersectionObserverEntry) => void;
+export type IntersectionCallback = (entry?: IntersectionObserverEntry) => void;

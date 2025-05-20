@@ -35,13 +35,13 @@ const updateColors = (): void => {
 
 const update =
     (callback: IntersectionCallback) => (entry?: IntersectionObserverEntry) => {
-        callback(entry ?? {});
+        callback(entry);
         updateColors();
         emit("update:threshold", currentIntersection.value);
     };
 
-const handleIn = update(({ intersectionRatio }) => {
-    currentIntersection.value = intersectionRatio;
+const handleIn = update((entry) => {
+    currentIntersection.value = entry?.intersectionRatio ?? 0;
 });
 
 watch(
