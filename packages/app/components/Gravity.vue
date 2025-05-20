@@ -1,10 +1,12 @@
 <script lang="ts" setup>
-import Matter, { Engine, Events, Render, Runner } from "matter-js";
+import Matter from "matter-js";
 import Tech from "./helpers/Tech";
 import TechBody from "./helpers/TechBody";
 import TechMouse from "./helpers/TechMouse";
 import type { FullTech, TechItem } from "./types/Tech";
 import TechBorder from "./helpers/TechBorder";
+
+const { Render, Engine, Runner, Events } = Matter;
 
 const matter = ref<HTMLDivElement>();
 const techList = ref<FullTech[]>([]);

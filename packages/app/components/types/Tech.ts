@@ -1,4 +1,4 @@
-import type Matter from "matter-js";
+import Matter from "matter-js";
 
 type Tech<
     MountArgs extends unknown[] = [],
