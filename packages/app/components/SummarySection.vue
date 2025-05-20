@@ -1,18 +1,20 @@
 <script lang="ts" setup>
 import { Pointer } from "@portfolio/ui";
+import { TECH } from "./constants";
+import type { TechItem } from "./types/Tech";
 
 const props = defineProps<{ isReversed: boolean }>();
 
 const { t } = useI18n();
 
-const gravity = ref<{ next: () => -1 | (NonNullable<unknown> & number) }>();
 const skills = ref<string[]>(["select", "frontend", "backend", "soft"]);
-const step = ref<-1 | (NonNullable<unknown> & number)>(0);
+const phase = ref<number>(0);
 const highlight = ref(false);
+const isPaused = ref<boolean>(true);
 
 const currentSkill = computed(() => ({
-    cta: `landing.skills.${skills.value.at(step.value)}.next`,
-    stack: `landing.skills.${skills.value.at(step.value)}.stack`,
+    cta: `landing.skills.${skills.value.at(phase.value)}.next`,
+    stack: `landing.skills.${skills.value.at(phase.value)}.stack`,
 }));
 
 const handleCta = () => {
@@ -21,12 +23,23 @@ const handleCta = () => {
         return;
     }
 
-    if (!gravity.value) return;
+    if (phase.value === undefined) {
+        phase.value = 0;
+        return;
+    }
 
-    step.value = gravity.value.next();
+    if (phase.value < TECH.length) phase.value += 1;
 };
 
-watch(step, () => {
+const tech = computed<TechItem[]>(() =>
+    phase.value ? TECH[phase.value - 1]! : [],
+);
+
+const pause = (entry?: IntersectionObserverEntry) => {
+    isPaused.value = !entry?.isIntersecting;
+};
+
+watch(phase, () => {
     highlight.value = true;
 
     setTimeout(() => {
@@ -37,6 +50,7 @@ watch(step, () => {
 
 <template>
     <Pointer
+        v-intersect="{ handler: pause }"
         class="summary"
         :can-overflow="false"
         :size="1"
@@ -45,7 +59,7 @@ watch(step, () => {
         <p class="summary__text">
             {{ t("landing.summary.description") }}
             <span
-                v-if="step"
+                v-if="phase"
                 :class="[
                     'summary__subtitle',
                     { 'summary__subtitle--highlight': highlight },
@@ -54,7 +68,10 @@ watch(step, () => {
             >
         </p>
 
-        <Gravity ref="gravity" />
+        <Gravity
+            :tech
+            :is-paused
+        />
 
         <button
             type="button"

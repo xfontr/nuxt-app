@@ -34,19 +34,14 @@ const updateColors = (): void => {
 };
 
 const update =
-    (callback: IntersectionCallback) => (entry: IntersectionObserverEntry) => {
-        callback(entry);
+    (callback: IntersectionCallback) => (entry?: IntersectionObserverEntry) => {
+        callback(entry ?? {});
         updateColors();
         emit("update:threshold", currentIntersection.value);
     };
 
 const handleIn = update(({ intersectionRatio }) => {
     currentIntersection.value = intersectionRatio;
-});
-
-const handleOut = update(({ intersectionRatio }) => {
-    const adjustedRatio = 1 - intersectionRatio;
-    currentIntersection.value = Math.max(0, adjustedRatio);
 });
 
 watch(
@@ -59,16 +54,6 @@ watch(
 </script>
 
 <template>
-    <section
-        class="atf"
-        v-intersect="{
-            handler: handleOut,
-            options: { threshold: [0, 0.5] },
-        }"
-    >
-        <slot name="reference" />
-    </section>
-
     <section
         class="btf"
         v-intersect="{

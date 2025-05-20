@@ -6,24 +6,33 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <img
-        class="game-img"
-        src="/img/game/background-mountain.svg"
-    />
+    <section class="atf">
+        <img
+            class="game-img"
+            src="/img/game/background-mountain.svg"
+        />
 
-    <h1 class="game-title">
-        {{ $t("landing.title") }}
-        <GamePlayerLoc />
-    </h1>
+        <h1 class="game-title">
+            {{ $t("landing.title") }}
+            <GamePlayerLoc />
+        </h1>
 
-    <Game
-        class="game"
-        :game
-        :t
-    />
+        <Game
+            class="game"
+            :game
+            :t
+        />
+    </section>
 </template>
 
 <style lang="scss" scoped>
+.atf {
+    user-select: none;
+    height: 96vh;
+    display: flex;
+    align-items: flex-end;
+}
+
 .game {
     position: absolute;
     bottom: 1.55rem;

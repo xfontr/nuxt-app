@@ -6,7 +6,6 @@ type Tech<
 > = {
     mount?: (...args: MountArgs) => void;
     render: (...args: RenderArgs) => void;
-    unmount?: () => void;
 };
 
 export type FullTech = Required<Tech<[Matter.Engine["world"], number], []>>;
@@ -14,5 +13,16 @@ export type FullTech = Required<Tech<[Matter.Engine["world"], number], []>>;
 export type TechItemBody = Required<
     Tech<[HTMLCanvasElement], [Matter.Engine["world"], number]>
 > & { body: () => undefined | Matter.Body };
+
+export type TechItemMouse = Required<
+    Tech<
+        [Matter.Render["canvas"], Matter.Engine],
+        [Matter.Render, Matter.Engine["world"]]
+    >
+>;
+
+export type TechItemBorder = Required<
+    Pick<Tech<[], [Matter.Render["canvas"], Matter.Engine["world"]]>, "render">
+>;
 
 export type TechItem = Tech<[], [CanvasRenderingContext2D, number]>;

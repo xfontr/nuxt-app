@@ -25,15 +25,9 @@ const Tech = (
         context.restore();
     };
 
-    const unmount: FullTech["unmount"] = (): void => {
-        tech.unmount?.();
-        itemBody.unmount();
-    };
-
     return {
         mount,
         render,
-        unmount,
     };
 };
 

@@ -13,11 +13,9 @@ export const beforeMount = (
     const { handler, options } = binding.value ?? {};
 
     const observer = new IntersectionObserver((entries) => {
-        const intersectingEntry = entries.find(
-            ({ isIntersecting }) => isIntersecting,
-        );
+        const entry = entries.find(({ isIntersecting }) => isIntersecting);
 
-        if (handler && intersectingEntry) handler(intersectingEntry);
+        handler?.(entry);
     }, options ?? { threshold: 0.5 });
 
     observer.observe(element);

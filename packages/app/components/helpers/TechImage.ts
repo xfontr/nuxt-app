@@ -21,9 +21,6 @@ const TechImage = (id?: string): TechItem => {
     return {
         mount,
         render,
-        unmount: () => {
-            img = undefined;
-        },
     };
 };
 

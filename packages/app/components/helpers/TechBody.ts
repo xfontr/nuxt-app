@@ -4,8 +4,8 @@ import Matter from "matter-js";
 import { FRICTION_AIR, GRID_SIZE, TECH_STROKE } from "../constants";
 
 const TechBody = ({ Bodies, Composite, Body }: typeof Matter): TechItemBody => {
-    let size: number | undefined;
-    let body: Matter.Body | undefined;
+    let size: number;
+    let body: Matter.Body;
 
     const mount: TechItemBody["mount"] = (canvas: HTMLCanvasElement) => {
         size = canvas.width / GRID_SIZE;
@@ -38,15 +38,9 @@ const TechBody = ({ Bodies, Composite, Body }: typeof Matter): TechItemBody => {
         Body.setAngularVelocity(body!, (Math.random() - 0.5) * 0.2);
     };
 
-    const unmount: TechItemBody["unmount"] = () => {
-        size = undefined;
-        body = undefined;
-    };
-
     return {
         mount,
         render,
-        unmount,
         body: () => body,
     };
 };
