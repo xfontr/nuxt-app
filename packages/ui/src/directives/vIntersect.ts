@@ -12,16 +12,11 @@ export const beforeMount = (
 ) => {
     const { handler, options } = binding.value ?? {};
 
-    const observer = new IntersectionObserver(
-        (entries) => {
-            const intersectingEntry = entries.find(
-                ({ isIntersecting }) => isIntersecting,
-            );
+    const observer = new IntersectionObserver((entries) => {
+        const entry = entries.find(({ isIntersecting }) => isIntersecting);
 
-            if (handler && intersectingEntry) handler(intersectingEntry);
-        },
-        options ?? { threshold: 0.5 },
-    );
+        handler?.(entry);
+    }, options ?? { threshold: 0.5 });
 
     observer.observe(element);
     observers.set(element, observer);

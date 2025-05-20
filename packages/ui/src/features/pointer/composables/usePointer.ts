@@ -33,18 +33,33 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
     const leave = (): void => togglePointerVisibility(false);
     const enter = (): void => togglePointerVisibility(true);
 
-    const targetRect = computed(() => target.value!.getBoundingClientRect());
-
-    const move = (
-        { x: clientX, y: clientY }: MouseEvent | Location,
-        isMouse: boolean,
-    ): void => {
+    const move = (event: MouseEvent | Location, isMouse: boolean): void => {
         if (!isEnabled.value) return;
 
         const { left, right } = limit.value;
 
-        let x = isMouse ? clientX - targetRect.value.left : clientX;
-        let y = isMouse ? clientY - targetRect.value.top : clientY;
+        let x: number;
+        let y: number;
+
+        if (isMouse) {
+            const e = event as MouseEvent;
+            const targetEl = target.value!;
+            const rect = targetEl.getBoundingClientRect();
+
+            const scrollLeft =
+                window.pageXOffset || document.documentElement.scrollLeft;
+            const scrollTop =
+                window.pageYOffset || document.documentElement.scrollTop;
+
+            const offsetLeft = rect.left + scrollLeft;
+            const offsetTop = rect.top + scrollTop;
+
+            x = e.pageX - offsetLeft;
+            y = e.pageY - offsetTop;
+        } else {
+            x = (event as Location).x;
+            y = (event as Location).y;
+        }
 
         x = Math.max(left.x, Math.min(x, right.x));
         y = Math.max(left.y, Math.min(y, right.y));

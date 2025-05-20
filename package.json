@@ -21,12 +21,14 @@
         "clean:node_modules": "find . -type d -name 'node_modules' -prune -exec rm -rf '{}' +"
     },
     "dependencies": {
-        "@changesets/cli": "^2.28.1"
+        "@changesets/cli": "^2.28.1",
+        "matter-js": "^0.20.0"
     },
     "workspaces": [
         "packages/*"
     ],
     "devDependencies": {
+        "@types/matter-js": "^0.19.8",
         "husky": "^9.1.7"
     }
 }

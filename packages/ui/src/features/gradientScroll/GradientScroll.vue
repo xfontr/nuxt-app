@@ -1,112 +1,48 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from "vue";
-import useWindow from "../../composables/useWindow";
-import { findClosestValue, generateThresholds } from "../../utils/math";
-import { getGradient } from "./utils/gradient";
-import type { GradientStyle } from "./types/GradientStyle";
+import { ref, watch } from "vue";
+import type { GradientStyle, IntersectionCallback } from "./GradientScroll";
 
 const props = withDefaults(
     defineProps<{
         target?: HTMLElement;
-        gradients?: (string | GradientStyle)[];
+        gradients?: GradientStyle[];
         transition?: number;
     }>(),
     {
-        gradients: () => [
-            "#00000000",
-            "#3e2a47",
-            "#7f5f5f",
-            "#5a2a83",
-            "#8b6e8e",
-            "#4682b4",
-            "#ff6347",
-            "#ffb6c1",
-            "#000000",
-        ],
+        gradients: () => [],
         transition: 0.3,
-        /**
-         * Can be defined anytime (this is particularly important for SSR).
-         */
         target: undefined,
     },
 );
 
-const { on } = useWindow();
+const emit = defineEmits<{ "update:threshold": [number] }>();
 
-const currentThreshold = ref<number>(0);
-const lastScrollY = ref<number>(0);
-const isDown = ref<boolean>();
-
-const threshold = computed<number[]>(() =>
-    generateThresholds(props.gradients.length),
-);
-
-const gradientStyles = computed<GradientStyle[]>(() =>
-    props.gradients.map((gradient) =>
-        typeof gradient === "string"
-            ? {
-                  backgroundColor: gradient,
-              }
-            : gradient,
-    ),
-);
-
-const gradientsByThreshold = computed<Record<string, GradientStyle>>(() =>
-    threshold.value.reduce(
-        (all, threshold, i) => ({
-            ...all,
-            [threshold]: gradientStyles.value[i],
-        }),
-        {},
-    ),
-);
+const currentIntersection = ref<number>(0);
 
 const updateColors = (): void => {
     if (!props.target) return;
 
-    const closestThreshold = findClosestValue(
-        threshold.value,
-        currentThreshold.value,
-    );
-
-    const { backgroundColor, color } =
-        gradientsByThreshold.value[
-            getGradient(threshold.value, closestThreshold, !!isDown.value)!
-        ];
+    const index = currentIntersection.value > 0.5 ? 1 : 0;
+    const { backgroundColor, color } = props.gradients[index];
 
     // eslint-disable-next-line vue/no-mutating-props
     props.target.style.background = backgroundColor;
-
     // eslint-disable-next-line vue/no-mutating-props
     if (color) props.target.style.color = color;
+    // eslint-disable-next-line vue/no-mutating-props
+    if (color) props.target.style.stroke = color;
 };
 
-const handleIn = ({ intersectionRatio }: IntersectionObserverEntry): void => {
-    if (isDown.value === undefined && intersectionRatio > 0.5) {
-        isDown.value = true;
-    }
+const update =
+    (callback: IntersectionCallback) => (entry?: IntersectionObserverEntry) => {
+        callback(entry);
+        updateColors();
+        emit("update:threshold", currentIntersection.value);
+    };
 
-    if (!isDown.value) return;
-
-    currentThreshold.value =
-        currentThreshold.value > intersectionRatio
-            ? currentThreshold.value
-            : intersectionRatio;
-};
-
-const handleOut = ({ intersectionRatio }: IntersectionObserverEntry): void => {
-    if (isDown.value) return;
-
-    const adjustedRatio = 1 - intersectionRatio;
-    currentThreshold.value = Math.max(0, adjustedRatio);
-};
-
-on("scroll", ({ scrollY }) => {
-    isDown.value = scrollY > lastScrollY.value;
-    lastScrollY.value = scrollY;
+const handleIn = update((entry) => {
+    currentIntersection.value = entry?.intersectionRatio ?? 0;
 });
-
-watch(currentThreshold, updateColors);
 
 watch(
     () => props.target,
@@ -118,21 +54,13 @@ watch(
 </script>
 
 <template>
-    <div
-        v-intersect="{
-            handler: handleOut,
-            options: { threshold },
-        }"
-    >
-        <slot name="reference" />
-    </div>
-
-    <div
+    <section
+        class="btf"
         v-intersect="{
             handler: handleIn,
-            options: { threshold },
+            options: { threshold: [0, 0.5] },
         }"
     >
         <slot />
-    </div>
+    </section>
 </template>

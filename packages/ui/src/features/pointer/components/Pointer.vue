@@ -127,6 +127,7 @@ onMounted(() => {
         width: v-bind("css.size");
         top: v-bind("css.top");
         left: v-bind("css.left");
+        pointer-events: none;
     }
 
     &__pointer > * {
