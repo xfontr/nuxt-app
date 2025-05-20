@@ -8,6 +8,7 @@ const TechMouse = (matter: typeof Matter): TechItemMouse => {
     const removeWheelListener = (listener: "wheel" | "DOMMouseScroll") => {
         mouseConstraint!.mouse.element.removeEventListener(
             listener,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             mouseConstraint.mouse.mousewheel,
         );
     };
