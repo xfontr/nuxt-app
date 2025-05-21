@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { Pointer } from "@portfolio/ui";
-import { TECH } from "./constants";
-import type { TechItem } from "./types/Tech";
+import { Pointer, Tech } from "@portfolio/ui";
+import { TECH } from "../../ui/src/features/tech/constants";
+import type { TechItem } from "../../ui/src/features/tech/types/Tech";
 
 const props = defineProps<{ isReversed: boolean }>();
 
@@ -68,7 +68,7 @@ watch(phase, () => {
             >
         </p>
 
-        <Gravity
+        <Tech
             :tech
             :is-paused
         />

@@ -27,10 +27,12 @@ const { t } = useI18n();
 
 <style lang="scss" scoped>
 .atf {
+    position: relative;
     user-select: none;
     height: 96vh;
     display: flex;
     align-items: flex-end;
+    width: 100%;
 }
 
 .game {
@@ -49,7 +51,6 @@ const { t } = useI18n();
     bottom: 17rem;
 
     @media (min-width: $breakpoints-m) {
-        width: 100vw;
         bottom: 13.5rem;
     }
 }
