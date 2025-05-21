@@ -6,6 +6,7 @@ export {
     type GameOptions,
     type i18n,
 } from "./features/game";
+export { Tech } from "./features/tech";
 
 export * from "./configs";
 export * from "./composables";

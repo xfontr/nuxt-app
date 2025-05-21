@@ -8,10 +8,10 @@ type Tech<
     render: (...args: RenderArgs) => void;
 };
 
-export type FullTech = Required<Tech<[Matter.Engine["world"], number], []>>;
+export type FullTech = Required<Tech<[Matter.Engine["world"]], []>>;
 
 export type TechItemBody = Required<
-    Tech<[HTMLCanvasElement], [Matter.Engine["world"], number]>
+    Tech<[HTMLCanvasElement], [Matter.Engine["world"]]>
 > & { body: () => undefined | Matter.Body };
 
 export type TechItemMouse = Required<

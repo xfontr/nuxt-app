@@ -5,6 +5,7 @@ import TechBody from "./helpers/TechBody";
 import TechMouse from "./helpers/TechMouse";
 import type { FullTech, TechItem } from "./types/Tech";
 import TechBorder from "./helpers/TechBorder";
+import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 const { Render, Engine, Runner, Events } = Matter;
 
@@ -12,7 +13,6 @@ const matter = ref<HTMLDivElement>();
 const techList = ref<FullTech[]>([]);
 const render = ref<Matter.Render>();
 const runner = ref<Matter.Runner>();
-const techUpdatesCount = ref<number>(0);
 
 const props = defineProps<{ tech: TechItem[]; isPaused: boolean }>();
 
@@ -46,9 +46,9 @@ const setUpTech = (
     engine: Matter.Engine,
     newTech: TechItem[],
 ) => {
-    newTech.forEach((item) => {
-        const tech = Tech(TechBody(Matter), item, render);
-        tech.mount(engine.world, techUpdatesCount.value);
+    newTech.forEach((item, i) => {
+        const tech = Tech(TechBody(Matter, i), item, render);
+        tech.mount(engine.world);
         techList.value.push(tech);
     });
 };
@@ -89,8 +89,6 @@ onMounted(() => {
 watch(
     () => props.tech,
     (tech) => {
-        techUpdatesCount.value += 1;
-
         if (!render.value) return;
 
         setUpTech(render.value, engine, tech);

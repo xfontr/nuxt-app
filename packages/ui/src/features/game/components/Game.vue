@@ -18,8 +18,8 @@ const props = defineProps<{
 const { animate, setup, state } = useGame(props.game, canvas);
 
 const updateLayoutAndPlayerPosition = () => {
-    state.value.layout.width = window.innerWidth;
-    state.value.layout.height = window.innerHeight;
+    state.value.layout.width = document.body.clientWidth;
+    state.value.layout.height = document.body.clientHeight;
 
     const x = document
         .querySelector(PLAYER_LOCATION_CLASS)

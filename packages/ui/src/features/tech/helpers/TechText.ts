@@ -1,4 +1,4 @@
-import { colors, fonts } from "@portfolio/ui";
+import { colors, fonts } from "../../../configs";
 import type { TechItem } from "../types/Tech";
 
 const TechText = (text: string): TechItem => ({
