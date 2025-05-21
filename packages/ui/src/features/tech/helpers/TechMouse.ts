@@ -1,6 +1,12 @@
 import Matter from "matter-js";
 import type { TechItemMouse } from "../types/Tech";
 
+declare module "matter-js" {
+    interface Mouse {
+        mousewheel: EventListenerOrEventListenerObject;
+    }
+}
+
 const TechMouse = (matter: typeof Matter): TechItemMouse => {
     let mouse: Matter.Mouse;
     let mouseConstraint: Matter.MouseConstraint;
@@ -8,7 +14,6 @@ const TechMouse = (matter: typeof Matter): TechItemMouse => {
     const removeWheelListener = (listener: "wheel" | "DOMMouseScroll") => {
         mouseConstraint!.mouse.element.removeEventListener(
             listener,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             mouseConstraint.mouse.mousewheel,
         );
     };

@@ -7,10 +7,10 @@ const Tech = (
     tech: TechItem,
     { canvas, context }: Matter.Render,
 ): FullTech => {
-    const mount: FullTech["mount"] = (world, multiplier) => {
+    const mount: FullTech["mount"] = (world) => {
         itemBody.mount(canvas);
         tech.mount?.();
-        itemBody.render(world, multiplier);
+        itemBody.render(world);
     };
 
     const render: FullTech["render"] = (): void => {
