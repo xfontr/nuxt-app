@@ -87,7 +87,7 @@ watch(phase, () => {
         </button>
 
         <template #pointer>
-            <div :class="['summary__pointer', { reversed: isReversed }]"></div>
+            <div :class="['summary__pointer', { reversed: isReversed }]" />
         </template>
     </Pointer>
 </template>
@@ -138,8 +138,13 @@ watch(phase, () => {
 
     &__cta {
         position: absolute;
-        left: 3rem;
-        bottom: 3rem;
+        left: 1.5rem;
+        bottom: 1.5rem;
+
+        @media (min-width: $breakpoints-m) {
+            left: 3rem;
+            bottom: 3rem;
+        }
 
         border-radius: 50%;
         height: 6rem;

@@ -1,3 +1,4 @@
+import { IMG_MAX_SIZE, IMG_MIN_SIZE } from "../constants";
 import type { TechItem } from "../types/Tech";
 
 const getAsset = (id?: string): string =>
@@ -15,7 +16,8 @@ const TechImage = (id?: string): TechItem => {
 
     const render: TechItem["render"] = (context, size) => {
         if (!img?.complete) return;
-        context.drawImage(img, -size / 2, -size / 2, size, size);
+        const imgSize = Math.min(Math.max(IMG_MIN_SIZE, size), IMG_MAX_SIZE);
+        context.drawImage(img, -imgSize / 2, -imgSize / 2, imgSize, imgSize);
     };
 
     return {

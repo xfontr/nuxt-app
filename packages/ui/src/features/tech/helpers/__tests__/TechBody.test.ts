@@ -2,7 +2,7 @@ import {
     FRICTION_AIR,
     GRID_SIZE,
     TECH_STROKE,
-    THROWER_LOCATION,
+    THROWER_LOCATION_XS,
 } from "../../constants";
 import * as utils from "../../../../utils";
 import TechBody from "../TechBody";
@@ -48,8 +48,8 @@ describe("TechBody", () => {
         techBody.mount(canvas);
 
         expect(Bodies.rectangle).toHaveBeenCalledWith(
-            THROWER_LOCATION,
-            canvas.height - THROWER_LOCATION,
+            THROWER_LOCATION_XS,
+            canvas.height - THROWER_LOCATION_XS,
             canvas.width / GRID_SIZE,
             canvas.width / GRID_SIZE,
             expect.objectContaining({

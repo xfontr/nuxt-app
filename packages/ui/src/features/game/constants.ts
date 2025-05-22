@@ -35,14 +35,14 @@ export const DESKTOP_INSTRUCTIONS: InstructionName[] = [
 export const MOBILE_INSTRUCTIONS: InstructionName[] = ["tap_hold", "tap"];
 
 export const CLOUD_SHAPE: BackgroundItemOptions = {
-    baseHeight: 40,
-    baseWidth: 60,
-    density: 10,
+    baseHeight: 35,
+    baseWidth: 55,
+    density: 12,
     sizeMultiplier: 4,
 };
 
 export const STAR_SHAPE: BackgroundItemOptions = {
-    density: 100,
+    density: 400,
     baseHeight: 2,
     baseWidth: 2,
     sizeMultiplier: 3,

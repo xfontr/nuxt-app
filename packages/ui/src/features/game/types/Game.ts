@@ -36,7 +36,7 @@ export type Game = {
 };
 
 export type GameState = {
-    status: "LOADING" | "IDLE" | "ON" | "OVER";
+    status: "LOADING" | "IDLE" | "ON" | "OVER" | "PAUSED";
     velocityY: number;
     jumpKeyHeld: boolean;
     isJumping: boolean;

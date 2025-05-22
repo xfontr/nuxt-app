@@ -5,7 +5,11 @@ import {
     GRID_SIZE,
     EXPLOSION,
     TECH_STROKE,
-    THROWER_LOCATION,
+    BODY_MIN_SIZE,
+    THROWER_LOCATION_XS,
+    THROWER_LOCATION_LG,
+    THROWER_LOCATION_MD,
+    BODY_MAX_SIZE,
 } from "../constants";
 import { colors } from "../../../configs";
 import { random } from "../../../utils";
@@ -18,11 +22,21 @@ const TechBody = (
     let body: Matter.Body;
 
     const mount: TechItemBody["mount"] = (canvas: HTMLCanvasElement) => {
-        size = canvas.width / GRID_SIZE;
+        const throwerLocation = (() => {
+            const md =
+                canvas.width < 600 ? THROWER_LOCATION_XS : THROWER_LOCATION_MD;
+
+            return canvas.width < 1500 ? md : THROWER_LOCATION_LG;
+        })();
+
+        size = Math.min(
+            Math.max(BODY_MIN_SIZE, canvas.width / GRID_SIZE),
+            BODY_MAX_SIZE,
+        );
 
         body = Bodies.rectangle(
-            THROWER_LOCATION,
-            canvas.height - THROWER_LOCATION,
+            throwerLocation,
+            canvas.height - throwerLocation,
             size,
             size,
             {
