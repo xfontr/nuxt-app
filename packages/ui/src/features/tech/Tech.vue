@@ -90,7 +90,6 @@ watch(
     () => props.tech,
     (tech) => {
         if (!render.value) return;
-
         setUpTech(render.value, engine, tech);
     },
 );

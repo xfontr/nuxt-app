@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
+import { type Mock } from "vitest";
 import { beforeMount, unmounted } from "../vIntersect";
 import type { DirectiveBinding } from "vue";
 import type { CustomDirectiveBinding } from "../../types/CustomDirective";

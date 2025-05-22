@@ -1,46 +1,71 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import TechImage from "../TechImage";
+import { IMG_MIN_SIZE, IMG_MAX_SIZE } from "../../constants";
 
-vi.stubGlobal(
-    "Image",
-    class {
-        src = "";
-        complete = true;
-    },
-);
+class MockImage {
+    src = "";
+    complete = true;
+}
+vi.stubGlobal("Image", MockImage);
 
 describe("TechImage", () => {
-    const size = 100;
+    const mockContext = {
+        drawImage: vi.fn(),
+    } as unknown as CanvasRenderingContext2D;
 
-    it("calls drawImage with correct parameters when image is loaded", () => {
-        const mockContext = {
-            drawImage: vi.fn(),
-        } as unknown as CanvasRenderingContext2D;
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
 
-        const item = TechImage("id");
+    it("calls drawImage with clamped size when image is loaded", () => {
+        const item = TechImage("some-id");
         item.mount?.();
 
-        item.render(mockContext, size);
+        const testSize = 1000; // higher than max to test clamping
+        const clampedSize = Math.min(
+            Math.max(IMG_MIN_SIZE, testSize),
+            IMG_MAX_SIZE,
+        );
 
-        // eslint-disable-next-line @typescript-eslint/unbound-method
+        item.render(mockContext, testSize);
+
         expect(mockContext.drawImage).toHaveBeenCalledWith(
             expect.any(Image),
-            -size / 2,
-            -size / 2,
-            size,
-            size,
+            -clampedSize / 2,
+            -clampedSize / 2,
+            clampedSize,
+            clampedSize,
         );
     });
 
-    it("does not call drawImage if image is not loaded", () => {
-        const mockContext = {
-            drawImage: vi.fn(),
-        } as unknown as CanvasRenderingContext2D;
+    it("clamps size to IMG_MIN_SIZE when below minimum", () => {
+        const item = TechImage("some-id");
+        item.mount?.();
 
-        const item = TechImage("id");
+        const testSize = IMG_MIN_SIZE - 50;
+        item.render(mockContext, testSize);
 
-        item.render(mockContext, size);
+        expect(mockContext.drawImage).toHaveBeenCalledWith(
+            expect.any(Image),
+            -IMG_MIN_SIZE / 2,
+            -IMG_MIN_SIZE / 2,
+            IMG_MIN_SIZE,
+            IMG_MIN_SIZE,
+        );
+    });
 
-        // eslint-disable-next-line @typescript-eslint/unbound-method
+    it("does not call drawImage if image is not complete", () => {
+        const IncompleteImage = class {
+            src = "";
+            complete = false;
+        };
+        vi.stubGlobal("Image", IncompleteImage);
+
+        const item = TechImage("some-id");
+        item.mount?.();
+
+        item.render(mockContext, 100);
+
         expect(mockContext.drawImage).not.toHaveBeenCalled();
     });
 });

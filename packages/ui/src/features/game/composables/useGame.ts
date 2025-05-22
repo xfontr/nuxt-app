@@ -228,6 +228,11 @@ const useGame = (
     };
 
     const animate = () => {
+        if (state.value.status === "PAUSED") {
+            requestAnimationFrame(animate);
+            return;
+        }
+
         updateFrameCount();
         drawScene();
         updateGame();

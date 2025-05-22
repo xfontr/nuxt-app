@@ -1,23 +1,25 @@
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
-import type { Game } from "../types/Game";
+import { onMounted, ref, watch } from "vue";
+import type { Game, GameState } from "../types/Game";
 import GameInterface from "./GameInterface.vue";
 import useGame from "../composables/useGame";
 import { useWindow } from "../../../composables";
 import { PLAYER_LOCATION_CLASS } from "../constants";
 import type { i18n } from "../types/Translations";
 
-const thisWindow = useWindow();
-const canvas = ref<HTMLCanvasElement>();
-
 const props = defineProps<{
+    isPaused: boolean;
     game: Game;
     t: i18n;
 }>();
 
+const thisWindow = useWindow();
+const canvas = ref<HTMLCanvasElement>();
 const { animate, setup, state } = useGame(props.game, canvas);
 
-const updateLayoutAndPlayerPosition = () => {
+const prePauseState = ref<GameState["status"]>(state.value.status);
+
+const updateLayoutAndPlayerPosition = (): void => {
     state.value.layout.width = document.body.clientWidth;
     state.value.layout.height = document.body.clientHeight;
 
@@ -30,6 +32,18 @@ const updateLayoutAndPlayerPosition = () => {
     if (state.value.status === "ON") state.value.player.x = x;
     if (state.value.status !== "ON") state.value.player.offsetX = x;
 };
+
+watch(
+    () => props.isPaused,
+    (paused) => {
+        if (paused) {
+            prePauseState.value = state.value.status;
+            state.value.status = "PAUSED";
+        }
+
+        if (!paused) state.value.status = prePauseState.value;
+    },
+);
 
 thisWindow.on("resize", updateLayoutAndPlayerPosition);
 
@@ -62,6 +76,8 @@ onMounted(() => {
 @use "../../../assets/scss/variables/breakpoints" as *;
 
 @layer base {
+    $game-area-color: white;
+
     @property --color-stop-1 {
         syntax: "<color>";
         initial-value: #d4e3ed;
@@ -80,35 +96,29 @@ onMounted(() => {
         inherits: false;
     }
 
-    .canvas {
-        user-select: none;
-        border-bottom: 1px solid $colors-primary-very-light !important;
+    @mixin gradient($game-area-size) {
         background: linear-gradient(
                 to top,
-                #ffffff 0%,
-                #ffffff 17rem,
-                transparent 17rem
+                $game-area-color 0%,
+                $game-area-color $game-area-size,
+                transparent $game-area-size
             ),
             linear-gradient(
                 to bottom,
-                var(--color-stop-1),
-                var(--color-stop-2) 40%,
+                var(--color-stop-1) 20%,
+                var(--color-stop-2) 60%,
                 var(--color-stop-3) 100%
             );
+    }
+
+    .canvas {
+        user-select: none;
+        border-bottom: 1px solid $colors-primary-very-light !important;
+
+        @include gradient(17rem);
 
         @media (min-width: $breakpoints-m) {
-            background: linear-gradient(
-                    to top,
-                    #ffffff 0%,
-                    #ffffff 13.5rem,
-                    transparent 13.5rem
-                ),
-                linear-gradient(
-                    to bottom,
-                    var(--color-stop-1),
-                    var(--color-stop-2) 40%,
-                    var(--color-stop-3) 100%
-                );
+            @include gradient(13.5rem);
         }
 
         z-index: 1;
@@ -120,9 +130,9 @@ onMounted(() => {
         --color-stop-3: #a9c3da;
 
         &--on {
-            --color-stop-1: black;
-            --color-stop-2: #404040;
-            --color-stop-3: #8e8e8e;
+            --color-stop-1: #656565;
+            --color-stop-2: #323232;
+            --color-stop-3: black;
         }
     }
 }

@@ -53,4 +53,7 @@ export default defineNuxtConfig({
             weights: [300, 600, 900],
         },
     },
+    runtimeConfig: {
+        public: { nodeEnv: process.env.NODE_ENV },
+    },
 });

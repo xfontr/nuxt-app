@@ -22,10 +22,10 @@ const useBackground = (state: Ref<GameState>, ...items: Background[]) => {
 
     watch(
         () => state.value.status,
-        (status) => {
+        (newStatus, oldStatus) => {
             items.forEach((item) => {
-                if (!item.status.includes(status)) return;
-                item.reset(state);
+                if (!item.status.includes(newStatus)) return;
+                if (!item.status.includes(oldStatus)) item.reset(state);
             });
         },
     );

@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { Pointer, Tech } from "@portfolio/ui";
-import { TECH } from "../../ui/src/features/tech/constants";
 import type { TechItem } from "../../ui/src/features/tech/types/Tech";
+import TechImage from "../../ui/src/features/tech/helpers/TechImage";
+import TechText from "../../ui/src/features/tech/helpers/TechText";
+import { TECH } from "~/configs/constants";
 
 const props = defineProps<{ isReversed: boolean }>();
 
@@ -31,8 +33,14 @@ const handleCta = () => {
     if (phase.value < TECH.length) phase.value += 1;
 };
 
+const createTech = ({ type, id }: { type: "IMAGE" | "TEXT"; id: string }) =>
+    ({
+        IMAGE: TechImage(id),
+        TEXT: TechText(id),
+    }[type]);
+
 const tech = computed<TechItem[]>(() =>
-    phase.value ? TECH[phase.value - 1]! : [],
+    phase.value ? TECH[phase.value - 1]!.map(createTech) : [],
 );
 
 const pause = (entry?: IntersectionObserverEntry) => {
@@ -87,7 +95,7 @@ watch(phase, () => {
         </button>
 
         <template #pointer>
-            <div :class="['summary__pointer', { reversed: isReversed }]"></div>
+            <div :class="['summary__pointer', { reversed: isReversed }]" />
         </template>
     </Pointer>
 </template>
@@ -138,9 +146,8 @@ watch(phase, () => {
 
     &__cta {
         position: absolute;
-        left: 3rem;
-        bottom: 3rem;
-
+        left: 1.5rem;
+        bottom: 1.5rem;
         border-radius: 50%;
         height: 6rem;
         width: 6rem;
@@ -153,6 +160,11 @@ watch(phase, () => {
         color: $colors-primary;
         background-color: $colors-secondary;
         cursor: none;
+
+        @media (min-width: $breakpoints-m) {
+            left: 3rem;
+            bottom: 3rem;
+        }
 
         &.reversed {
             position: absolute;

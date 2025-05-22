@@ -32,15 +32,15 @@ export const Star: BackgroundFactory = (options, container, list) => {
 
             if (star.y <= container.height || star.x <= container.width) return;
 
-            const fromLeft = Math.random() < 0.2;
+            const fromLeft = random(0, 12) < 4;
 
             if (fromLeft) {
-                star.x = -star.width;
+                star.x = (-container.width / 4) * (Math.random() + 1);
                 star.y = random(0, container.height / 2);
                 return;
             }
 
-            star.x = random(0, container.width);
+            star.x = random(-400, container.width - 400);
             star.y = -star.height;
         });
     };

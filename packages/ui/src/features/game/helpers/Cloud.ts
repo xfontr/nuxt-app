@@ -31,7 +31,9 @@ export const Cloud: BackgroundFactory = (options, container, list) => {
 
             return {
                 x: Math.random() * container.width,
-                y: Math.random() * (container.height / 2),
+                y:
+                    Math.random() * (container.height / 2) +
+                    container.height / 3,
                 width: options.baseWidth * scale,
                 height: options.baseHeight * scale,
                 scale,
@@ -82,6 +84,6 @@ export const Cloud: BackgroundFactory = (options, container, list) => {
 };
 
 export default createBackgroundItem(
-    { cycle: "DAY", status: ["IDLE", "OVER"], image: "cloud" },
+    { cycle: "DAY", status: ["LOADING", "IDLE", "OVER"], image: "cloud" },
     Cloud,
 );

@@ -34,7 +34,7 @@ export type BackgroundInfo = BackgroundOptions & {
 
 export type BackgroundMethods = {
     init: () => void;
-    reset: (state: Ref<GameState>) => void;
+    reset: (state?: Ref<GameState>) => void;
     update: (state: Ref<GameState>) => void;
     resize?: (newSize: { width: number; height: number }) => void;
 };
