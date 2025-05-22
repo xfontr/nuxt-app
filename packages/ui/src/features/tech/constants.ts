@@ -1,6 +1,3 @@
-import TechImage from "./helpers/TechImage";
-import TechText from "./helpers/TechText";
-
 export const THROWER_LOCATION_XS = 90;
 export const THROWER_LOCATION_MD = 150;
 export const THROWER_LOCATION_LG = 100;
@@ -16,32 +13,31 @@ export const BODY_MAX_SIZE = 250;
 export const IMG_MIN_SIZE = 20;
 export const IMG_MAX_SIZE = 84;
 
-export const TECH = [
+export const TECH: { type: "IMAGE" | "TEXT"; id: string }[][] = [
     [
-        TechImage("24eF8YVaoAR5"), // nuxt
-        TechImage("rSpdgU9ntuoU"), // vue
-        TechImage("0Da6k7SMq0hs"), // react
-        TechImage("vMqgHSToxrJR"), // ts
-        TechImage("106036"), // js
-        TechImage("38272"), // css
-        TechImage("23028"), // html
-        TechText("VUE"),
+        { id: "24eF8YVaoAR5", type: "IMAGE" },
+        { id: "rSpdgU9ntuoU", type: "IMAGE" },
+        { id: "0Da6k7SMq0hs", type: "IMAGE" },
+        { id: "vMqgHSToxrJR", type: "IMAGE" },
+        { id: "106036", type: "IMAGE" },
+        { id: "38272", type: "IMAGE" },
+        { id: "23028", type: "IMAGE" },
+        { id: "VUE", type: "TEXT" },
     ],
     [
-        TechImage("FQlr_bFSqEdG"), // node
-        TechText("C"),
-        TechImage("ywH6EJgZ7sm5"), // sql
-        TechText("MONGO"),
+        { id: "FQlr_bFSqEdG", type: "IMAGE" },
+        { id: "C", type: "TEXT" },
+        { id: "ywH6EJgZ7sm5", type: "IMAGE" },
+        { id: "MONGO", type: "TEXT" },
     ],
     [
-        TechText("TESTS"),
-        TechText("SOLID"),
-        TechText("UI/UX"),
-        TechText("CRO"),
-        TechText("SEO"),
+        { id: "TESTS", type: "TEXT" },
+        { id: "SOLID", type: "TEXT" },
+        { id: "UI/UX", type: "TEXT" },
+        { id: "CRO", type: "TEXT" },
+        { id: "SEO", type: "TEXT" },
     ],
 ];
-
 export const EXPLOSION = {
     power: 20,
     minAngleDeg: 20,

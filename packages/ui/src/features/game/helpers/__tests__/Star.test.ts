@@ -1,4 +1,3 @@
-import { describe, it, expect, beforeEach } from "vitest";
 import { ref } from "vue";
 import type {
     BackgroundItem,

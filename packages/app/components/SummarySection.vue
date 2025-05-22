@@ -2,6 +2,8 @@
 import { Pointer, Tech } from "@portfolio/ui";
 import { TECH } from "../../ui/src/features/tech/constants";
 import type { TechItem } from "../../ui/src/features/tech/types/Tech";
+import TechImage from "../../ui/src/features/tech/helpers/TechImage";
+import TechText from "../../ui/src/features/tech/helpers/TechText";
 
 const props = defineProps<{ isReversed: boolean }>();
 
@@ -31,8 +33,14 @@ const handleCta = () => {
     if (phase.value < TECH.length) phase.value += 1;
 };
 
+const createTech = ({ type, id }: { type: "IMAGE" | "TEXT"; id: string }) =>
+    ({
+        IMAGE: TechImage(id),
+        TEXT: TechText(id),
+    }[type]);
+
 const tech = computed<TechItem[]>(() =>
-    phase.value ? TECH[phase.value - 1]! : [],
+    phase.value ? TECH[phase.value - 1]!.map(createTech) : [],
 );
 
 const pause = (entry?: IntersectionObserverEntry) => {

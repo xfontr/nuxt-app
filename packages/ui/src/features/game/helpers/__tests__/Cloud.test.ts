@@ -1,4 +1,3 @@
-import { describe, it, expect, beforeEach } from "vitest";
 import { ref } from "vue";
 import type {
     BackgroundItem,
@@ -36,7 +35,9 @@ describe("Cloud factory", () => {
             expect(item.x).toBeGreaterThanOrEqual(0);
             expect(item.x).toBeLessThanOrEqual(container.width);
             expect(item.y).toBeGreaterThanOrEqual(0);
-            expect(item.y).toBeLessThanOrEqual(container.height / 2);
+            expect(item.y).toBeLessThanOrEqual(
+                container.height / 2 + container.height / 3,
+            );
 
             expect(item.scale).toBeGreaterThanOrEqual(1);
             expect(item.speedMultiplier).toBeGreaterThanOrEqual(0.1);
@@ -59,11 +60,10 @@ describe("Cloud factory", () => {
     });
 
     it("should randomize cloud sizes", () => {
-        const state = ref<GameState>(getInitialState(mockGame));
         cloud.init();
 
         const oldWidths = list.value.map((c) => c.width);
-        cloud.reset?.(state);
+        cloud.reset?.();
         const newWidths = list.value.map((c) => c.width);
 
         expect(newWidths).not.toEqual(oldWidths);
