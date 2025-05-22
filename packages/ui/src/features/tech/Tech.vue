@@ -90,7 +90,6 @@ watch(
     () => props.tech,
     (tech) => {
         if (!render.value) return;
-
         setUpTech(render.value, engine, tech);
     },
 );
@@ -109,7 +108,6 @@ watch(
         ref="matter"
         class="matter"
     />
-    s
 </template>
 
 <style lang="scss" scoped>

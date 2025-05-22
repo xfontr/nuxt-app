@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { Pointer, Tech } from "@portfolio/ui";
-import { TECH } from "../../ui/src/features/tech/constants";
 import type { TechItem } from "../../ui/src/features/tech/types/Tech";
 import TechImage from "../../ui/src/features/tech/helpers/TechImage";
 import TechText from "../../ui/src/features/tech/helpers/TechText";
+import { TECH } from "~/configs/constants";
 
 const props = defineProps<{ isReversed: boolean }>();
 
@@ -148,12 +148,6 @@ watch(phase, () => {
         position: absolute;
         left: 1.5rem;
         bottom: 1.5rem;
-
-        @media (min-width: $breakpoints-m) {
-            left: 3rem;
-            bottom: 3rem;
-        }
-
         border-radius: 50%;
         height: 6rem;
         width: 6rem;
@@ -166,6 +160,11 @@ watch(phase, () => {
         color: $colors-primary;
         background-color: $colors-secondary;
         cursor: none;
+
+        @media (min-width: $breakpoints-m) {
+            left: 3rem;
+            bottom: 3rem;
+        }
 
         &.reversed {
             position: absolute;
