@@ -66,8 +66,10 @@ onMounted(() => {
     Render.run(render.value);
     Runner.run(runner.value, engine);
 
+    const usesMouse = window.matchMedia("(hover: hover)").matches;
+
     setUpBorders(render.value, engine);
-    setUpMouse(render.value, engine);
+    if (usesMouse) setUpMouse(render.value, engine);
 
     const { width: x, height: y } = render.value.canvas;
 
