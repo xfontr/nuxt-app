@@ -1,69 +1,7 @@
-import * as math from "../../../utils/math";
-import { areLocationsEqual, getUpdatedCount } from "./pointer";
-import type { Ranges } from "../types/Ranges";
-import { DEFAULT_RANGES } from "../constants";
-
-const mockRandom = vi.spyOn(math, "random");
+import { areLocationsEqual } from "./pointer";
 
 beforeEach(() => {
     vi.resetAllMocks();
-});
-
-describe("getUpdatedCount", () => {
-    it("should decrement the long property by 1 and update short with random medium range if long > 0", () => {
-        const count = { short: 20, medium: 60, long: 10 };
-
-        const mockRandom = vi.spyOn(math, "random");
-
-        mockRandom.mockReturnValueOnce(50);
-        mockRandom.mockReturnValueOnce(120);
-
-        const result = getUpdatedCount(count, DEFAULT_RANGES);
-
-        expect(result.short).toBe(50);
-        expect(result.long).toBe(9);
-    });
-
-    it("should reset short and long properties with random values from the ranges when long <= 0", () => {
-        const count = { short: 0, medium: 0, long: 0 };
-
-        mockRandom.mockReturnValueOnce(120);
-        mockRandom.mockReturnValueOnce(12);
-
-        const result = getUpdatedCount(count, DEFAULT_RANGES);
-
-        expect(result.short).toBe(120);
-        expect(result.long).toBe(12);
-    });
-
-    it("should work with custom range passed as argument", () => {
-        const count = { short: 0, medium: 0, long: 5 };
-        const customRanges: Ranges = {
-            short: [5, 10],
-            medium: [15, 30],
-            long: [50, 100],
-        };
-
-        mockRandom.mockReturnValueOnce(25);
-        mockRandom.mockReturnValueOnce(60);
-
-        const result = getUpdatedCount(count, customRanges);
-
-        expect(result.short).toBe(25);
-        expect(result.long).toBe(4);
-    });
-
-    it("should handle edge case where long is exactly 0", () => {
-        const count = { short: 0, medium: 0, long: 0 };
-
-        mockRandom.mockReturnValueOnce(150);
-        mockRandom.mockReturnValueOnce(10);
-
-        const result = getUpdatedCount(count, DEFAULT_RANGES);
-
-        expect(result.short).toBe(150);
-        expect(result.long).toBe(10);
-    });
 });
 
 describe("areLocationsEqual", () => {

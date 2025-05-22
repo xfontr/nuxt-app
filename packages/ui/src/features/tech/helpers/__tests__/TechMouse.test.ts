@@ -48,10 +48,6 @@ describe("TechMouse", () => {
             "wheel",
             mockMouse.mousewheel,
         );
-        expect(mockMouse.element.removeEventListener).toHaveBeenCalledWith(
-            "DOMMouseScroll",
-            mockMouse.mousewheel,
-        );
     });
 
     it("renders mouse and adds mouseConstraint to world", () => {

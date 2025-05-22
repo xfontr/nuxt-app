@@ -62,7 +62,6 @@ watch(phase, () => {
         class="summary"
         :can-overflow="false"
         :size="1"
-        :animate="false"
     >
         <p class="summary__text">
             {{ t("landing.summary.description") }}

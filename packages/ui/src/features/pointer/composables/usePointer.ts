@@ -20,10 +20,6 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
     const isVisible = ref<boolean>(true); // renders on server
     const location = ref<Location>(options.start ?? ({} as Location));
 
-    const isEnabled = computed<boolean>(
-        () => !!target.value && !!pointer.value && options.enabled,
-    );
-
     const isSizeRelative = computed<boolean>(() => options.unit !== "px");
 
     const togglePointerVisibility = (visible: boolean): void => {
@@ -33,33 +29,28 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
     const leave = (): void => togglePointerVisibility(false);
     const enter = (): void => togglePointerVisibility(true);
 
-    const move = (event: MouseEvent | Location, isMouse: boolean): void => {
-        if (!isEnabled.value) return;
+    const move = (event: MouseEvent | Location): void => {
+        if (!options.enabled) return;
 
         const { left, right } = limit.value;
 
         let x: number;
         let y: number;
 
-        if (isMouse) {
-            const e = event as MouseEvent;
-            const targetEl = target.value!;
-            const rect = targetEl.getBoundingClientRect();
+        const e = event as MouseEvent;
+        const targetEl = target.value!;
+        const rect = targetEl.getBoundingClientRect();
 
-            const scrollLeft =
-                window.pageXOffset || document.documentElement.scrollLeft;
-            const scrollTop =
-                window.pageYOffset || document.documentElement.scrollTop;
+        const scrollLeft =
+            window.pageXOffset || document.documentElement.scrollLeft;
+        const scrollTop =
+            window.pageYOffset || document.documentElement.scrollTop;
 
-            const offsetLeft = rect.left + scrollLeft;
-            const offsetTop = rect.top + scrollTop;
+        const offsetLeft = rect.left + scrollLeft;
+        const offsetTop = rect.top + scrollTop;
 
-            x = e.pageX - offsetLeft;
-            y = e.pageY - offsetTop;
-        } else {
-            x = (event as Location).x;
-            y = (event as Location).y;
-        }
+        x = e.pageX - offsetLeft;
+        y = e.pageY - offsetTop;
 
         x = Math.max(left.x, Math.min(x, right.x));
         y = Math.max(left.y, Math.min(y, right.y));
@@ -78,7 +69,6 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
     };
 
     const resize = (): void => {
-        if (!isEnabled.value) return;
         if (isSizeRelative.value) radius.value = pointer.value!.clientWidth / 2;
         setLimits();
     };
@@ -96,7 +86,6 @@ const usePointer = <Pointer extends HTMLElement, Target extends HTMLElement>(
         mouse: { enter, leave, move },
         location,
         radius,
-        isEnabled,
         isVisible,
     };
 };

@@ -11,13 +11,6 @@ const TechMouse = (matter: typeof Matter): TechItemMouse => {
     let mouse: Matter.Mouse;
     let mouseConstraint: Matter.MouseConstraint;
 
-    const removeWheelListener = (listener: "wheel" | "DOMMouseScroll") => {
-        mouseConstraint!.mouse.element.removeEventListener(
-            listener,
-            mouseConstraint.mouse.mousewheel,
-        );
-    };
-
     const mount: TechItemMouse["mount"] = (canvas, engine) => {
         mouse = matter.Mouse.create(canvas);
         mouseConstraint = matter.MouseConstraint.create(engine, {
@@ -28,8 +21,10 @@ const TechMouse = (matter: typeof Matter): TechItemMouse => {
             },
         });
 
-        removeWheelListener("wheel");
-        removeWheelListener("DOMMouseScroll");
+        mouseConstraint.mouse.element.removeEventListener(
+            "wheel",
+            mouseConstraint.mouse.mousewheel,
+        );
     };
 
     const render: TechItemMouse["render"] = (matterRender, world) => {
